@@ -22,7 +22,7 @@ jobs:
         uses: lycheeverse/lychee-action@v2
         with:
           # LinkedIn and LeetCode block automated checks, and localhost only works on your
-          # own machine, so both are skipped. Email links are skipped by default.
+          # own machine, so they are skipped. Email links are skipped by default.
           args: >-
             --no-progress
             --exclude "linkedin\.com"
