@@ -41,3 +41,9 @@ window.addEventListener("pointermove", (e) => {
   glow.style.setProperty("--mx", `${(e.clientX / window.innerWidth) * 100}%`);
   glow.style.setProperty("--my", `${(e.clientY / window.innerHeight) * 100}%`);
 });
+
+// Remove any service worker left behind by the old version of this site
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister()));
+  if (window.caches) caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+}
