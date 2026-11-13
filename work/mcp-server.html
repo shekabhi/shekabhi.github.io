@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCP server for AI agents — Abhishek Shukla</title>
+  <meta name="description" content="How I architected an MCP server that exposes REST APIs to AI agents as tools, secured with OAuth2 + PKCE, JWT/JWKS and scope-based access control." />
+  <link rel="canonical" href="https://shekabhi.github.io/work/mcp-server.html" />
+  <meta name="author" content="Abhishek Shukla" />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://shekabhi.github.io/work/mcp-server.html" />
+  <meta property="og:title" content="Letting AI agents use enterprise APIs, safely" />
+  <meta property="og:description" content="How I architected an MCP server that exposes REST APIs to AI agents as tools, secured with OAuth2 + PKCE, JWT/JWKS and scope-based access control." />
+  <meta property="og:image" content="https://shekabhi.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="../index.html" class="logo">&lt;AS /&gt;</a>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../index.html#work">All work</a>
+      <a href="../index.html#principles">How I work</a>
+      <button type="button" class="term-btn mono" title="Open terminal (press ~ or T)" aria-label="Open terminal">&gt;_</button>
+      <a href="../index.html#contact" class="btn btn-small">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="container case-hero">
+      <a class="back" href="../index.html#work">← All work</a>
+      <p class="eyebrow case-tag">AI INFRASTRUCTURE · SECURITY</p>
+      <h1>Letting AI agents use enterprise APIs, safely</h1>
+      <p class="summary">AI agents are only useful if they can act on real systems. I architected the OpenEdge MCP Server, which turns existing REST APIs into tools an agent can discover and call, without ever handing it a password.</p>
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Architect and lead developer</dd></div>
+        <div><dt>Where</dt><dd>Progress Software</dd></div>
+        <div><dt>Stack</dt><dd>Java, MCP, OAuth2 + PKCE, JWT/JWKS, Docker</dd></div>
+      </dl>
+    </header>
+
+    <article class="container case-body">
+      <h2><span class="mono">01</span>The problem</h2>
+      <p>Enterprises have years of business logic behind REST APIs. AI agents can reason well, but they can't use an API they've never seen, and a human copy-pasting between a chat window and an admin screen isn't automation.</p>
+      <p data-draft>The <strong>Model Context Protocol (MCP)</strong> gives agents a standard way to discover and call tools. The hard part isn't the protocol. It's that an agent acting on someone's behalf is a new kind of client: it's not a browser, it can't keep a secret reliably, and it will try whatever a prompt tells it to.</p>
+
+      <h2><span class="mono">02</span>Constraints</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>Don't change the existing APIs.</strong> Customers already run them in production.</li>
+        <li><strong>No shared secrets.</strong> An API key pasted into an agent's configuration is one prompt injection away from leaking.</li>
+        <li><strong>Least privilege per tool.</strong> Reading a customer record and creating an order shouldn't need the same permission.</li>
+        <li><strong>Deployable by ops teams</strong> who have never heard of MCP.</li>
+      </ul>
+
+      <h2><span class="mono">03</span>The design</h2>
+      <p>The server sits between the agent and the REST API. It describes each endpoint as a tool with a typed input schema, and every tool call has to carry a signed, scoped token. Step through a full call below.</p>
+      <figure class="figure" tabindex="0">
+        <div data-mcp-flow></div>
+        <figcaption>One tool call, end to end. Steps 5–8 are OAuth2 Authorization Code with PKCE.</figcaption>
+      </figure>
+      <p data-draft>Three checks happen on every call before anything reaches the API: the token's <strong>signature</strong> (against the auth server's public keys, fetched as JWKS and cached), its <strong>expiry and audience</strong>, and whether its <strong>scopes</strong> cover the specific tool being called.</p>
+
+      <h2><span class="mono">04</span>Trade-offs</h2>
+      <div class="tradeoffs" data-draft>
+        <div class="tradeoff">
+          <h3>Static API keys <span class="verdict">rejected</span></h3>
+          <p>Simplest to build, and what many early MCP servers did. But a key can't be scoped per user, can't be revoked per session, and lives in a config file an agent can read.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>OAuth2 client credentials <span class="verdict">rejected</span></h3>
+          <p>Fine for service-to-service calls, but the agent would act as itself, not as the user. Every action would look the same in the audit log.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>OAuth2 Authorization Code + PKCE <span class="verdict">chosen</span></h3>
+          <p>The user signs in and approves scopes; the agent never sees a password. PKCE means the agent doesn't need a client secret, so there is nothing long-lived to steal.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>Hand-written tool for each endpoint <span class="verdict">rejected</span></h3>
+          <p>Gives the nicest descriptions, but every new endpoint would need new code, and the tools would drift from the API.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>Tools generated from the API's own description <span class="verdict">chosen</span></h3>
+          <p>New endpoints become tools without new code. The cost is that tool quality depends on how well the API is documented, so descriptions can be overridden where it matters.</p>
+        </div>
+      </div>
+
+      <h2><span class="mono">05</span>Results</h2>
+      <ul class="results">
+        <li><strong>No secrets</strong><span>shared with agents, thanks to PKCE</span></li>
+        <li><strong>Per tool</strong><span>scope-based access control</span></li>
+        <li><strong>Docker</strong><span>production deployment pipeline</span></li>
+      </ul>
+      <p>Existing REST APIs became usable by AI agents without changing them, with enterprise security (JWT/JWKS, OAuth2 + PKCE, scope-based access control) and a containerized deployment path.</p>
+
+      <h2><span class="mono">06</span>What I'd do next</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>Human approval for risky tools.</strong> Let destructive calls pause for a confirmation instead of relying on scopes alone.</li>
+        <li><strong>Per-tool rate limits</strong>, because an agent in a loop is a very efficient way to overload an API.</li>
+        <li><strong>Audit trails built for agents:</strong> which prompt led to which call.</li>
+      </ul>
+
+      <nav class="next-case" aria-label="More case studies">
+        <a href="rate-limiter.html"><small>← Previous</small><b>A rate limiter that many servers can agree on</b></a>
+        <a class="next" href="pasoe.html"><small>Next →</small><b>Shipping security fixes without waiting for a release train</b></a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer mono muted">
+    Designed &amp; built by Abhishek Shukla · <span id="year"></span>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script src="../mcp-flow.js"></script>
+  <script src="../terminal.js"></script>
+</body>
+</html>

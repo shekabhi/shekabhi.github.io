@@ -50,21 +50,25 @@
       "# Distributed Rate Limiter Service",
       "Spring Boot + Redis sliding window, throttles per user/IP at high throughput.",
       "AWS EC2 + ElastiCache, CloudWatch monitoring, SQS breach events for alerting.",
+      "Case study: https://shekabhi.github.io/work/rate-limiter.html",
     ],
     "mcp-server.md": [
       "# OpenEdge MCP Server",
       "Turns REST APIs into AI-consumable tools via the Model Context Protocol.",
       "JWT/JWKS, OAuth2 + PKCE, scope-based access control, Docker deployment.",
+      "Case study: https://shekabhi.github.io/work/mcp-server.html",
     ],
     "pasoe.md": [
       "# Version-Independent App Server (PASOE)",
       "Decoupled from the LTS release cycle so 200+ libraries can be patched",
       "independently. Cross-version negotiation protocol + phased rollout.",
+      "Case study: https://shekabhi.github.io/work/pasoe.html",
     ],
     "fips.md": [
       "# FIPS Security Hardening",
       "Bouncy Castle FIPS provider: +30% client security adoption.",
       "Startup FIPS validation: -40% security exceptions. 20+ CVEs fixed, 0 regressions.",
+      "Case study: https://shekabhi.github.io/work/fips.html",
     ],
   };
 
