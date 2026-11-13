@@ -50,7 +50,16 @@ button { font-family: inherit; }
   transition: border-color .3s, padding .3s;
 }
 .nav.scrolled { border-color: var(--border); padding: 12px 32px; }
-.logo { font-family: "JetBrains Mono", monospace; font-weight: 500; color: var(--accent); font-size: 1.1rem; }
+.logo { display: inline-flex; align-items: center; gap: 12px; font-weight: 600; font-size: 1rem; letter-spacing: -.01em; color: var(--text); }
+.logo-mark {
+  display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px;
+  font: 800 .9rem Inter, sans-serif; letter-spacing: -.02em; color: var(--accent);
+  border: 1.5px solid var(--accent); background: rgba(94, 234, 212, .06);
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+.logo:hover .logo-mark { background: rgba(94, 234, 212, .14); box-shadow: 0 0 18px -4px rgba(94, 234, 212, .6); transform: rotate(-4deg); }
+.logo-name { transition: color .2s; }
+.logo:hover .logo-name { color: var(--accent); }
 .nav-links { display: flex; align-items: center; gap: 28px; font-size: .95rem; }
 .nav-links a:not(.btn) { color: var(--muted); transition: color .2s; }
 .nav-links a:not(.btn):hover { color: var(--accent); }
