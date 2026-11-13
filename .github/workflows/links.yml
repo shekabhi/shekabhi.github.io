@@ -21,11 +21,12 @@ jobs:
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
-          # LinkedIn blocks automated checks, so it is skipped
+          # LinkedIn blocks automated checks and localhost only works on your
+          # own machine, so both are skipped. Email links are skipped by default.
           args: >-
             --no-progress
-            --exclude-mail
             --exclude "linkedin\.com"
+            --exclude "localhost"
             --accept 200,206,429
             index.html README.md
           fail: true
