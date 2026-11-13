@@ -1,11 +1,11 @@
 name: Link check
 
-# Catches dead links (a renamed repo, a moved profile) once a week
-# and whenever the page changes.
+# Catches dead links (a renamed repo, a moved profile, a broken note link)
+# once a week and whenever the content changes.
 on:
   push:
     branches: [master]
-    paths: ["**.html", "**.md", "_notes/**"]
+    paths: ["**.html", "**.md", "_notes/**", "_layouts/**"]
   schedule:
     - cron: "17 4 * * 1" # Mondays 04:17 UTC
   workflow_dispatch:
@@ -13,21 +13,33 @@ on:
 permissions:
   contents: read
 
+env:
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+
 jobs:
   links:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      # Check the built site, so links like /learning/ resolve the way they do live
+      - name: Build the site with Jekyll
+        run: bundle exec jekyll build
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
-          # LinkedIn and LeetCode block automated checks, and localhost only works on your
-          # own machine, so they are skipped. Email links are skipped by default.
+          # LinkedIn and LeetCode block automated checks, and localhost only works on
+          # your own machine, so they are skipped. Email links are skipped by default.
           args: >-
             --no-progress
+            --root-dir ${{ github.workspace }}/_site
             --exclude "linkedin\.com"
             --exclude "leetcode\.com"
             --exclude "localhost"
             --accept 200,206,429
-            index.html work/*.html _notes/*.md README.md
+            "_site/**/*.html" README.md
           fail: true
