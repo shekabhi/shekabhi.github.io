@@ -1,0 +1,23 @@
+name: Something's broken
+description: A part of the site looks wrong or doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong?
+      placeholder: e.g. The terminal doesn't open when I press ~
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Device and browser
+      placeholder: e.g. iPhone 15, Safari / Windows laptop, Chrome
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot (optional)
+      description: Drag an image in here.

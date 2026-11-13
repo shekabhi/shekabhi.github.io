@@ -1,12 +1,29 @@
 # Abhishek Shukla — Portfolio
 
-Personal portfolio site: a dark, modern single page in plain HTML, CSS and JavaScript, with no build step.
+[![CI](https://github.com/shekabhi/shekabhi.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/shekabhi/shekabhi.github.io/actions/workflows/ci.yml)
+[![Link check](https://github.com/shekabhi/shekabhi.github.io/actions/workflows/links.yml/badge.svg)](https://github.com/shekabhi/shekabhi.github.io/actions/workflows/links.yml)
 
+Personal portfolio at **https://shekabhi.github.io**: a dark, modern single page in
+plain HTML, CSS and JavaScript, with no build step.
+
+## Files
 - `index.html`: content (about, skills, work, experience, contact)
 - `style.css`: theme and layout (accent colours are under `:root`)
 - `script.js`: mobile menu, scroll reveal, cursor glow
-- `terminal.js`: terminal mode (press ~ or T, or click >_)
+- `terminal.js`: terminal mode (press `~` or `T`, or click `>_`)
+- `tests/`: browser tests that run on every push
 
-Preview locally with `python3 -m http.server 8000`.
+## Work on it locally
+```bash
+npm install
+npm run serve      # http://localhost:4173
+npm run check      # HTML validation + browser tests
+```
+
+## Automation (`.github/`)
+- **CI**: validates the HTML and runs the browser tests (desktop and phone) on every push and pull request.
+- **Link check**: finds dead links every Monday and whenever the page changes.
+- **Dependabot**: opens a monthly pull request to update the test tools.
+- **Templates**: issue forms for bugs and ideas, and a pull request checklist.
 
 Hosted on GitHub Pages from the `master` branch.
