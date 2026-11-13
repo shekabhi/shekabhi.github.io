@@ -13,3 +13,8 @@ updates:
     groups:
       test-tools:
         patterns: ["*"]
+  # Keep the Jekyll / GitHub Pages gem in step with GitHub
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: monthly

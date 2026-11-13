@@ -83,11 +83,12 @@
     ["contact", "how to reach me"],
     ["github | linkedin | leetcode", "open a profile"],
     ["email", "copy my email address"],
+    ["notes", "my learning notes"],
     ["history", "commands you've typed"],
     ["clear", "clear the screen"],
     ["exit", "close the terminal (or press Esc)"],
   ];
-  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills",
+  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills", "notes", "learning",
     "contact", "achievements", "github", "linkedin", "leetcode", "email", "history",
     "clear", "date", "echo", "pwd", "cd", "sudo", "exit"];
 
@@ -109,7 +110,7 @@
   const body = wrap.querySelector(".term-body");
   const chips = wrap.querySelector(".term-chips");
 
-  ["help", "whoami", "projects", "experience", "skills", "contact", "sudo hire abhishek"].forEach((c) => {
+  ["help", "whoami", "projects", "notes", "experience", "skills", "contact", "sudo hire abhishek"].forEach((c) => {
     const b = document.createElement("button");
     b.type = "button"; b.textContent = c;
     b.addEventListener("click", () => { input.value = c; submit(); });
@@ -232,6 +233,19 @@
       case "experience": print(FILES["experience.txt"]); break;
       case "skills": print(FILES["skills.txt"]); break;
       case "achievements": print(FILES["achievements.txt"]); break;
+      case "notes":
+      case "learning":
+        print("Loading notes…", "dim");
+        fetch("/learning/notes.json")
+          .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then((notes) => {
+            notes.slice(0, 8).forEach((n) =>
+              printHTML(`<span class="dim">${esc(n.date)}</span>  <span class="cmd">${esc(n.topic.padEnd(14))}</span><a href="${esc(n.url)}">${esc(n.title)}</a>`));
+            print(`All ${notes.length} notes: https://shekabhi.github.io/learning/`, "dim");
+          })
+          .catch(() => print("Couldn't load notes. Open https://shekabhi.github.io/learning/", "err"))
+          .finally(() => { body.appendChild(promptRow); body.scrollTop = body.scrollHeight; });
+        break;
       case "contact": print(FILES["contact.txt"]); break;
       case "github": case "linkedin": case "leetcode":
         print(`Opening ${LINKS[cmd]} ...`, "dim"); window.open(LINKS[cmd], "_blank", "noopener"); break;

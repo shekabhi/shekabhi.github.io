@@ -15,9 +15,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+
 jobs:
   validate:
-    name: HTML validation
+    name: Build + HTML validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +29,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
       - run: npm ci
+      - name: Build the site with Jekyll (same as GitHub Pages)
+        run: npm run build
       - run: npm run validate
 
   test:
@@ -37,8 +47,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Build the site with Jekyll (same as GitHub Pages)
+        run: npm run build
       - run: npm test
       - name: Upload test report
         if: failure()

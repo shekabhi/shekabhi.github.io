@@ -3,8 +3,13 @@ const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 
 const isMobile = (testInfo) => testInfo.project.name === "mobile";
+const fs = require("fs");
+const path = require("path");
+
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`)];
+// Notes come from the Jekyll build, so new notes are tested automatically.
+const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url)];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -105,6 +110,60 @@ test.describe("rate limiter demo", () => {
   }
 });
 
+test.describe("learning hub", () => {
+  test.beforeEach(async ({ page }) => { await page.goto("/learning/"); });
+  const cards = (page) => page.locator(".note-card:not([hidden])");
+
+  test("lists every note, newest first", async ({ page }) => {
+    await expect(cards(page)).toHaveCount(NOTES.length);
+    const dates = await page.$$eval(".note-card time", (ts) => ts.map((t) => t.getAttribute("datetime")));
+    expect(dates).toEqual([...dates].sort().reverse());
+  });
+
+  test("topic filter shows only that topic, and survives a reload", async ({ page }) => {
+    const topic = NOTES[0].topic;
+    const expected = NOTES.filter((n) => n.topic === topic).length;
+    await page.locator(".topic-filters button", { hasText: topic }).click();
+    await expect(cards(page)).toHaveCount(expected);
+    await expect(page).toHaveURL(/\?topic=/);
+    await page.reload();
+    await expect(cards(page)).toHaveCount(expected);
+    await page.locator('.topic-filters button[data-topic="all"]').click();
+    await expect(cards(page)).toHaveCount(NOTES.length);
+  });
+
+  test("search narrows the list and shows a message when nothing matches", async ({ page }) => {
+    const word = NOTES[0].title.split(" ")[0];
+    await page.locator(".learn-search").fill(word.toLowerCase());
+    expect(await cards(page).count()).toBeGreaterThan(0);
+    await page.locator(".learn-search").fill("zzzz-no-such-note");
+    await expect(cards(page)).toHaveCount(0);
+    await expect(page.locator(".learn-empty")).toBeVisible();
+  });
+
+  test("nav link opens the hub from the home page", async ({ page }, testInfo) => {
+    await page.goto("/");
+    if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
+    await page.locator('.nav-links a[href="/learning/"]').click();
+    await expect(page).toHaveURL(/\/learning\/$/);
+    await expect(page.locator("h1")).toContainText("Notes");
+  });
+});
+
+test.describe("note pages", () => {
+  for (const note of NOTES) {
+    test(`${note.url} has a table of contents, highlighted code and copy buttons`, async ({ page }) => {
+      await page.goto(note.url);
+      await expect(page.locator("h1")).toHaveText(note.title);
+      await expect(page.locator(".toc a").first()).toBeVisible();
+      const blocks = page.locator(".note-body div.highlighter-rouge");
+      expect(await blocks.count()).toBeGreaterThan(0);
+      await expect(page.locator(".note-body .code-copy")).toHaveCount(await blocks.count());
+      await expect(page.locator('.next-case a').first()).toBeVisible();
+    });
+  }
+});
+
 test.describe("MCP flow", () => {
   test("steps forward and back through all 12 steps", async ({ page }) => {
     await page.goto("/work/mcp-server.html");
@@ -190,6 +249,16 @@ test.describe("terminal", () => {
     const size = await input(page).evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(size).toBeGreaterThanOrEqual(16);
   });
+});
+
+test("terminal notes command lists the learning notes", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".term-btn").first().evaluate((b) => b.click());
+  const input = page.locator(".term-prompt input");
+  await input.fill("notes");
+  await input.press("Enter");
+  await expect(page.locator(".term-body")).toContainText(NOTES[0].title);
+  await expect(page.locator(".term-body")).toContainText(`All ${NOTES.length} notes`);
 });
 
 test("terminal also opens on a case study page", async ({ page }, testInfo) => {

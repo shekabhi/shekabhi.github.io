@@ -1,0 +1,10 @@
+---
+layout: null
+permalink: /learning/notes.json
+---
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+[
+{%- for n in notes %}
+  {"title": {{ n.title | jsonify }}, "topic": {{ n.topic | jsonify }}, "summary": {{ n.summary | jsonify }}, "date": "{{ n.date | date: '%Y-%m-%d' }}", "url": {{ n.url | jsonify }}}{% unless forloop.last %},{% endunless %}
+{%- endfor %}
+]

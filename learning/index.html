@@ -1,0 +1,40 @@
+---
+layout: base
+title: Learning notes
+description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redis, Kafka, system design, security and AWS. Short, practical, with code.
+---
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+{%- assign groups = site.notes | group_by: "topic" | sort: "name" -%}
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning</p>
+      <h1>Notes I write so I never learn the same thing twice.</h1>
+      <p class="summary">
+        Every topic I study ends up here: short, practical, with code. They're for
+        future me first, and for anyone else who'd rather not learn it the hard way.
+      </p>
+      <p class="learn-stats mono">{{ notes.size }} notes · {{ groups.size }} topics</p>
+    </section>
+
+    <section class="container learn-main" aria-label="Notes">
+      <div class="learn-controls">
+        <div class="topic-filters" role="group" aria-label="Filter by topic">
+          <button type="button" data-topic="all" aria-pressed="true">All <span>{{ notes.size }}</span></button>
+          {%- for g in groups %}
+          <button type="button" data-topic="{{ g.name | slugify }}" aria-pressed="false">{{ g.name }} <span>{{ g.size }}</span></button>
+          {%- endfor %}
+        </div>
+        <input type="search" class="learn-search" placeholder="Search notes…" aria-label="Search notes" />
+      </div>
+
+      <ul class="note-list">
+        {%- for n in notes %}
+        <li class="card note-card" data-topic="{{ n.topic | slugify }}" data-search="{{ n.title | append: ' ' | append: n.summary | append: ' ' | append: n.topic | append: ' ' | append: n.tags | join: ' ' | downcase | escape }}">
+          <span class="tag">{{ n.topic | upcase }}</span>
+          <h2><a href="{{ n.url }}">{{ n.title }}</a></h2>
+          <p>{{ n.summary }}</p>
+          <span class="note-date mono"><time datetime="{{ n.date | date: '%Y-%m-%d' }}">{{ n.date | date: "%b %-d, %Y" }}</time>{% if n.updated %} · revisited {{ n.updated | date: "%b %-d" }}{% endif %}</span>
+        </li>
+        {%- endfor %}
+      </ul>
+      <p class="learn-empty muted" hidden>No notes match that. Try another word or topic.</p>
+    </section>

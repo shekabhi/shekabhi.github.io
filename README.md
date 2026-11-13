@@ -14,18 +14,40 @@ plain HTML, CSS and JavaScript, with no build step.
 - `demo.js`: the live sliding-window rate limiter demo
 - `mcp-flow.js`: the step-through OAuth2 + PKCE diagram on the MCP page
 - `terminal.js`: terminal mode (press `~` or `T`, or click `>_`)
+- `_notes/*.md`: **Learning notes**, one Markdown file per note
+- `learning/`: the Learning hub page and a JSON feed of notes
+- `_layouts/`: page templates for the Learning section
+- `learning.js`: topic filters, search, table of contents and copy buttons
 - `tests/`: browser tests that run on every push
 - `CONTENT-TODO.md`: **AI-drafted text that still needs your review** (marked `data-draft` in the HTML)
 
+## Add a learning note
+
+1. Copy `NOTE-TEMPLATE.md` into `_notes/` and give it a short, dashed name,
+   e.g. `_notes/kafka-consumer-groups.md`. The file name becomes the URL:
+   `https://shekabhi.github.io/learning/kafka-consumer-groups/`.
+2. Fill in the details at the top (`title`, `topic`, `date`, `tags`, `summary`)
+   and write the note in Markdown below them.
+3. Commit and push. GitHub builds the page and adds it to the Learning hub in about a minute.
+
+You can do this on github.com too: open the `_notes` folder, click **Add file → Create new file**.
+
+- A **new `topic`** automatically gets its own filter button.
+- When you revisit a note, add `updated: YYYY-MM-DD` to show "Last revisited".
+- A `date` in the future keeps the note hidden until that day.
+
 ## Work on it locally
+
+Needs Node 22 and Ruby 3.3.
+
 ```bash
-npm install
-npm run serve      # http://localhost:4173
-npm run check      # HTML validation + browser tests
+npm install && bundle install
+npm run serve      # http://localhost:4173, rebuilds as you edit
+npm run check      # build + HTML validation + browser tests
 ```
 
 ## Automation (`.github/`)
-- **CI**: validates the HTML and runs the browser tests (desktop and phone) on every push and pull request.
+- **CI**: builds the site with Jekyll (like GitHub Pages does), validates the HTML and runs the browser tests (desktop and phone) on every push and pull request.
 - **Link check**: finds dead links every Monday and whenever the page changes.
 - **Dependabot**: opens a monthly pull request to update the test tools.
 - **Templates**: issue forms for bugs and ideas, and a pull request checklist.
