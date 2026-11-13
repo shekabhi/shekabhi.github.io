@@ -1,0 +1,38 @@
+# Jekyll settings. GitHub Pages builds the site with these on every push.
+# Plain .html files without front matter (index.html, work/*.html) are copied as-is;
+# only the Learning section (learning/, _notes/) is generated.
+title: Abhishek Shukla
+url: https://shekabhi.github.io
+baseurl: ""
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  auto_ids: true
+
+# Each Markdown file in _notes/ becomes a page at /learning/<file-name>/
+collections:
+  notes:
+    output: true
+    permalink: /learning/:name/
+
+defaults:
+  - scope: { path: "", type: notes }
+    values: { layout: note }
+
+exclude:
+  - README.md
+  - CONTENT-TODO.md
+  - NOTE-TEMPLATE.md
+  - package.json
+  - package-lock.json
+  - playwright.config.js
+  - tests
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - test-results
+  - playwright-report

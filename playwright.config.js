@@ -16,7 +16,8 @@ module.exports = defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
-    command: "python3 -m http.server 4173",
+    // Serves the Jekyll output, so run `npm run build` first (CI does).
+    command: "python3 -m http.server 4173 -d _site",
     url: "http://localhost:4173",
     reuseExistingServer: !process.env.CI,
   },

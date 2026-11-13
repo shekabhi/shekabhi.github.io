@@ -4,7 +4,10 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 `master` branch at https://shekabhi.github.io.
 
 ## Stack
-- Plain HTML, CSS and JavaScript. **No build step and no framework.** Keep it that way.
+- Plain HTML, CSS and JavaScript, no framework. GitHub Pages runs **Jekyll** only to
+  build the Learning section; the rest of the site is hand-written HTML copied as-is.
+- `_notes/*.md`: learning notes (front matter: title, topic, date, tags, summary,
+  optional updated). Rendered with `_layouts/note.html`, listed by `learning/index.html`.
 - `index.html`: home page and SEO/link-preview meta tags.
 - `work/*.html`: case study pages. They share one layout; keep them consistent.
 - `style.css`: theme. Colours live in `:root` (`--accent` teal, `--accent-2` indigo).
@@ -27,5 +30,6 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
   attribute on any new drafted text; remove it only when Abhishek has reviewed it.
 
 ## Checks
-- `npm run check` = HTML validation + Playwright tests (desktop and mobile).
+- `npm run check` = Jekyll build + HTML validation + Playwright tests (desktop and mobile).
+- Tests read `_site/learning/notes.json`, so every new note is tested automatically.
 - Add or update a test in `tests/site.spec.js` for any new section or terminal command.

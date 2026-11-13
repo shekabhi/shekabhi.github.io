@@ -1,0 +1,52 @@
+---
+layout: base
+---
+{%- assign words = content | number_of_words -%}
+{%- assign minutes = words | divided_by: 200 | plus: 1 -%}
+{%- assign same = site.notes | where: "topic", page.topic | sort: "date" -%}
+{%- assign idx = -1 -%}
+{%- for n in same -%}{%- if n.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+{%- assign prev_i = idx | minus: 1 -%}
+{%- assign next_i = idx | plus: 1 -%}
+    <article class="container note">
+      <header class="note-head">
+        <a class="back" href="/learning/">← All notes</a>
+        <p class="eyebrow case-tag"><a href="/learning/?topic={{ page.topic | slugify }}">{{ page.topic | upcase }}</a></p>
+        <h1>{{ page.title }}</h1>
+        {%- if page.summary %}
+        <p class="summary">{{ page.summary }}</p>
+        {%- endif %}
+        <dl class="meta">
+          <div><dt>Written</dt><dd><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%b %-d, %Y" }}</time></dd></div>
+          {%- if page.updated %}
+          <div><dt>Last revisited</dt><dd><time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: "%b %-d, %Y" }}</time></dd></div>
+          {%- endif %}
+          <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
+          {%- if page.tags.size > 0 %}
+          <div><dt>Tags</dt><dd class="note-tags">{% for t in page.tags %}<span>#{{ t }}</span>{% endfor %}</dd></div>
+          {%- endif %}
+        </dl>
+      </header>
+
+      <div class="note-layout">
+        <nav class="toc" aria-label="On this page" hidden></nav>
+        <div class="note-body">
+{{ content }}
+        </div>
+      </div>
+
+      <nav class="next-case" aria-label="More notes on {{ page.topic }}">
+        {%- if idx > 0 %}
+        {%- assign p = same[prev_i] %}
+        <a href="{{ p.url }}"><small>← Older in {{ page.topic }}</small><b>{{ p.title }}</b></a>
+        {%- else %}
+        <a href="/learning/"><small>← Back to</small><b>All notes</b></a>
+        {%- endif %}
+        {%- assign nx = same[next_i] %}
+        {%- if nx %}
+        <a class="next" href="{{ nx.url }}"><small>Newer in {{ page.topic }} →</small><b>{{ nx.title }}</b></a>
+        {%- else %}
+        <a class="next" href="/learning/?topic={{ page.topic | slugify }}"><small>More →</small><b>All {{ page.topic }} notes</b></a>
+        {%- endif %}
+      </nav>
+    </article>

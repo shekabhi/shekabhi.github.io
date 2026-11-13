@@ -61,6 +61,15 @@ When you have rewritten a block in your own words, delete its `data-draft` attri
 - [ ] What I'd do next
 - [ ] Add a link to the GitHub repo if it is public
 
+### Learning notes (`_notes/`)
+These four starter notes were written by AI as examples. They are technically
+reviewed but written in a generic voice. Each has `reviewed: false` at the top;
+rewrite in your own words (or delete) and change it to `reviewed: true`.
+- [ ] `redis-sliding-window-rate-limiting.md`
+- [ ] `oauth2-pkce-in-five-minutes.md`
+- [ ] `java-volatile-synchronized-atomic.md`
+- [ ] `idempotency-keys.md`
+
 ## Still missing
 - [ ] Résumé PDF without the phone number (then add a download button + `resume` terminal command)
 - [ ] A photo (optional)

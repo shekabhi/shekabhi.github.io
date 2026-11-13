@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://shekabhi.github.io/</loc><lastmod>2026-11-13</lastmod></url>
@@ -5,4 +8,8 @@
   <url><loc>https://shekabhi.github.io/work/pasoe.html</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://shekabhi.github.io/work/fips.html</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://shekabhi.github.io/work/rate-limiter.html</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://shekabhi.github.io/learning/</loc><lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod></url>
+{%- for n in site.notes %}
+  <url><loc>{{ n.url | absolute_url }}</loc><lastmod>{{ n.updated | default: n.date | date: "%Y-%m-%d" }}</lastmod></url>
+{%- endfor %}
 </urlset>

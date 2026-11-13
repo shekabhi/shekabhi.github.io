@@ -4,10 +4,11 @@
   "private": true,
   "description": "Abhishek Shukla's portfolio site (static HTML/CSS/JS, hosted on GitHub Pages)",
   "scripts": {
-    "serve": "python3 -m http.server 4173",
-    "validate": "html-validate index.html work/*.html",
+    "build": "bundle exec jekyll build",
+    "serve": "bundle exec jekyll serve --port 4173 --livereload",
+    "validate": "html-validate \"_site/**/*.html\"",
     "test": "playwright test",
-    "check": "npm run validate && npm test"
+    "check": "npm run build && npm run validate && npm test"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
