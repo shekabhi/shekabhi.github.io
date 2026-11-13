@@ -188,3 +188,17 @@ ul, ol { list-style: none; }
   .avatar { max-width: 220px; }
   .projects-grid { grid-template-columns: 1fr; }
 }
+
+/* stats */
+.stats { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 28px; }
+.stats li { display: flex; flex-direction: column; }
+.stats strong {
+  font-size: 2rem; font-weight: 800; line-height: 1.1;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stats span { font-size: .85rem; color: var(--muted); }
+.project-links.mono { font-size: .75rem; }
+.section-title.sub { margin-top: 40px; font-size: 1.5rem; }
+.card p.muted { font-size: .95rem; }
+@media (min-width: 769px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
