@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Distributed rate limiter — Abhishek Shukla</title>
+  <meta name="description" content="How I designed a distributed rate limiting service with Spring Boot and Redis using a sliding window, deployed on AWS with breach events streamed to SQS." />
+  <link rel="canonical" href="https://shekabhi.github.io/work/rate-limiter.html" />
+  <meta name="author" content="Abhishek Shukla" />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://shekabhi.github.io/work/rate-limiter.html" />
+  <meta property="og:title" content="A rate limiter that many servers can agree on" />
+  <meta property="og:description" content="How I designed a distributed rate limiting service with Spring Boot and Redis using a sliding window, deployed on AWS with breach events streamed to SQS." />
+  <meta property="og:image" content="https://shekabhi.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="../index.html" class="logo">&lt;AS /&gt;</a>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../index.html#work">All work</a>
+      <a href="../index.html#principles">How I work</a>
+      <button type="button" class="term-btn mono" title="Open terminal (press ~ or T)" aria-label="Open terminal">&gt;_</button>
+      <a href="../index.html#contact" class="btn btn-small">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="container case-hero">
+      <a class="back" href="../index.html#work">← All work</a>
+      <p class="eyebrow case-tag">DISTRIBUTED SYSTEMS · PERSONAL PROJECT</p>
+      <h1>A rate limiter that many servers can agree on</h1>
+      <p class="summary">A limit enforced inside one server isn't a limit once you run ten of them. I built a rate limiting microservice with Spring Boot and Redis that gives every instance the same answer, and keeps alerting off the request path.</p>
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Design and build</dd></div>
+        <div><dt>Type</dt><dd>Personal project</dd></div>
+        <div><dt>Stack</dt><dd>Spring Boot, Redis, AWS (EC2, ElastiCache, SQS, CloudWatch), Docker</dd></div>
+      </dl>
+    </header>
+
+    <article class="container case-body">
+      <h2><span class="mono">01</span>The problem</h2>
+      <p>The classic in-memory rate limiter works until you scale out. With several instances behind a load balancer, each one keeps its own count, so a client allowed 100 requests can get 100 from every instance.</p>
+      <p>I wanted a limiter that throttles per user or per IP at high throughput, gives the <strong>same answer on every instance</strong>, and can tell other systems when someone is hitting the limit.</p>
+
+      <h2><span class="mono">02</span>Try it</h2>
+      <p>This is the same algorithm, running in your browser: 5 requests per 10-second sliding window.</p>
+      <div class="demo-inline" data-ratelimit-demo></div>
+
+      <h2><span class="mono">03</span>The design</h2>
+      <figure class="figure" tabindex="0">
+        <svg viewBox="0 0 760 300" role="img" aria-label="Architecture: clients call an API gateway, the rate limiter service checks Redis, and breach events go to SQS"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#4b5b73"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5eead4"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#fca5a5"/></marker></defs>
+<rect class="d-box " x="20" y="110" width="120" height="60" rx="10"/><text class="d-text" x="80.0" y="145.0" text-anchor="middle">Clients</text>
+<rect class="d-box " x="190" y="110" width="130" height="60" rx="10"/><text class="d-text" x="255.0" y="145.0" text-anchor="middle">API Gateway</text>
+<rect class="d-box hi" x="370" y="100" width="170" height="80" rx="10"/><text class="d-text" x="455.0" y="137.0" text-anchor="middle">Rate limiter</text><text class="d-sub" x="455.0" y="155.0" text-anchor="middle">Spring Boot on EC2</text>
+<rect class="d-box " x="600" y="30" width="140" height="64" rx="10"/><text class="d-text" x="670.0" y="59.0" text-anchor="middle">Redis</text><text class="d-sub" x="670.0" y="77.0" text-anchor="middle">ElastiCache</text>
+<rect class="d-box " x="600" y="206" width="140" height="64" rx="10"/><text class="d-text" x="670.0" y="235.0" text-anchor="middle">SQS</text><text class="d-sub" x="670.0" y="253.0" text-anchor="middle">breach events</text>
+<rect class="d-box " x="370" y="226" width="170" height="50" rx="10"/><text class="d-text" x="455.0" y="256.0" text-anchor="middle">CloudWatch</text>
+<line class="d-line " x1="140" y1="140" x2="188" y2="140" marker-end="url(#ah)"/><line class="d-line " x1="320" y1="140" x2="368" y2="140" marker-end="url(#ah)"/>
+<line class="d-line hi" x1="540" y1="122" x2="598" y2="74" marker-end="url(#ah-hi)" marker-start="url(#ah-hi)"/><line class="d-line " x1="540" y1="160" x2="598" y2="226" marker-end="url(#ah)"/>
+<line class="d-line " x1="455" y1="180" x2="455" y2="224" marker-end="url(#ah)"/>
+<text class="d-label hi" x="548" y="90" text-anchor="end">sliding window check</text>
+<text class="d-label " x="588" y="186" text-anchor="start">only on 429, async</text>
+<text class="d-label " x="445" y="208" text-anchor="end">metrics</text>
+</svg>
+        <figcaption>The limiter keeps its state in Redis, so every instance sees the same window. Breach events leave the request path through SQS.</figcaption>
+      </figure>
+      <p data-draft>Each user's recent requests live in a Redis <strong>sorted set</strong>, scored by timestamp. A check is three steps: remove entries older than the window (<code>ZREMRANGEBYSCORE</code>), count what's left (<code>ZCARD</code>), and if there is room, add the new request (<code>ZADD</code>). The steps run atomically, so two instances can't both hand out the last slot.</p>
+      <p>When a request is rejected, the service publishes a <strong>breach event to SQS</strong> for downstream alerting and analytics. CloudWatch tracks the service itself.</p>
+
+      <h2><span class="mono">04</span>Trade-offs</h2>
+      <div class="tradeoffs" data-draft>
+        <div class="tradeoff">
+          <h3>Fixed window counter <span class="verdict">rejected</span></h3>
+          <p>One counter per minute is the cheapest option. But a client can send a full quota at 11:59:59 and another at 12:00:00, doubling the limit across the boundary.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>Token bucket <span class="verdict">considered</span></h3>
+          <p>Great when you want to allow short bursts. I wanted a hard, easy-to-explain rule: no more than N in any window.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>Sliding window in a Redis sorted set <span class="verdict">chosen</span></h3>
+          <p>Exact, with no boundary burst, and capacity returns smoothly as requests age out. It costs more memory per user than a counter, which is acceptable for per-user API limits.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>Send alerts inside the request <span class="verdict">rejected</span></h3>
+          <p>Simple, but it ties the latency of every rejected request to the alerting system's health.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>Publish breach events to SQS <span class="verdict">chosen</span></h3>
+          <p>The request returns immediately; alerting and analytics consume events at their own pace and can fail without affecting traffic.</p>
+        </div>
+      </div>
+
+      <h2><span class="mono">05</span>Results</h2>
+      <ul class="results">
+        <li><strong>Per user / IP</strong><span>throttling shared across instances</span></li>
+        <li><strong>Sliding window</strong><span>no double quota at window edges</span></li>
+        <li><strong>Async</strong><span>breach events via SQS</span></li>
+        <li><strong>AWS</strong><span>EC2, ElastiCache, CloudWatch</span></li>
+      </ul>
+
+      <h2><span class="mono">06</span>What I'd do next</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>Decide what happens when Redis is unreachable:</strong> fail open (availability) or fail closed (protection), per route.</li>
+        <li><strong>Standard headers</strong> such as <code>Retry-After</code> and remaining-quota, so well-behaved clients can back off on their own.</li>
+        <li><strong>A cheaper approximate mode</strong> (sliding window counter) for very high-volume, low-stakes limits.</li>
+      </ul>
+
+      <nav class="next-case" aria-label="More case studies">
+        <a href="fips.html"><small>← Previous</small><b>Making FIPS compliance fail loudly at startup</b></a>
+        <a class="next" href="mcp-server.html"><small>Next →</small><b>Letting AI agents use enterprise APIs, safely</b></a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer mono muted">
+    Designed &amp; built by Abhishek Shukla · <span id="year"></span>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script src="../demo.js"></script>
+  <script src="../terminal.js"></script>
+</body>
+</html>

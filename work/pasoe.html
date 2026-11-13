@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Version-independent app server — Abhishek Shukla</title>
+  <meta name="description" content="How I led the architecture that decoupled the PASOE application server from the monolithic LTS release cycle, so 200+ third-party libraries can be patched independently." />
+  <link rel="canonical" href="https://shekabhi.github.io/work/pasoe.html" />
+  <meta name="author" content="Abhishek Shukla" />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://shekabhi.github.io/work/pasoe.html" />
+  <meta property="og:title" content="Shipping security fixes without waiting for a release train" />
+  <meta property="og:description" content="How I led the architecture that decoupled the PASOE application server from the monolithic LTS release cycle, so 200+ third-party libraries can be patched independently." />
+  <meta property="og:image" content="https://shekabhi.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="../index.html" class="logo">&lt;AS /&gt;</a>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../index.html#work">All work</a>
+      <a href="../index.html#principles">How I work</a>
+      <button type="button" class="term-btn mono" title="Open terminal (press ~ or T)" aria-label="Open terminal">&gt;_</button>
+      <a href="../index.html#contact" class="btn btn-small">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="container case-hero">
+      <a class="back" href="../index.html#work">← All work</a>
+      <p class="eyebrow case-tag">ARCHITECTURE</p>
+      <h1>Shipping security fixes without waiting for a release train</h1>
+      <p class="summary">The application server shipped inside a monolithic LTS release, so a fix for any of its 200+ third-party libraries had to wait for the next one. I led the architecture that made the server version-independent.</p>
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Architecture lead</dd></div>
+        <div><dt>Where</dt><dd>Progress Software</dd></div>
+        <div><dt>Stack</dt><dd>Java, Tomcat, PASOE</dd></div>
+      </dl>
+    </header>
+
+    <article class="container case-body">
+      <h2><span class="mono">01</span>The problem</h2>
+      <p>PASOE, the application server, shipped as part of the platform's LTS release. That's a sensible default: one version number, one test matrix, one install.</p>
+      <p>It stops being sensible when a critical CVE lands in one of the <strong>200+ third-party libraries</strong> the server depends on. The fix might be a one-line version bump, but it could only reach customers inside the next platform release.</p>
+      <figure class="figure" tabindex="0">
+        <svg viewBox="0 0 760 330" role="img" aria-label="Before: the application server and its libraries ship inside one LTS release. After: the application server is versioned on its own and negotiates with the platform"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#4b5b73"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5eead4"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#fca5a5"/></marker></defs>
+<text class="d-head" x="20" y="24">BEFORE</text>
+<rect class="d-box warn" x="20" y="38" width="330" height="200" rx="12"/>
+<text class="d-text" x="185" y="64" text-anchor="middle">One LTS release</text>
+<rect class="d-box " x="40" y="84" width="135" height="56" rx="10"/><text class="d-text" x="107.5" y="117.0" text-anchor="middle">Platform core</text>
+<rect class="d-box " x="195" y="84" width="135" height="56" rx="10"/><text class="d-text" x="262.5" y="117.0" text-anchor="middle">Database</text>
+<rect class="d-box " x="40" y="158" width="290" height="62" rx="10"/><text class="d-text" x="185.0" y="186.0" text-anchor="middle">Application server (PASOE)</text><text class="d-sub" x="185.0" y="204.0" text-anchor="middle">+ 200+ third-party libraries</text>
+<text class="d-label warn" x="185" y="262" text-anchor="middle">library CVE fix → wait for the next LTS release</text>
+<text class="d-head" x="410" y="24">AFTER</text>
+<rect class="d-box " x="400" y="60" width="135" height="150" rx="10"/><text class="d-text" x="467.5" y="132.0" text-anchor="middle">LTS platform</text><text class="d-sub" x="467.5" y="150.0" text-anchor="middle">stable cadence</text>
+<rect class="d-box hi" x="635" y="60" width="110" height="150" rx="10"/><text class="d-text" x="690.0" y="132.0" text-anchor="middle">PASOE</text><text class="d-sub" x="690.0" y="150.0" text-anchor="middle">own versions</text>
+<line class="d-line hi" x1="539" y1="135" x2="631" y2="135" marker-end="url(#ah-hi)" marker-start="url(#ah-hi)"/>
+<text class="d-label hi" x="585" y="120" text-anchor="middle">version</text><text class="d-label hi" x="585" y="158" text-anchor="middle">negotiation</text>
+<text class="d-label hi" x="572" y="262" text-anchor="middle">library CVE fix → ship a PASOE update</text>
+<line class="d-line" x1="380" y1="10" x2="380" y2="300" stroke-dasharray="4 6"/>
+</svg>
+        <figcaption>Decoupling the release cadence: the platform stays stable, the application server moves at the speed of security fixes.</figcaption>
+      </figure>
+
+      <h2><span class="mono">02</span>Constraints</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>LTS customers upgrade rarely, on purpose.</strong> Whatever we built had to work with the platform version they already run.</li>
+        <li><strong>Two versions now have to agree.</strong> A newer server talking to an older platform (or the reverse) must never fail in a confusing way.</li>
+        <li><strong>No big-bang migration.</strong> Customers needed a way to adopt this gradually and to back out.</li>
+      </ul>
+
+      <h2><span class="mono">03</span>The design</h2>
+      <p>Two pieces made it work:</p>
+      <ul class="bullets">
+        <li><strong>A cross-version negotiation protocol.</strong> <span data-draft>On connect, the server and the platform tell each other which versions and capabilities they support and settle on a common set. An unsupported pairing is refused up front with a clear reason, rather than failing halfway through a request.</span></li>
+        <li><strong>A phased rollout strategy.</strong> <span data-draft>Independent versioning started as opt-in, so early adopters could prove it in their own environments before it became the default.</span></li>
+      </ul>
+
+      <h2><span class="mono">04</span>Trade-offs</h2>
+      <div class="tradeoffs" data-draft>
+        <div class="tradeoff">
+          <h3>Hotfix every supported LTS release <span class="verdict">rejected</span></h3>
+          <p>No architecture change needed, but the work multiplies: every fix times every supported release, each needing its own build and test cycle. It gets slower exactly when speed matters.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>Bundle fewer libraries <span class="verdict">rejected</span></h3>
+          <p>Shrinks the problem without solving it. The libraries that remain still can't be patched on their own.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>Version the application server independently <span class="verdict">chosen</span></h3>
+          <p>One fix, shipped once, usable across platform versions. The price is a compatibility contract we now have to maintain and test, which is what the negotiation protocol is for.</p>
+        </div>
+      </div>
+
+      <h2><span class="mono">05</span>Results</h2>
+      <ul class="results">
+        <li><strong>200+</strong><span>third-party libraries can get security updates independently</span></li>
+        <li><strong>Decoupled</strong><span>from the monolithic LTS release cycle</span></li>
+        <li><strong>Phased</strong><span>rollout, no forced migration</span></li>
+      </ul>
+
+      <h2><span class="mono">06</span>What I'd do next</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>Automated compatibility matrix:</strong> test every supported server and platform pairing on each build.</li>
+        <li><strong>Dependency freshness as a dashboard</strong>, so "how exposed are we right now?" has an answer without a meeting.</li>
+      </ul>
+
+      <nav class="next-case" aria-label="More case studies">
+        <a href="mcp-server.html"><small>← Previous</small><b>Letting AI agents use enterprise APIs, safely</b></a>
+        <a class="next" href="fips.html"><small>Next →</small><b>Making FIPS compliance fail loudly at startup</b></a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer mono muted">
+    Designed &amp; built by Abhishek Shukla · <span id="year"></span>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script src="../terminal.js"></script>
+</body>
+</html>

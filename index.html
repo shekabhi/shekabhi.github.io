@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Abhishek Shukla — Senior Software Engineer</title>
-  <meta name="description" content="Abhishek Shukla, Senior Software Engineer in Hyderabad building scalable backend systems with Java and Spring Boot, security engineering and AI infrastructure (MCP)." />
+  <meta name="description" content="Abhishek Shukla builds backend systems that stay secure, upgradeable and fast in production. Case studies on rate limiting, MCP servers, FIPS and application-server architecture." />
   <link rel="canonical" href="https://shekabhi.github.io/" />
   <meta name="author" content="Abhishek Shukla" />
   <meta name="theme-color" content="#0b0f17" />
@@ -58,11 +58,11 @@
     <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span>
     </button>
-    <nav class="nav-links">
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Work</a>
-      <a href="#experience">Experience</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#demo">Live demo</a>
+      <a href="#work">Work</a>
+      <a href="#principles">How I work</a>
+      <a href="#career">Career</a>
       <button type="button" class="term-btn mono" title="Open terminal (press ~ or T)" aria-label="Open terminal">&gt;_</button>
       <a href="#contact" class="btn btn-small">Contact</a>
     </nav>
@@ -71,17 +71,16 @@
   <main id="top">
     <!-- HERO -->
     <section class="hero container">
-      <p class="mono accent">Hi, my name is</p>
-      <h1>Abhishek Shukla.</h1>
-      <h2 class="muted">I build scalable, secure backend systems<span class="cursor">_</span></h2>
+      <p class="eyebrow">Abhishek Shukla · Senior Software Engineer</p>
+      <h1>I build backends that <span class="grad">survive production.</span></h1>
       <p class="lead">
-        Senior Software Engineer at <span class="accent">Progress Software</span>, Hyderabad.
-        5+ years with Java and Spring Boot across distributed systems, security engineering
-        (FIPS, OAuth2) and AI infrastructure (MCP).
+        Secure by default, upgradeable without drama, and fast under load.
+        I work on application servers and security at <strong>Progress Software</strong>,
+        and lately on making enterprise APIs safe for <strong>AI agents</strong> to use.
       </p>
       <div class="hero-cta">
-        <a href="#projects" class="btn">View my work</a>
-        <a href="https://github.com/shekabhi" target="_blank" rel="noopener" class="btn btn-ghost">GitHub profile</a>
+        <a href="#work" class="btn">See how I think</a>
+        <a href="#demo" class="btn btn-ghost">Try to break my rate limiter</a>
       </div>
       <ul class="socials">
         <li><a href="https://github.com/shekabhi" target="_blank" rel="noopener" aria-label="GitHub">
@@ -103,154 +102,188 @@
       </p>
     </section>
 
-    <!-- ABOUT -->
-    <section id="about" class="container section reveal">
-      <h3 class="section-title"><span class="mono accent">01.</span> About me</h3>
-      <div class="about-grid">
-        <div>
+    <!-- LIVE DEMO -->
+    <section id="demo" class="container section reveal">
+      <div class="demo-grid">
+        <div class="demo-copy">
+          <p class="eyebrow">Live demo</p>
+          <h2 class="section-title">Go on, flood it.</h2>
           <p>
-            I'm a backend engineer who likes owning features end to end, from research and
-            design through implementation to production hardening. I've spent 5+ years
-            building systems in <em>Java and Spring Boot</em>, first at Tata Consultancy
-            Services and now at <em>Progress Software</em>.
+            This is the sliding-window algorithm from my
+            <strong>Distributed Rate Limiter</strong>, running in your browser.
+            Each user gets 5 requests in any 10-second window.
           </p>
-          <p>
-            Lately I've worked on application-server architecture, cryptography and
-            compliance (<em>FIPS, Bouncy Castle, OAuth2</em>), and AI infrastructure. I
-            architected an MCP server that turns REST APIs into tools AI agents can use.
+          <p data-draft>
+            Hit <strong>Burst ×8</strong> and watch the extra requests bounce with a
+            <span class="mono">429</span>. Then wait: as old requests slide out of the
+            window, capacity comes back one slot at a time. There is no sudden reset
+            for a client to exploit, which is the whole reason to pick a sliding window.
           </p>
-          <p>
-            Outside work I solve problems on LeetCode, and my team won 1st place at the
-            <em>XRPL Blockchain Hackathon 2024</em> at IIT Bombay.
+          <a class="link-arrow" href="work/rate-limiter.html">Read why I built it this way</a>
+        </div>
+        <div data-ratelimit-demo></div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" class="container section reveal">
+      <p class="eyebrow">Selected work</p>
+      <h2 class="section-title">Four problems, and how I solved them.</h2>
+      <p class="section-intro">
+        Not a list of duties. Each one covers the problem, the options I weighed,
+        what I chose and what it changed.
+      </p>
+      <div class="work-grid">
+        <article class="card case-card">
+          <span class="tag">AI INFRASTRUCTURE · SECURITY</span>
+          <h3><a href="work/mcp-server.html">Letting AI agents use enterprise APIs, safely</a></h3>
+          <p class="problem">
+            <b>The problem:</b> AI agents can't use a REST API they don't understand,
+            and you can't hand them a password. I architected an MCP server that turns
+            REST endpoints into tools, behind OAuth2 + PKCE.
           </p>
-          <ul class="stats">
-            <li><strong>5+</strong><span>years experience</span></li>
-            <li><strong>20+</strong><span>CVEs remediated</span></li>
-            <li><strong>200+</strong><span>libraries decoupled</span></li>
+          <ul class="outcomes">
+            <li><strong>OAuth2 + PKCE</strong><span>no shared secrets</span></li>
+            <li><strong>Per-tool scopes</strong><span>least privilege</span></li>
           </ul>
-        </div>
-        <div class="avatar">
-          <!-- Replace with: <img src="me.jpg" alt="Abhishek Shukla" /> -->
-          <div class="avatar-placeholder">AS</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SKILLS -->
-    <section id="skills" class="container section reveal">
-      <h3 class="section-title"><span class="mono accent">02.</span> Skills</h3>
-      <div class="skills-grid">
-        <div class="card">
-          <h4>Languages &amp; Frameworks</h4>
-          <ul class="tags"><li>Java</li><li>Multithreading</li><li>SQL</li><li>Spring Boot</li><li>Spring MVC</li><li>Spring Security</li><li>Tomcat</li></ul>
-        </div>
-        <div class="card">
-          <h4>Architecture &amp; Data</h4>
-          <ul class="tags"><li>Microservices</li><li>Distributed Systems</li><li>MySQL</li><li>Redis</li><li>Hibernate/JPA</li><li>Kafka</li></ul>
-        </div>
-        <div class="card">
-          <h4>Cloud &amp; Security</h4>
-          <ul class="tags"><li>AWS EC2</li><li>ElastiCache</li><li>SQS</li><li>CloudWatch</li><li>API Gateway</li><li>OAuth2</li><li>JWT/JWKS</li><li>FIPS</li><li>Bouncy Castle</li></ul>
-        </div>
-        <div class="card">
-          <h4>Tools &amp; DevOps</h4>
-          <ul class="tags"><li>Git</li><li>Linux</li><li>Docker</li><li>Gradle</li><li>TeamCity CI/CD</li><li>IntelliJ</li><li>GitHub Copilot</li><li>MCP</li></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJECTS -->
-    <section id="projects" class="container section reveal">
-      <h3 class="section-title"><span class="mono accent">03.</span> Things I've built</h3>
-      <div class="projects-grid">
-        <article class="card project">
-          <div class="project-top">
-            <svg class="folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z"/></svg>
-            <div class="project-links mono">Personal project</div>
-          </div>
-          <h4>Distributed Rate Limiter Service</h4>
-          <p>A rate-limiting microservice that throttles API requests per user or IP at high throughput, using a Redis sliding-window algorithm. Runs on AWS (EC2, ElastiCache) with CloudWatch monitoring, and publishes rate-limit breach events to SQS for alerting and analytics.</p>
-          <ul class="tech mono"><li>Spring Boot</li><li>Redis</li><li>AWS</li><li>SQS</li><li>Docker</li></ul>
+          <span class="link-arrow">Read the case study</span>
         </article>
 
-        <article class="card project">
-          <div class="project-top">
-            <svg class="folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z"/></svg>
-            <div class="project-links mono">Progress Software</div>
-          </div>
-          <h4>OpenEdge MCP Server</h4>
-          <p>Architected a server that turns REST APIs into AI-consumable tools through the Model Context Protocol. It includes enterprise security (JWT/JWKS, OAuth2 + PKCE, scope-based access control) and a Docker-based production deployment pipeline.</p>
-          <ul class="tech mono"><li>MCP</li><li>OAuth2 + PKCE</li><li>JWT/JWKS</li><li>Docker</li></ul>
+        <article class="card case-card">
+          <span class="tag">ARCHITECTURE</span>
+          <h3><a href="work/pasoe.html">Shipping security fixes without waiting for a release train</a></h3>
+          <p class="problem">
+            <b>The problem:</b> the application server shipped inside a monolithic
+            LTS release, so every library fix waited for the next one. I led the
+            architecture that decoupled it.
+          </p>
+          <ul class="outcomes">
+            <li><strong>200+</strong><span>libraries now patchable independently</span></li>
+            <li><strong>Phased</strong><span>rollout, cross-version protocol</span></li>
+          </ul>
+          <span class="link-arrow">Read the case study</span>
         </article>
 
-        <article class="card project">
-          <div class="project-top">
-            <svg class="folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z"/></svg>
-            <div class="project-links mono">Progress Software</div>
-          </div>
-          <h4>Version-Independent App Server</h4>
-          <p>Led the architecture that decoupled the PASOE application server from the monolithic LTS release cycle, so security updates for 200+ third-party libraries can ship independently. Designed the cross-version negotiation protocol and the phased rollout.</p>
-          <ul class="tech mono"><li>Java</li><li>Tomcat</li><li>Architecture</li></ul>
+        <article class="card case-card">
+          <span class="tag">SECURITY ENGINEERING</span>
+          <h3><a href="work/fips.html">Making FIPS compliance fail loudly at startup</a></h3>
+          <p class="problem">
+            <b>The problem:</b> cryptography misconfiguration showed up late, as
+            confusing runtime exceptions. I integrated Bouncy Castle FIPS and moved
+            validation to JVM startup.
+          </p>
+          <ul class="outcomes">
+            <li><strong>−40%</strong><span>security exceptions</span></li>
+            <li><strong>+30%</strong><span>client security adoption</span></li>
+            <li><strong>20+</strong><span>CVEs fixed, 0 regressions</span></li>
+          </ul>
+          <span class="link-arrow">Read the case study</span>
         </article>
 
-        <article class="card project">
-          <div class="project-top">
-            <svg class="folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z"/></svg>
-            <div class="project-links mono">Progress Software</div>
-          </div>
-          <h4>FIPS Security Hardening</h4>
-          <p>Integrated the Bouncy Castle FIPS cryptographic provider, which helped raise client security adoption by 30%. Added FIPS validation at JVM startup that cut security exceptions by 40%, and remediated 20+ CVEs, including critical RCEs, with zero production regressions.</p>
-          <ul class="tech mono"><li>Bouncy Castle FIPS</li><li>JVM</li><li>Security</li></ul>
+        <article class="card case-card">
+          <span class="tag">DISTRIBUTED SYSTEMS · PERSONAL PROJECT</span>
+          <h3><a href="work/rate-limiter.html">A rate limiter that many servers can agree on</a></h3>
+          <p class="problem">
+            <b>The problem:</b> a limit enforced per server isn't a limit once you
+            scale out. I built a shared sliding-window limiter on Redis, with breach
+            events streamed to SQS.
+          </p>
+          <ul class="outcomes">
+            <li><strong>Sliding window</strong><span>no burst at the boundary</span></li>
+            <li><strong>Async events</strong><span>hot path stays fast</span></li>
+          </ul>
+          <span class="link-arrow">Read the case study</span>
         </article>
       </div>
     </section>
 
-    <!-- EXPERIENCE -->
-    <section id="experience" class="container section reveal">
-      <h3 class="section-title"><span class="mono accent">04.</span> Experience</h3>
-      <ol class="timeline">
+    <!-- PRINCIPLES -->
+    <section id="principles" class="container section reveal">
+      <p class="eyebrow">How I work</p>
+      <h2 class="section-title">Things I've come to believe.</h2>
+      <p class="section-intro">Each of these cost me something to learn.</p>
+      <ol class="principles" data-draft>
         <li>
-          <span class="mono muted">Nov 2024 — Present · Hyderabad</span>
-          <h4>Senior Software Engineer 1 · <span class="accent">Progress Software</span></h4>
-          <p>Leads architecture for the PASOE application server, FIPS cryptography integration and the OpenEdge MCP Server. Built production log management with size-based rollover and retention policies, which stopped uncontrolled disk growth and the outages it caused.</p>
+          <h3>If you can't upgrade it, you can't secure it.</h3>
+          <p>A fix that needs a full platform release isn't a fix yet. Upgrade paths are a security feature, so I design them first.</p>
         </li>
         <li>
-          <span class="mono muted">Jan 2023 — Nov 2024 · Hyderabad</span>
-          <h4>Software Engineer 2 · <span class="accent">Progress Software</span></h4>
-          <p>Optimized client HTTP session management, cutting server resource use by 20%. Built a custom Logback contextSelector for multi-application Tomcat setups, and added Swagger-generated API contracts that reduced cross-team integration time.</p>
+          <h3>Fail loudly at startup, not quietly in production.</h3>
+          <p>A clear error before the first request is worth more than a stack trace at 2 a.m. Validate configuration early and say exactly what to change.</p>
         </li>
         <li>
-          <span class="mono muted">Jan 2021 — Jan 2023 · New Delhi</span>
-          <h4>Software Engineer · <span class="accent">Tata Consultancy Services</span></h4>
-          <p>Built Spring Boot REST APIs that process 10K+ JSON payloads a day, and tuned MySQL with indexing and batch inserts. Designed microservices with circuit breakers, retry policies and async messaging to stay available under peak traffic. Awarded Performance Band A (2021–22).</p>
+          <h3>Make the safe path the easy path.</h3>
+          <p>People adopt security when it's the default and costs them nothing. If the secure setup needs a 12-step guide, the design isn't finished.</p>
         </li>
         <li>
-          <span class="mono muted">2016 — 2020</span>
-          <h4>B.Tech, Information Technology · <span class="accent">Dr. A.P.J. Abdul Kalam Technical University</span></h4>
-          <p>CGPA 8.1</p>
+          <h3>Keep the hot path boring.</h3>
+          <p>Anything that can happen later should. Alerting, analytics and audit trails go on a queue; the request gets only what it needs to return.</p>
+        </li>
+        <li>
+          <h3>Logs are a feature, and they need an owner.</h3>
+          <p>Logging nobody manages eventually fills a disk. Rollover, retention and useful context get designed like any other feature.</p>
+        </li>
+        <li>
+          <h3>Design for the next consumer, even a non-human one.</h3>
+          <p>Yesterday it was another team, today it's an AI agent. Clear contracts and scoped access work for both.</p>
         </li>
       </ol>
+    </section>
 
-      <h3 class="section-title sub"><span class="mono accent">★</span> Achievements</h3>
-      <div class="skills-grid">
-        <div class="card">
-          <h4>🏆 XRPL Blockchain Hackathon 2024</h4>
-          <p class="muted">1st place out of 20 teams, IIT Bombay</p>
-        </div>
-        <div class="card">
-          <h4>⭐ TCS Performance Recognition</h4>
-          <p class="muted">Awarded Performance Band A, 2021–2022</p>
-        </div>
-      </div>
+    <!-- CAREER -->
+    <section id="career" class="container section reveal">
+      <p class="eyebrow">Career</p>
+      <h2 class="section-title">The short version.</h2>
+      <ol class="career">
+        <li>
+          <span class="when">Nov 2024 — now</span>
+          <div>
+            <h3>Senior Software Engineer 1 · <span class="accent">Progress Software</span></h3>
+            <p>Application-server architecture, FIPS cryptography, the OpenEdge MCP Server, production log management.</p>
+          </div>
+        </li>
+        <li>
+          <span class="when">Jan 2023 — Nov 2024</span>
+          <div>
+            <h3>Software Engineer 2 · <span class="accent">Progress Software</span></h3>
+            <p>Cut HTTP session resource use by 20%, rebuilt logging for multi-app Tomcat, added Swagger API contracts.</p>
+          </div>
+        </li>
+        <li>
+          <span class="when">Jan 2021 — Jan 2023</span>
+          <div>
+            <h3>Software Engineer · <span class="accent">Tata Consultancy Services</span></h3>
+            <p>Spring Boot APIs handling 10K+ payloads a day, resilient microservices. Performance Band A, 2021–22.</p>
+          </div>
+        </li>
+        <li>
+          <span class="when">2024</span>
+          <div>
+            <h3>1st place · <span class="accent">XRPL Blockchain Hackathon, IIT Bombay</span></h3>
+            <p>Out of 20 teams.</p>
+          </div>
+        </li>
+        <li>
+          <span class="when">2016 — 2020</span>
+          <div>
+            <h3>B.Tech, Information Technology · <span class="accent">Dr. A.P.J. Abdul Kalam Technical University</span></h3>
+            <p>CGPA 8.1</p>
+          </div>
+        </li>
+      </ol>
+      <p class="toolbox">
+        <b>Everyday tools:</b> Java, Spring Boot, Spring Security, Tomcat, Redis, Kafka, MySQL,
+        AWS, Docker, OAuth2, JWT, Bouncy Castle FIPS, MCP.
+      </p>
     </section>
 
     <!-- CONTACT -->
     <section id="contact" class="container section contact reveal">
-      <p class="mono accent">05. What's next?</p>
-      <h3>Get in touch</h3>
+      <p class="eyebrow">Contact</p>
+      <h2>Have a hard backend problem?</h2>
       <p class="muted">
-        I'm always happy to talk about backend architecture, security engineering or AI
-        infrastructure. If you have a role, a project or just a question, send me a message.
+        I like the ones where security, upgrades and scale pull in different directions.
+        Tell me about yours.
       </p>
       <a href="mailto:shekabhi369@gmail.com" class="btn">Say hello</a>
     </section>
@@ -261,6 +294,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="demo.js"></script>
   <script src="terminal.js"></script>
 </body>
 </html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FIPS validation at startup — Abhishek Shukla</title>
+  <meta name="description" content="How I integrated the Bouncy Castle FIPS cryptographic provider and moved validation to JVM startup, cutting security exceptions by 40% and fixing 20+ CVEs with zero regressions." />
+  <link rel="canonical" href="https://shekabhi.github.io/work/fips.html" />
+  <meta name="author" content="Abhishek Shukla" />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://shekabhi.github.io/work/fips.html" />
+  <meta property="og:title" content="Making FIPS compliance fail loudly at startup" />
+  <meta property="og:description" content="How I integrated the Bouncy Castle FIPS cryptographic provider and moved validation to JVM startup, cutting security exceptions by 40% and fixing 20+ CVEs with zero regressions." />
+  <meta property="og:image" content="https://shekabhi.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="../index.html" class="logo">&lt;AS /&gt;</a>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../index.html#work">All work</a>
+      <a href="../index.html#principles">How I work</a>
+      <button type="button" class="term-btn mono" title="Open terminal (press ~ or T)" aria-label="Open terminal">&gt;_</button>
+      <a href="../index.html#contact" class="btn btn-small">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="container case-hero">
+      <a class="back" href="../index.html#work">← All work</a>
+      <p class="eyebrow case-tag">SECURITY ENGINEERING</p>
+      <h1>Making FIPS compliance fail loudly at startup</h1>
+      <p class="summary">Regulated customers need FIPS-validated cryptography. I integrated the Bouncy Castle FIPS provider into the platform and moved validation to JVM startup, so a bad configuration stops the server immediately instead of surfacing later as a runtime exception.</p>
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Lead developer</dd></div>
+        <div><dt>Where</dt><dd>Progress Software</dd></div>
+        <div><dt>Stack</dt><dd>Java, JVM, Bouncy Castle FIPS, TLS</dd></div>
+      </dl>
+    </header>
+
+    <article class="container case-body">
+      <h2><span class="mono">01</span>The problem</h2>
+      <p>Customers in government, finance and healthcare can only run software that uses <strong>FIPS-validated cryptography</strong>. Supporting it means more than adding a library: every algorithm, key store and TLS setting has to come from the approved set.</p>
+      <p data-draft>The painful part was how failures showed up. A server could start cleanly with a non-compliant setting and run fine until the first code path touched it. Then it threw a security exception that named an algorithm, not the setting that caused it.</p>
+      <figure class="figure" tabindex="0">
+        <svg viewBox="0 0 760 300" role="img" aria-label="Before: misconfiguration surfaces as runtime exceptions. After: a FIPS check at JVM startup either passes or stops with a clear message"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#4b5b73"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#5eead4"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#fca5a5"/></marker></defs>
+<text class="d-head" x="20" y="24">BEFORE</text>
+<rect class="d-box " x="20" y="40" width="130" height="56" rx="10"/><text class="d-text" x="85.0" y="73.0" text-anchor="middle">JVM starts</text><rect class="d-box " x="200" y="40" width="150" height="56" rx="10"/><text class="d-text" x="275.0" y="73.0" text-anchor="middle">App serves traffic</text><rect class="d-box " x="400" y="40" width="200" height="56" rx="10"/><text class="d-text" x="500.0" y="65.0" text-anchor="middle">First TLS / crypto call</text><text class="d-sub" x="500.0" y="83.0" text-anchor="middle">later, in production</text>
+<rect class="d-box warn" x="640" y="40" width="110" height="56" rx="10"/><text class="d-text" x="695" y="64" text-anchor="middle">Runtime</text><text class="d-sub" x="695" y="82" text-anchor="middle">exception</text>
+<line class="d-line " x1="150" y1="68" x2="198" y2="68" marker-end="url(#ah)"/><line class="d-line " x1="350" y1="68" x2="398" y2="68" marker-end="url(#ah)"/><line class="d-line warn" x1="600" y1="68" x2="638" y2="68" marker-end="url(#ah-warn)"/>
+<line class="d-line" x1="20" y1="128" x2="740" y2="128" stroke-dasharray="4 6"/>
+<text class="d-head" x="20" y="158">AFTER</text>
+<rect class="d-box " x="20" y="176" width="130" height="56" rx="10"/><text class="d-text" x="85.0" y="209.0" text-anchor="middle">JVM starts</text>
+<rect class="d-box hi" x="190" y="166" width="190" height="76" rx="10"/><text class="d-text" x="285.0" y="201.0" text-anchor="middle">FIPS validation</text><text class="d-sub" x="285.0" y="219.0" text-anchor="middle">provider, algorithms, keys</text>
+<rect class="d-box hi" x="430" y="150" width="300" height="48" rx="10"/><text class="d-text" x="580.0" y="179.0" text-anchor="middle">All good → app starts in FIPS mode</text>
+<rect class="d-box warn" x="430" y="214" width="300" height="56" rx="10"/><text class="d-text" x="580" y="238" text-anchor="middle">Stop now, with a clear message:</text><text class="d-sub" x="580" y="256" text-anchor="middle">which setting is wrong and how to fix it</text>
+<line class="d-line " x1="150" y1="204" x2="188" y2="204" marker-end="url(#ah)"/><line class="d-line hi" x1="380" y1="192" x2="428" y2="176" marker-end="url(#ah-hi)"/><line class="d-line warn" x1="380" y1="216" x2="428" y2="240" marker-end="url(#ah-warn)"/>
+</svg>
+        <figcaption>Same misconfiguration, two very different days. Moving the check to startup turns a production incident into a deployment error.</figcaption>
+      </figure>
+
+      <h2><span class="mono">02</span>Constraints</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>Existing deployments must keep working.</strong> FIPS mode had to be something customers turn on, not something that breaks their upgrade.</li>
+        <li><strong>Crypto errors are hard to read.</strong> The person who sees the error is usually an administrator, not a cryptographer.</li>
+        <li><strong>Zero tolerance for regressions</strong> in the code that protects every connection.</li>
+      </ul>
+
+      <h2><span class="mono">03</span>The design</h2>
+      <ul class="bullets">
+        <li><strong>Bouncy Castle FIPS as the cryptographic provider</strong>, integrated into the platform.</li>
+        <li><strong>Proactive FIPS validation at JVM startup.</strong> <span data-draft>Before the server accepts a connection, it checks that the provider is in place and that the configured algorithms and key stores are approved. If not, it stops and says which setting to change.</span></li>
+      </ul>
+
+      <h2><span class="mono">04</span>Trade-offs</h2>
+      <div class="tradeoffs" data-draft>
+        <div class="tradeoff">
+          <h3>Document the requirements and let it fail at runtime <span class="verdict">rejected</span></h3>
+          <p>No code to write, and how it worked before. But the feedback arrives late, in production, as an exception most people can't interpret.</p>
+        </div>
+        <div class="tradeoff">
+          <h3>Silently fall back to a non-FIPS algorithm <span class="verdict">rejected</span></h3>
+          <p>Keeps the server up, and quietly breaks the compliance the customer is paying for. The worst option of the three.</p>
+        </div>
+        <div class="tradeoff chosen">
+          <h3>Validate at startup and refuse to run <span class="verdict">chosen</span></h3>
+          <p>A stricter server is slightly more annoying to configure the first time. In exchange, a wrong setting is caught by the person deploying it, with a message that tells them what to fix.</p>
+        </div>
+      </div>
+
+      <h2><span class="mono">05</span>Results</h2>
+      <ul class="results">
+        <li><strong>−40%</strong><span>security exceptions</span></li>
+        <li><strong>+30%</strong><span>client security adoption</span></li>
+        <li><strong>20+</strong><span>CVEs remediated, including critical RCEs</span></li>
+        <li><strong>0</strong><span>production regressions</span></li>
+      </ul>
+
+      <h2><span class="mono">06</span>What I'd do next</h2>
+      <ul class="bullets" data-draft>
+        <li><strong>A dry-run command</strong> that validates a configuration without starting the server, for CI pipelines.</li>
+        <li><strong>Crypto agility:</strong> make swapping algorithms a configuration change, ready for post-quantum requirements.</li>
+      </ul>
+
+      <nav class="next-case" aria-label="More case studies">
+        <a href="pasoe.html"><small>← Previous</small><b>Shipping security fixes without waiting for a release train</b></a>
+        <a class="next" href="rate-limiter.html"><small>Next →</small><b>A rate limiter that many servers can agree on</b></a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer mono muted">
+    Designed &amp; built by Abhishek Shukla · <span id="year"></span>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script src="../terminal.js"></script>
+</body>
+</html>
