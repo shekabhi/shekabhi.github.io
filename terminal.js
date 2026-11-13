@@ -137,7 +137,7 @@
   // Prompt line with the input
   const promptRow = document.createElement("label");
   promptRow.className = "term-prompt";
-  promptRow.innerHTML = `<span class="ps1"><b>abhishek@portfolio</b>:<i>~</i>$</span>`;
+  promptRow.innerHTML = `<span class="ps1"><b>abhishek@portfolio:</b><i>~</i>$</span>`;
   const input = document.createElement("input");
   Object.assign(input, { type: "text", autocomplete: "off", spellcheck: false, autocapitalize: "off" });
   input.setAttribute("aria-label", "Terminal command");
@@ -153,8 +153,19 @@
     document.body.classList.add("term-open");
     if (!body.childElementCount) boot();
     body.appendChild(promptRow);
+    fitViewport();
     setTimeout(() => input.focus(), 30);
   };
+  const fitViewport = () => {
+    const vv = window.visualViewport;
+    if (!vv || wrap.hidden) return;
+    wrap.style.height = vv.height + "px";
+    wrap.style.top = vv.offsetTop + "px";
+    body.scrollTop = body.scrollHeight;
+  };
+  window.visualViewport?.addEventListener("resize", fitViewport);
+  window.visualViewport?.addEventListener("scroll", fitViewport);
+
   const close = () => {
     wrap.hidden = true;
     document.body.classList.remove("term-open");
@@ -162,17 +173,11 @@
   };
 
   const boot = () => {
-    print([
-      "Last login: " + new Date().toDateString() + " on ttys001",
-      "",
-      "   █████╗ ███████╗",
-      "  ██╔══██╗██╔════╝   Abhishek Shukla",
-      "  ███████║███████╗   Senior Software Engineer",
-      "  ██╔══██║╚════██║   Java · Spring Boot · Security · MCP",
-      "  ██║  ██║███████║",
-      "  ╚═╝  ╚═╝╚══════╝",
-      "",
-    ], "ascii");
+    print("Last login: " + new Date().toDateString() + " on ttys001", "dim");
+    printHTML(`<div class="term-banner">
+        <div class="term-logo" aria-hidden="true">AS</div>
+        <div><b>Abhishek Shukla</b><br>Senior Software Engineer<br><span class="dim">Java · Spring Boot · Security · MCP</span></div>
+      </div>`);
     print("Welcome! Type 'help' to see what you can do, or tap a command below.", "dim");
     print("");
   };
@@ -280,7 +285,7 @@
 
   const submit = () => {
     const val = input.value;
-    printHTML(`<span class="ps1"><b>abhishek@portfolio</b>:<i>~</i>$</span> ${esc(val)}`);
+    printHTML(`<span class="ps1"><b>abhishek@portfolio:</b><i>~</i>$</span> ${esc(val)}`);
     if (val.trim()) { history.push(val.trim()); }
     hIdx = history.length;
     input.value = "";
