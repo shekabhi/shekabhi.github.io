@@ -154,7 +154,9 @@
     if (!body.childElementCount) boot();
     body.appendChild(promptRow);
     fitViewport();
-    setTimeout(() => input.focus(), 30);
+    // Focus right away (inside the tap) so phones open their keyboard
+    input.focus({ preventScroll: true });
+    setTimeout(() => { if (document.activeElement !== input) input.focus({ preventScroll: true }); }, 50);
   };
   const fitViewport = () => {
     const vv = window.visualViewport;
@@ -319,7 +321,13 @@
   body.addEventListener("click", () => { if (!window.getSelection().toString()) input.focus(); });
   document.addEventListener("keydown", (e) => {
     const typing = /INPUT|TEXTAREA/.test(document.activeElement?.tagName);
-    if (wrap.hidden && !typing && (e.key === "~" || e.key === "`")) { e.preventDefault(); open(); }
+    const mod = e.ctrlKey || e.metaKey || e.altKey;
+    const isShortcut = !mod && (
+      e.code === "Backquote" ||                 // the ~ / ` key, on any layout
+      e.key === "~" || e.key === "`" ||
+      e.key === "t" || e.key === "T"            // alternative shortcut
+    );
+    if (wrap.hidden && !typing && !e.repeat && isShortcut) { e.preventDefault(); open(); }
     else if (!wrap.hidden && e.key === "Escape") close();
     else if (!wrap.hidden && e.key === "Tab" && document.activeElement !== input) {
       // keep focus inside the dialog

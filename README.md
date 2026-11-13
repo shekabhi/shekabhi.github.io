@@ -5,7 +5,7 @@ Personal portfolio site: a dark, modern single page in plain HTML, CSS and JavaS
 - `index.html`: content (about, skills, work, experience, contact)
 - `style.css`: theme and layout (accent colours are under `:root`)
 - `script.js`: mobile menu, scroll reveal, cursor glow
-- `terminal.js`: terminal mode (press ~ or click >_)
+- `terminal.js`: terminal mode (press ~ or T, or click >_)
 
 Preview locally with `python3 -m http.server 8000`.
 
