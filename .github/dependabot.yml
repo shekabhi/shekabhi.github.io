@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Keep the GitHub Actions used by CI up to date
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+  # Keep the test tools (Playwright, html-validate, axe) up to date
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      test-tools:
+        patterns: ["*"]

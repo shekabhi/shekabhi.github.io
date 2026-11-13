@@ -1,0 +1,17 @@
+{
+  "name": "shekabhi.github.io",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Abhishek Shukla's portfolio site (static HTML/CSS/JS, hosted on GitHub Pages)",
+  "scripts": {
+    "serve": "python3 -m http.server 4173",
+    "validate": "html-validate index.html",
+    "test": "playwright test",
+    "check": "npm run validate && npm test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "1.63.0",
+    "html-validate": "^11.21.1"
+  }
+}
