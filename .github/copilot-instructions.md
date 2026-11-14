@@ -9,6 +9,8 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 - `_notes/*.md`: learning notes (front matter: title, topic, date, tags, summary,
   optional updated). Rendered with `_layouts/note.html`, listed by `learning/index.html`.
 - `index.html`: home page and SEO/link-preview meta tags.
+- `career/index.html`: career details (roles, skills, education). Career content lives here only,
+  not on the home page.
 - `work/*.html`: case study pages. They share one layout; keep them consistent.
 - `style.css`: theme. Colours live in `:root` (`--accent` teal, `--accent-2` indigo).
 - `script.js`: mobile menu, scroll reveal, cursor glow, old service worker cleanup.

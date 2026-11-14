@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url), "/play/"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url), "/play/", "/career/"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -78,7 +78,7 @@ test.describe("home page", () => {
   test.beforeEach(async ({ page }) => { await page.goto("/"); });
 
   test("has every section and a card for each case study", async ({ page }) => {
-    for (const id of ["demo", "work", "principles", "career", "play-teaser", "contact"]) {
+    for (const id of ["demo", "work", "principles", "play-teaser", "contact"]) {
       await expect(page.locator(`#${id}`)).toHaveCount(1);
     }
     for (const c of CASES) {
@@ -457,6 +457,47 @@ test("terminal play command opens the game", async ({ page }) => {
   await input.fill("play");
   await input.press("Enter");
   await expect(page).toHaveURL(/\/play\/$/);
+});
+
+test.describe("career page", () => {
+  test("home page has no career details, only the menu link", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("#career")).toHaveCount(0);
+    await expect(page.locator("main")).not.toContainText("Tata Consultancy Services");
+    await expect(page.locator('.nav-links a[href="/career/"]')).toHaveCount(1);
+  });
+
+  test("menu link opens the career page from every kind of page", async ({ page }, testInfo) => {
+    for (const from of ["/", "/work/fips.html", "/learning/", "/play/"]) {
+      await page.goto(from);
+      if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
+      await page.locator('.nav-links a[href="/career/"]').click();
+      await expect(page).toHaveURL(/\/career\/$/);
+      await expect(page.locator("h1")).toHaveText("5+ years building backends that ship.");
+    }
+    await expect(page.locator('.nav-links a[href="/career/"]')).toHaveAttribute("aria-current", "page");
+  });
+
+  test("has every role, skills, education and achievements", async ({ page }) => {
+    await page.goto("/career/");
+    await expect(page.locator(".roles .role")).toHaveCount(3);
+    for (const text of ["Senior Software Engineer 1", "Software Engineer 2", "Tata Consultancy Services",
+      "Distributed Rate Limiter", "Spring Boot", "B.Tech, Information Technology", "XRPL Blockchain Hackathon", "Performance Band A"]) {
+      await expect(page.locator("main")).toContainText(text);
+    }
+    for (const c of CASES) await expect(page.locator(`.role-points a[href="/work/${c}.html"]`)).toHaveCount(1);
+    // the phone number must never be published
+    await expect(page.locator("body")).not.toContainText("9821178125");
+  });
+
+  test("terminal experience command links to the career page", async ({ page }) => {
+    await page.goto("/");
+    await page.locator(".term-btn").first().evaluate((b) => b.click());
+    const input = page.locator(".term-prompt input");
+    await input.fill("experience");
+    await input.press("Enter");
+    await expect(page.locator(".term-body a[href='https://shekabhi.github.io/career/']")).toHaveCount(1);
+  });
 });
 
 test.describe("MCP flow", () => {
