@@ -24,6 +24,9 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
   Don't turn it into a caching service worker.
 
 ## Rules
+- Animation lives in `motion.js`. It must be decoration only (page complete without it), must
+  respect `prefers-reduced-motion`, and must pause when off-screen. Tests call
+  `window.portfolioMotion.finishAll()` to settle everything before checking the page.
 - Colours: always use the CSS variables in `:root` (never hard-code a colour in a
   component). The light theme overrides them under `:root[data-theme="light"]` and
   `prefers-color-scheme: light`. Every panel follows the theme, including the live demo,

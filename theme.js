@@ -30,13 +30,26 @@
     });
   };
 
-  const set = (next) => {
+  // `origin` is the {x, y} the change starts from (the button that was clicked).
+  // With it, the new theme spreads out in a circle from that point.
+  const set = (next, origin) => {
     if (!ORDER.includes(next)) return false;
     pref = next;
     try {
       if (pref === "system") localStorage.removeItem(KEY); else localStorage.setItem(KEY, pref);
     } catch { /* not saved, still applied for this page */ }
-    apply();
+    const still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!origin || still || !document.startViewTransition) { apply(); return true; }
+    root.classList.add("theme-switching");
+    const vt = document.startViewTransition(apply);
+    vt.ready.then(() => {
+      const r = Math.hypot(Math.max(origin.x, innerWidth - origin.x), Math.max(origin.y, innerHeight - origin.y));
+      root.animate(
+        { clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${r}px at ${origin.x}px ${origin.y}px)`] },
+        { duration: 600, easing: "ease-in-out", pseudoElement: "::view-transition-new(root)" }
+      );
+    }).catch(() => {});
+    vt.finished.finally(() => root.classList.remove("theme-switching"));
     return true;
   };
 
@@ -46,7 +59,10 @@
   document.addEventListener("DOMContentLoaded", () => {
     apply(); // the meta tag and buttons exist now
     document.querySelectorAll(".theme-btn").forEach((b) =>
-      b.addEventListener("click", () => set(ORDER[(ORDER.indexOf(pref) + 1) % ORDER.length]))
+      b.addEventListener("click", () => {
+        const r = b.getBoundingClientRect();
+        set(ORDER[(ORDER.indexOf(pref) + 1) % ORDER.length], { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+      })
     );
   });
 
