@@ -86,6 +86,8 @@ then rewrite them in your words.
       4 multiple-choice questions.
 - [ ] `java-explicit-locks.md` — chapter 4, drafted by AI with 6 common questions and
       4 multiple-choice questions.
+- [ ] `java-atomics-cas.md` — chapter 5, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
 
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
