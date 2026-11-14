@@ -247,8 +247,8 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("quiz: reveal, got it, ask again, and a summary at the end", async ({ page }) => {
     const slug = QUIZ[0].note;
-    const n = QUIZ.filter((q) => q.note === slug).length;
-    await page.goto(`/learning/quiz/?note=${slug}`);
+    const n = QUIZ.filter((q) => q.note === slug && !q.options.length).length;
+    await page.goto(`/learning/quiz/?note=${slug}&type=card`);
     await expect(page.locator(".quiz-count")).toContainText(`Question 1 of ${n}`);
     await expect(page.locator(".quiz-a")).toBeHidden();
     await page.locator(".quiz-reveal").click();
@@ -268,9 +268,10 @@ test.describe("learning: topics, quiz and privacy", () => {
   test("quiz: topic filter and keyboard keys", async ({ page }, testInfo) => {
     await page.goto("/learning/quiz/");
     await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.length}`);
+    await page.locator('.type-filters [data-type="card"]').click();
     const topic = QUIZ[0].topic;
     await page.locator(".quiz-filters button", { hasText: topic }).click();
-    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.filter((q) => q.topic === topic).length}`);
+    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.filter((q) => q.topic === topic && !q.options.length).length}`);
     await expect(page).toHaveURL(/\?topic=/);
     test.skip(isMobile(testInfo), "keyboard keys are for desktop");
     await page.locator("h1").click();
@@ -280,17 +281,122 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator(".quiz-count")).toContainText("Question 2");
   });
 
+  test("Skip moves on without scoring and shows up in the summary", async ({ page }, testInfo) => {
+    const q = QUIZ.find((x) => x.options.length);
+    const n = QUIZ.filter((x) => x.note === q.note && x.options.length).length;
+    await page.goto(`/learning/quiz/?note=${q.note}&type=mcq`);
+    await expect(page.locator(".quiz-skip")).toBeVisible();
+    await page.locator(".quiz-skip").click();                    // skip the first
+    await expect(page.locator(".quiz-count")).toContainText(`Question 2 of ${n}`);
+    for (let i = 1; i < n; i++) {                                 // answer the rest right
+      await page.locator('.quiz-option[data-right="1"]').click();
+      await expect(page.locator(".quiz-skip")).toBeHidden();      // no skipping after answering
+      await page.locator(".quiz-next").click();
+    }
+    await expect(page.locator(".quiz-score")).toHaveText(`You knew ${n - 1} of ${n - 1} on the first try, and skipped 1.`);
+    await expect(page.locator(".quiz-review-list li")).toHaveCount(1);
+    await expect(page.locator(".quiz-review-list")).toContainText("(skipped)");
+    // flashcards can be skipped too, with the S key
+    await page.goto(`/learning/quiz/?note=${q.note}&type=card`);
+    const total = QUIZ.filter((x) => x.note === q.note && !x.options.length).length;
+    if (!isMobile(testInfo)) {
+      await page.locator("h1").click();
+      for (let i = 0; i < total; i++) await page.keyboard.press("s");
+    } else {
+      for (let i = 0; i < total; i++) await page.locator(".quiz-skip").click();
+    }
+    await expect(page.locator(".quiz-score")).toHaveText(`You skipped all ${total} questions.`);
+  });
+
+  test("multiple-choice data is valid: 2-6 options and a correct answer", async () => {
+    const mcqs = QUIZ.filter((q) => q.options.length);
+    expect(mcqs.length).toBeGreaterThan(3);
+    for (const q of mcqs) {
+      expect(q.options.length, q.id).toBeGreaterThanOrEqual(2);
+      expect(q.options.length, q.id).toBeLessThanOrEqual(6);
+      expect(q.correct, q.id).toBeGreaterThanOrEqual(0);
+      expect(q.correct, q.id).toBeLessThan(q.options.length);
+    }
+  });
+
+  test("MCQ: picking the right option marks it correct", async ({ page }) => {
+    const q = QUIZ.find((x) => x.options.length);
+    await page.goto(`/learning/quiz/?note=${q.note}&type=mcq`);
+    await expect(page.locator(".quiz-option")).toHaveCount(4);
+    await expect(page.locator(".quiz-reveal")).toBeHidden();
+    await page.locator('.quiz-option[data-right="1"]').click();
+    await expect(page.locator(".quiz-feedback")).toHaveText("Correct!");
+    await expect(page.locator(".quiz-option.right")).toHaveCount(1);
+    await expect(page.locator(".quiz-option.wrong")).toHaveCount(0);
+    await expect(page.locator(".quiz-a")).toBeVisible();
+    await expect(page.locator(".quiz-option").first()).toBeDisabled();
+    await page.locator(".quiz-next").click();
+    await expect(page.locator(".quiz-count")).toContainText("Question 2 of 2");
+  });
+
+  test("MCQ: a wrong pick shows the right answer and comes back later", async ({ page }) => {
+    const q = QUIZ.find((x) => x.options.length);
+    const n = QUIZ.filter((x) => x.note === q.note && x.options.length).length;
+    await page.goto(`/learning/quiz/?note=${q.note}&type=mcq`);
+    await page.locator('.quiz-option:not([data-right="1"])').first().click();
+    await expect(page.locator(".quiz-feedback")).toContainText("Not quite");
+    await expect(page.locator(".quiz-option.wrong")).toHaveCount(1);
+    await expect(page.locator(".quiz-option.right")).toHaveCount(1);
+    // answer everything else right, including the repeat of the missed one
+    for (let i = 0; i < n; i++) {
+      await page.locator(".quiz-next").click();
+      await page.locator('.quiz-option[data-right="1"]').click();
+    }
+    await page.locator(".quiz-next").click();
+    await expect(page.locator(".quiz-score")).toHaveText(`You knew ${n - 1} of ${n} on the first try.`);
+  });
+
+  test("MCQ: number keys choose and Enter moves on", async ({ page }, testInfo) => {
+    test.skip(isMobile(testInfo), "keyboard keys are for desktop");
+    const q = QUIZ.find((x) => x.options.length);
+    await page.goto(`/learning/quiz/?note=${q.note}&type=mcq`);
+    await page.locator("h1").click();
+    await page.keyboard.press("2");
+    await expect(page.locator(".quiz-option").nth(1)).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".quiz-feedback")).toBeVisible();
+    await page.locator("h1").click();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(".quiz-feedback")).toBeHidden();
+  });
+
+  test("type filter: only multiple choice, or only flashcards", async ({ page }) => {
+    await page.goto("/learning/quiz/");
+    await page.locator('.type-filters [data-type="mcq"]').click();
+    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.filter((q) => q.options.length).length}`);
+    await expect(page.locator(".quiz-option").first()).toBeVisible();
+    await expect(page).toHaveURL(/type=mcq/);
+    await page.locator('.type-filters [data-type="card"]').click();
+    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.filter((q) => !q.options.length).length}`);
+    await expect(page.locator(".quiz-reveal")).toBeVisible();
+  });
+
+  test("notes show MCQ options with the right one marked", async ({ page }) => {
+    const q = QUIZ.find((x) => x.options.length);
+    await page.goto(q.url);
+    const mcq = page.locator(".qa").filter({ has: page.locator(".qa-options") }).first();
+    await mcq.locator("summary").click();
+    await expect(mcq.locator(".qa-options li")).toHaveCount(q.options.length);
+    await expect(mcq.locator(".qa-options li.right")).toHaveCount(1);
+  });
+
   test("quiz answers are not saved for visitors", async ({ page }) => {
-    await page.goto(`/learning/quiz/?note=${QUIZ[0].note}`);
+    await page.goto(`/learning/quiz/?note=${QUIZ[0].note}&type=card`);
     await page.locator(".quiz-reveal").click();
     await page.locator(".quiz-got").click();
+    await page.goto(`/learning/quiz/?note=${QUIZ[0].note}&type=mcq`);
+    await page.locator(".quiz-option").first().click();
     expect(await page.evaluate(() => localStorage.getItem("study-progress"))).toBeNull();
   });
 
   test("private plan view: full catalogue and own quiz results, only after 'plan on'", async ({ page }) => {
     await planOn(page);
     const slug = QUIZ[0].note;
-    await page.goto(`/learning/quiz/?note=${slug}`);
+    await page.goto(`/learning/quiz/?note=${slug}&type=card`);
     await page.locator(".quiz-reveal").click();
     await page.locator(".quiz-got").click();
     await page.goto("/learning/topics/");

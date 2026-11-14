@@ -11,17 +11,28 @@ scripts: [/quiz.js]
     </section>
 {% include learning-tabs.html %}
     <section class="container quiz" data-quiz aria-label="Quiz">
-      <div class="topic-filters quiz-filters" role="group" aria-label="Quiz topic"></div>
+      <div class="quiz-filter-row">
+        <div class="topic-filters quiz-filters" role="group" aria-label="Quiz topic"></div>
+        <div class="topic-filters type-filters" role="group" aria-label="Question type">
+          <button type="button" data-type="all" aria-pressed="true">All types</button>
+          <button type="button" data-type="mcq" aria-pressed="false">Multiple choice</button>
+          <button type="button" data-type="card" aria-pressed="false">Flashcards</button>
+        </div>
+      </div>
       <div class="quiz-card card">
         <p class="quiz-meta mono"><span class="quiz-count"></span><a class="quiz-source" href="/learning/">Notes</a></p>
         <h2 class="quiz-q">Loading questions…</h2>
+        <ol class="quiz-options" hidden></ol>
+        <p class="quiz-feedback" hidden aria-live="polite"></p>
         <div class="quiz-a" hidden></div>
         <div class="quiz-actions">
           <button type="button" class="btn quiz-reveal">Show answer</button>
           <button type="button" class="btn quiz-got" hidden>Got it</button>
           <button type="button" class="btn btn-ghost quiz-again" hidden>Ask me again</button>
+          <button type="button" class="btn quiz-next" hidden>Next question</button>
+          <button type="button" class="quiz-skip">Skip</button>
         </div>
-        <p class="quiz-keys mono muted">Keys: <kbd>Space</kbd> show answer · <kbd>1</kbd> got it · <kbd>2</kbd> ask me again</p>
+        <p class="quiz-keys mono muted"></p>
       </div>
       <div class="quiz-done card" hidden aria-live="polite">
         <h2>Done!</h2>
@@ -38,7 +49,7 @@ scripts: [/quiz.js]
 {%- assign first = true %}
 {%- assign qnotes = site.notes | sort: "date" | reverse %}
 {%- for n in qnotes %}{% for item in n.questions %}
-  {% unless first %},{% endunless %}{"id": {{ n.slug | append: "-" | append: forloop.index | jsonify }}, "note": {{ n.slug | jsonify }}, "noteTitle": {{ n.title | jsonify }}, "url": {{ n.url | jsonify }}, "topic": {{ n.topic | jsonify }}, "topicSlug": {{ n.topic | slugify | jsonify }}, "q": {{ item.q | markdownify | strip | jsonify }}, "a": {{ item.a | markdownify | strip | jsonify }}}
+  {% unless first %},{% endunless %}{"id": {{ n.slug | append: "-" | append: forloop.index | jsonify }}, "note": {{ n.slug | jsonify }}, "noteTitle": {{ n.title | jsonify }}, "url": {{ n.url | jsonify }}, "topic": {{ n.topic | jsonify }}, "topicSlug": {{ n.topic | slugify | jsonify }}, "q": {{ item.q | markdownify | strip | jsonify }}, "a": {{ item.a | markdownify | strip | jsonify }}, "options": [{% for o in item.options %}{{ o | markdownify | remove: "<p>" | remove: "</p>" | strip | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}], "correct": {{ item.correct | default: 0 | minus: 1 }}}
   {%- assign first = false %}
 {%- endfor %}{% endfor %}
 ]

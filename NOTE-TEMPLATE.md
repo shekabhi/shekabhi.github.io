@@ -10,6 +10,15 @@ questions:            # optional: shown at the end of the note under "Test yours
   - q: A question to check understanding?
     a: >-
       Your answer. Markdown works, e.g. `code`.
+  - q: A multiple-choice question?   # add options + correct to make it an MCQ
+    options:
+      - "The right answer"
+      - "A plausible wrong answer"
+      - "Another wrong answer"
+      - "One more wrong answer"
+    correct: 1                       # which option is right, counting from 1 (shuffled in the Quiz)
+    a: >-
+      Why that's right (shown after answering).
 ---
 
 ## The idea

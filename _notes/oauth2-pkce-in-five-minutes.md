@@ -24,6 +24,26 @@ questions:
       Not entirely. PKCE stops code injection, but `state` is still the simple way to check that a
       response matches a request you actually sent. OAuth 2.1 recommends PKCE for every client,
       confidential ones included.
+  - q: With the S256 method, what does the client send in the authorize request?
+    options:
+      - "The base64url-encoded SHA-256 hash of the code verifier"
+      - "The code verifier itself"
+      - "The client secret"
+      - "An access token"
+    correct: 1
+    a: >-
+      The `code_challenge` is `BASE64URL(SHA-256(code_verifier))`. The verifier itself stays secret
+      until the token request, and public clients have no client secret to send.
+  - q: When does the client reveal the code verifier?
+    options:
+      - "In the token request, together with the authorization code"
+      - "In the authorize request"
+      - "In every API call, next to the access token"
+      - "Never; only the hash is ever sent"
+    correct: 1
+    a: >-
+      The verifier goes in the token request with the code. The authorization server hashes it and
+      compares the result with the challenge it received at the start of the flow.
 ---
 
 ## Why PKCE exists

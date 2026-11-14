@@ -27,6 +27,28 @@ questions:
     a: >-
       If the change commits but the response isn't saved (a crash in between), a retry can't tell
       whether the work happened and may do it again.
+  - q: A retry reuses an idempotency key but sends a different body. Which response fits best?
+    options:
+      - "`422 Unprocessable Content`"
+      - "`409 Conflict`"
+      - "`200 OK` with the stored response"
+      - "`500 Internal Server Error`"
+    correct: 1
+    a: >-
+      The client reused a key for a different request, which is a client error. The IETF draft for
+      the `Idempotency-Key` header suggests `422`. `409` is for a request with that key that is
+      still in progress.
+  - q: A second request arrives while the first one with the same key is still running. What should it get?
+    options:
+      - "`409 Conflict`, so the client retries later"
+      - "`422 Unprocessable Content`"
+      - "`201 Created`, running the operation again"
+      - "`404 Not Found`"
+    correct: 1
+    a: >-
+      The key is stored as `IN_PROGRESS`, so the server can't return a result yet. `409` tells the
+      client to try again later. Running the operation again is exactly what idempotency keys
+      prevent.
 ---
 
 ## The problem
