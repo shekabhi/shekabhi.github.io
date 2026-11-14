@@ -50,6 +50,8 @@ The mechanism, step by step. Use `### sub-headings`, tables and diagrams in `tex
 | --- | --- |
 | ... | ... |
 
+<!-- Every table column needs a header, including the first (an empty header cell fails the accessibility check). -->
+
 ## Further reading
 
 - [Link title](https://example.com)

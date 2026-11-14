@@ -98,6 +98,16 @@ then rewrite them in your words.
       4 multiple-choice questions.
 - [ ] `java-synchronizers.md` — chapter 10, drafted by AI with 6 common questions and
       4 multiple-choice questions.
+- [ ] `java-threadlocal.md` — chapter 11, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-virtual-threads.md` — chapter 12, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-thread-safe-design.md` — chapter 13, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-spring-concurrency.md` — chapter 14, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-volatile-synchronized-atomic.md` — chapter 2, rewritten by AI to the full template
+      (memory model and happens-before), with 6 common questions and 4 multiple-choice questions.
 
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
