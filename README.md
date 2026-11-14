@@ -25,6 +25,8 @@ plain HTML, CSS and JavaScript, with no build step.
 - `learning/`: the Learning hub page and a JSON feed of notes
 - `_layouts/`: page templates for the Learning section
 - `learning.js`: topic filters, search, table of contents and copy buttons
+- `learning/topics/` + `topics.js`: notes grouped by area (`_data/topics.yml` is the catalogue)
+- `learning/quiz/` + `quiz.js`: quiz built from each note's `questions`
 - `tests/`: browser tests that run on every push
 - `CONTENT-TODO.md`: **AI-drafted text that still needs your review** (marked `data-draft` in the HTML)
 
@@ -40,7 +42,11 @@ plain HTML, CSS and JavaScript, with no build step.
 You can do this on github.com too: open the `_notes` folder, click **Add file → Create new file**.
 
 - A **new `topic`** automatically gets its own filter button.
-- When you revisit a note, add `updated: YYYY-MM-DD` to show "Last revisited".
+- Add `catalog: <topic id>` (from `_data/topics.yml`) to list the note on the Topics page.
+- Add `questions:` (each with `q` and `a`) to show a "Test yourself" section and include them in the Quiz.
+- Private plan view: type `plan on` in the site's terminal. This browser then also shows every
+  catalogue topic and your own quiz results on the Topics page. Visitors never see it; `plan off` hides it.
+- When you update a note, add `updated: YYYY-MM-DD` to show when it was last updated.
 - A `date` in the future keeps the note hidden until that day.
 
 ## Work on it locally

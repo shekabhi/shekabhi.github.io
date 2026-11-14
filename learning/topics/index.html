@@ -1,0 +1,40 @@
+---
+layout: base
+title: Topics
+description: Abhishek Shukla's learning notes grouped by area, from Java and Spring Boot to system design, databases, distributed systems and security.
+scripts: [/topics.js]
+---
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning</p>
+      <h1>Notes by topic.</h1>
+      <p class="summary">The same notes, grouped by area, so related ideas sit together.</p>
+    </section>
+{% include learning-tabs.html %}
+    <p class="plan-banner container mono" hidden>
+      Private plan view. Only you see this, in this browser. Type <code>plan off</code> in the terminal to hide it.
+    </p>
+    <section class="container topic-areas" aria-label="Topics">
+      {%- for area in site.data.topics %}
+      {%- assign area_count = 0 %}
+      {%- for t in area.topics %}{% assign tn = site.notes | where: "catalog", t.id %}{% assign area_count = area_count | plus: tn.size %}{% endfor %}
+      <section class="topic-area card{% if area_count == 0 %} plan-only{% endif %}" id="area-{{ area.id }}"{% if area_count == 0 %} hidden{% endif %} data-area="{{ area.id }}">
+        <h2>{{ area.title | escape }}</h2>
+        <p class="muted">{{ area.summary | escape }}</p>
+        <ul class="topic-list">
+          {%- for t in area.topics %}
+          {%- assign tnotes = site.notes | where: "catalog", t.id | sort: "date" %}
+          <li class="topic{% if tnotes.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}"{% if tnotes.size == 0 %} hidden{% endif %}>
+            <span class="topic-name">{{ t.title | escape }}</span>
+            {%- if tnotes.size > 0 %}
+            <ul class="topic-notes">
+              {%- for n in tnotes %}
+              <li><a href="{{ n.url }}" data-note="{{ n.slug }}">{{ n.title }}</a>{% if n.questions %} <span class="plan-stat mono" data-note="{{ n.slug }}" data-questions="{{ n.questions.size }}" hidden></span>{% endif %}</li>
+              {%- endfor %}
+            </ul>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- endfor %}
+    </section>

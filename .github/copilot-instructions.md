@@ -43,4 +43,6 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 ## Checks
 - `npm run check` = Jekyll build + HTML validation + Playwright tests (desktop and mobile).
 - Tests read `_site/learning/notes.json`, so every new note is tested automatically.
+- Learning pages are written for readers: public pages show no personal plan or progress.
+  The private plan view (localStorage `study-plan`) is the only place for that, and tests check it.
 - Add or update a test in `tests/site.spec.js` for any new section or terminal command.

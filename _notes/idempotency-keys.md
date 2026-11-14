@@ -5,6 +5,28 @@ date: 2026-11-12
 tags: [api-design, distributed-systems, reliability]
 summary: A timeout doesn't tell you whether the request worked. An idempotency key makes "just retry" safe.
 reviewed: false
+catalog: idempotency
+questions:
+  - q: Which HTTP methods need idempotency keys, and why?
+    a: >-
+      `POST`, and often `PATCH`. `GET`, `PUT` and `DELETE` are idempotent by definition, so
+      repeating them doesn't change the outcome.
+  - q: Who should generate the idempotency key?
+    a: >-
+      The client, once per logical operation, reused on every retry. A key created by the server
+      can't be reused by a retry that never received the first response.
+  - q: Two requests with the same key arrive at the same time. What happens?
+    a: >-
+      A unique constraint on (client, key) lets only one insert win. The other sees the key as
+      `IN_PROGRESS` and gets `409 Conflict`, so it retries later.
+  - q: The same key arrives with a different request body. What should the server do?
+    a: >-
+      Reject it with `422`. Store a hash of the request body with the key and compare: the client
+      reused a key by mistake.
+  - q: Why store the response in the same transaction as the business change?
+    a: >-
+      If the change commits but the response isn't saved (a crash in between), a retry can't tell
+      whether the work happened and may do it again.
 ---
 
 ## The problem

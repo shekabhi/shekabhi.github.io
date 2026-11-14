@@ -15,6 +15,7 @@ description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redi
       <p class="learn-stats mono">{{ notes.size }} notes · {{ groups.size }} topics</p>
     </section>
 
+{% include learning-tabs.html %}
     <section class="container learn-main" aria-label="Notes">
       <div class="learn-controls">
         <div class="topic-filters" role="group" aria-label="Filter by topic">
@@ -32,7 +33,7 @@ description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redi
           <span class="tag">{{ n.topic | upcase }}</span>
           <h2><a href="{{ n.url }}">{{ n.title }}</a></h2>
           <p>{{ n.summary }}</p>
-          <span class="note-date mono"><time datetime="{{ n.date | date: '%Y-%m-%d' }}">{{ n.date | date: "%b %-d, %Y" }}</time>{% if n.updated %} · revisited {{ n.updated | date: "%b %-d" }}{% endif %}</span>
+          <span class="note-date mono"><time datetime="{{ n.date | date: '%Y-%m-%d' }}">{{ n.date | date: "%b %-d, %Y" }}</time>{% if n.updated %} · updated {{ n.updated | date: "%b %-d" }}{% endif %}{% if n.questions %} · {{ n.questions.size }} questions{% endif %}</span>
         </li>
         {%- endfor %}
       </ul>

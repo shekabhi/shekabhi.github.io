@@ -19,7 +19,7 @@ layout: base
         <dl class="meta">
           <div><dt>Written</dt><dd><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%b %-d, %Y" }}</time></dd></div>
           {%- if page.updated %}
-          <div><dt>Last revisited</dt><dd><time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: "%b %-d, %Y" }}</time></dd></div>
+          <div><dt>Updated</dt><dd><time datetime="{{ page.updated | date: '%Y-%m-%d' }}">{{ page.updated | date: "%b %-d, %Y" }}</time></dd></div>
           {%- endif %}
           <div><dt>Reading time</dt><dd>{{ minutes }} min</dd></div>
           {%- if page.tags.size > 0 %}
@@ -32,6 +32,18 @@ layout: base
         <nav class="toc" aria-label="On this page" hidden></nav>
         <div class="note-body">
 {{ content }}
+          {%- if page.questions %}
+          <h2 id="test-yourself">Test yourself</h2>
+          <div class="qa-list">
+            {%- for item in page.questions %}
+            <details class="qa">
+              <summary>{{ item.q | markdownify | remove: "<p>" | remove: "</p>" | strip }}</summary>
+              <div class="qa-a">{{ item.a | markdownify }}</div>
+            </details>
+            {%- endfor %}
+          </div>
+          <p class="qa-more"><a href="/learning/quiz/?note={{ page.slug }}">Quiz me on this note</a></p>
+          {%- endif %}
         </div>
       </div>
 

@@ -5,6 +5,27 @@ date: 2026-11-02
 tags: [redis, rate-limiting, lua, distributed-systems]
 summary: Three Redis commands and one Lua script give every server the same answer to "is this user over the limit?"
 reviewed: false
+catalog: rate-limiting
+questions:
+  - q: Why use a sorted set instead of a simple counter for a sliding window?
+    a: >-
+      A fixed-window counter lets a client send a full quota at the end of one window and
+      another at the start of the next. A sorted set keeps each request's timestamp, so you
+      can count exactly what falls inside the last N seconds at any moment.
+  - q: Why does the check need to run as a Lua script?
+    a: >-
+      The read (`ZCARD`) and the write (`ZADD`) are separate commands, so two servers can both
+      read 4/5, both decide "allowed" and both add. A Lua script runs atomically on the Redis
+      server. `MULTI`/`EXEC` can't branch on the `ZCARD` result, so Lua is the usual choice.
+  - q: What goes wrong if the sorted-set member is just the timestamp?
+    a: >-
+      Two requests in the same millisecond get the same member, so the second `ZADD` overwrites
+      the first and you under-count. Add a random suffix or a UUID to the member.
+  - q: When would you choose a token bucket or a sliding window counter instead?
+    a: >-
+      Token bucket when short bursts are fine but you want a steady average rate. Sliding window
+      counter (two fixed-window counters, weighted) when limits are very high and an
+      approximation is acceptable, because it uses constant memory per user.
 ---
 
 ## The idea

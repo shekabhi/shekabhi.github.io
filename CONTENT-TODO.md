@@ -74,6 +74,12 @@ rewrite in your own words (or delete) and change it to `reviewed: true`.
 - [ ] `java-volatile-synchronized-atomic.md`
 - [ ] `idempotency-keys.md`
 
+### "Test yourself" questions (`_notes/*.md`, `questions:`)
+Drafted by AI for the four starter notes (17 questions). Check the answers and rewrite them in your words.
+
+### Topic catalogue (`_data/topics.yml`)
+A starting list of areas and topics. Add, remove or rename freely.
+
 ## Still missing
 - [ ] Résumé PDF without the phone number (then add a download button on the Career page + `resume` terminal command)
 - [ ] A photo (optional)
