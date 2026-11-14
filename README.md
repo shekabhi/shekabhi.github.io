@@ -13,6 +13,7 @@ plain HTML, CSS and JavaScript, with no build step.
 - `script.js`: mobile menu, scroll reveal, cursor glow
 - `demo.js`: the live sliding-window rate limiter demo
 - `mcp-flow.js`: the step-through OAuth2 + PKCE diagram on the MCP page
+- `theme.js`: System / Light / Dark switch (saved per visitor)
 - `terminal.js`: terminal mode (press `~` or `T`, or click `>_`)
 - `_notes/*.md`: **Learning notes**, one Markdown file per note
 - `learning/`: the Learning hub page and a JSON feed of notes

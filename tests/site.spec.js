@@ -62,11 +62,15 @@ for (const path of PAGES) {
       expect(width).toBeLessThanOrEqual(screen);
     });
 
-    test("no accessibility violations", async ({ page }) => {
-      await reveal(page);
-      const results = await new AxeBuilder({ page }).analyze();
-      expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
-    });
+    for (const theme of ["dark", "light"]) {
+      test(`no accessibility violations (${theme} theme)`, async ({ page }) => {
+        await page.evaluate((t) => window.portfolioTheme.set(t), theme);
+        await expect(page.locator("html")).toHaveAttribute("data-theme-pref", theme);
+        await reveal(page);
+        const results = await new AxeBuilder({ page }).analyze();
+        expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
+      });
+    }
   });
 }
 
@@ -162,6 +166,84 @@ test.describe("note pages", () => {
       await expect(page.locator('.next-case a').first()).toBeVisible();
     });
   }
+});
+
+test.describe("theme switch", () => {
+  const bg = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const DARK = "rgb(11, 15, 23)", LIGHT = "rgb(247, 248, 251)";
+  const themeBtn = async (page, testInfo) => {
+    if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
+    return page.locator(".nav-links .theme-btn");
+  };
+
+  test("defaults to the device setting", async ({ browser }) => {
+    for (const [scheme, expected] of [["light", LIGHT], ["dark", DARK]]) {
+      const ctx = await browser.newContext({ colorScheme: scheme });
+      const page = await ctx.newPage();
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveAttribute("data-theme-pref", "system");
+      await expect.poll(() => bg(page)).toBe(expected);
+      await ctx.close();
+    }
+  });
+
+  test("button cycles System → Light → Dark → System and is remembered", async ({ page }, testInfo) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/");
+    const btn = await themeBtn(page, testInfo);
+    await expect(btn).toHaveAttribute("aria-label", /System/);
+    await btn.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect.poll(() => bg(page)).toBe(LIGHT);
+    await expect(btn).toHaveAttribute("aria-label", /Light/);
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#f7f8fb");
+
+    // remembered on reload and on other pages
+    await page.goto("/learning/");
+    await expect.poll(() => bg(page)).toBe(LIGHT);
+
+    const btn2 = await themeBtn(page, testInfo);
+    await btn2.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect.poll(() => bg(page)).toBe(DARK);
+    await btn2.click();
+    await expect(page.locator("html")).not.toHaveAttribute("data-theme", /./);
+    await expect(page.locator("html")).toHaveAttribute("data-theme-pref", "system");
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
+  });
+
+  test("code panels stay dark in the light theme", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => window.portfolioTheme.set("light"));
+    const panelBg = await page.locator(".rl").evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(panelBg).toBe("rgb(13, 19, 32)");
+    await page.locator(".term-btn").first().evaluate((b) => b.click());
+    const termBg = await page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(termBg).toBe("rgb(7, 11, 17)");
+  });
+
+  test("works when the browser blocks storage", async ({ page }, testInfo) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "localStorage", { get() { throw new Error("blocked"); } });
+    });
+    await page.goto("/");
+    const btn = await themeBtn(page, testInfo);
+    await btn.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  });
+
+  test("terminal theme command", async ({ page }) => {
+    await page.goto("/");
+    await page.locator(".term-btn").first().evaluate((b) => b.click());
+    const input = page.locator(".term-prompt input");
+    await input.fill("theme light");
+    await input.press("Enter");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(page.locator(".term-body")).toContainText("Theme set to light");
+    await input.fill("theme purple");
+    await input.press("Enter");
+    await expect(page.locator(".term-body")).toContainText("unknown option 'purple'");
+  });
 });
 
 test.describe("MCP flow", () => {

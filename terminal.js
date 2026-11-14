@@ -84,11 +84,12 @@
     ["github | linkedin | leetcode", "open a profile"],
     ["email", "copy my email address"],
     ["notes", "my learning notes"],
+    ["theme [light|dark|system]", "switch the colour theme"],
     ["history", "commands you've typed"],
     ["clear", "clear the screen"],
     ["exit", "close the terminal (or press Esc)"],
   ];
-  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills", "notes", "learning",
+  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills", "notes", "learning", "theme",
     "contact", "achievements", "github", "linkedin", "leetcode", "email", "history",
     "clear", "date", "echo", "pwd", "cd", "sudo", "exit"];
 
@@ -233,6 +234,14 @@
       case "experience": print(FILES["experience.txt"]); break;
       case "skills": print(FILES["skills.txt"]); break;
       case "achievements": print(FILES["achievements.txt"]); break;
+      case "theme": {
+        const t = window.portfolioTheme;
+        if (!t) { print("Theme switching isn't available on this page.", "err"); break; }
+        if (!arg) { print(`theme: ${t.get()} (showing ${t.effective()}). Try: theme light | theme dark | theme system`); break; }
+        if (t.set(arg.toLowerCase())) print(`✓ Theme set to ${t.get()}.`, "ok");
+        else print(`theme: unknown option '${arg}'. Use light, dark or system.`, "err");
+        break;
+      }
       case "notes":
       case "learning":
         print("Loading notes…", "dim");
