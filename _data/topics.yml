@@ -55,16 +55,43 @@
     - { id: lld-splitwise, title: "LLD: expense sharing" }
 
 - id: java
-  title: Java & concurrency
+  title: "Java"
   summary: The language and its runtime.
   topics:
-    - { id: collections-internals, title: "HashMap & ConcurrentHashMap internals" }
-    - { id: jmm-volatile, title: "Java memory model, volatile & atomics" }
-    - { id: locks, title: "synchronized, locks & conditions" }
-    - { id: executors, title: "Executors & CompletableFuture" }
+    - { id: collections-internals, title: "HashMap & collections internals" }
     - { id: jvm-gc, title: "JVM memory & garbage collection" }
     - { id: streams, title: "Streams & lambdas" }
-    - { id: modern-java, title: "Records, sealed types & virtual threads" }
+    - { id: modern-java, title: "Records, sealed types & pattern matching" }
+
+- id: java-concurrency
+  title: "Java concurrency"
+  summary: Threads, memory, locks and the tools built on them.
+  series: true
+  topics:
+    - { id: thread-basics, title: "Threads, lifecycle & interrupts", key: true }
+    - { id: jmm-volatile, title: "Java memory model, volatile & happens-before", key: true }
+    - { id: synchronized, title: "synchronized, monitors & wait/notify", key: true }
+    - { id: explicit-locks, title: "ReentrantLock, ReadWriteLock & StampedLock", key: true }
+    - { id: atomics-cas, title: "Atomics, CAS & the ABA problem", key: true }
+    - { id: concurrency-bugs, title: "Race conditions, deadlock, livelock & starvation", key: true }
+    - { id: thread-pools, title: "Executors & ThreadPoolExecutor", key: true }
+    - { id: completable-future, title: "Futures & CompletableFuture", key: true }
+    - { id: concurrent-collections, title: "ConcurrentHashMap & concurrent collections", key: true }
+    - { id: synchronizers, title: "CountDownLatch, CyclicBarrier & Semaphore", key: true }
+    - { id: threadlocal, title: "ThreadLocal", key: true }
+    - { id: virtual-threads, title: "Virtual threads & structured concurrency", key: true }
+    - { id: thread-safe-design, title: "Immutability & thread-safe design", key: true }
+    - { id: spring-concurrency, title: "Concurrency in Spring" }
+    - { id: problem-odd-even, title: "Problem: odd/even printer with two threads", problem: true, key: true }
+    - { id: problem-producer-consumer, title: "Problem: producer-consumer", problem: true, key: true }
+    - { id: problem-bounded-queue, title: "Problem: bounded blocking queue", problem: true, key: true }
+    - { id: problem-print-in-order, title: "Problem: print in order with three threads", problem: true, key: true }
+    - { id: problem-singleton, title: "Problem: thread-safe singleton", problem: true, key: true }
+    - { id: problem-lru-cache, title: "Problem: thread-safe LRU cache", problem: true }
+    - { id: problem-deadlock, title: "Problem: write a deadlock, then fix it", problem: true, key: true }
+    - { id: problem-dining-philosophers, title: "Problem: dining philosophers", problem: true }
+    - { id: problem-thread-pool, title: "Problem: a simple thread pool", problem: true }
+    - { id: problem-rate-limiter, title: "Problem: thread-safe rate limiter", problem: true }
 
 - id: spring
   title: Spring Boot

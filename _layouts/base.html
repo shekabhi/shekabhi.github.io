@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ page.title }} — Abhishek Shukla</title>
+  <title>{{ page.short_title | default: page.title }} — Abhishek Shukla</title>
   {%- assign desc = page.summary | default: page.description %}
   <meta name="description" content="{{ desc | strip_html | escape }}" />
   <link rel="canonical" href="{{ page.url | absolute_url }}" />
