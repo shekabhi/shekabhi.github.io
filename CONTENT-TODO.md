@@ -90,6 +90,14 @@ then rewrite them in your words.
       4 multiple-choice questions.
 - [ ] `java-concurrency-bugs.md` — chapter 6, drafted by AI with 6 common questions and
       4 multiple-choice questions.
+- [ ] `java-thread-pools.md` — chapter 7, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-completable-future.md` — chapter 8, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-concurrent-collections.md` — chapter 9, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
+- [ ] `java-synchronizers.md` — chapter 10, drafted by AI with 6 common questions and
+      4 multiple-choice questions.
 
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
