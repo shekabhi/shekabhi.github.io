@@ -25,6 +25,8 @@
       "[2021-01 → 2023-01] Software Engineer @ Tata Consultancy Services",
       "                  Spring Boot APIs, 10K+ payloads/day · resilient microservices",
       "[2016 → 2020]     B.Tech IT @ Dr. A.P.J. Abdul Kalam Technical University (8.1)",
+      "",
+      "More: https://shekabhi.github.io/career/",
     ],
     "skills.txt": [
       "languages   Java (multithreading, concurrency), SQL",
@@ -33,10 +35,14 @@
       "cloud       AWS: EC2, ElastiCache, SQS, CloudWatch, API Gateway",
       "security    OAuth2, JWT/JWKS, FIPS, Bouncy Castle",
       "tools       Git, Linux, Docker, Gradle, TeamCity, MCP",
+      "",
+      "More: https://shekabhi.github.io/career/",
     ],
     "achievements.txt": [
       "🏆 XRPL Blockchain Hackathon 2024: 1st place of 20 teams, IIT Bombay",
       "⭐ TCS Performance Recognition 2021–22: Performance Band A",
+      "",
+      "More: https://shekabhi.github.io/career/",
     ],
     "contact.txt": [
       `email     ${EMAIL}`,

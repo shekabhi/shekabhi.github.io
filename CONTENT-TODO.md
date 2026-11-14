@@ -71,5 +71,5 @@ rewrite in your own words (or delete) and change it to `reviewed: true`.
 - [ ] `idempotency-keys.md`
 
 ## Still missing
-- [ ] Résumé PDF without the phone number (then add a download button + `resume` terminal command)
+- [ ] Résumé PDF without the phone number (then add a download button on the Career page + `resume` terminal command)
 - [ ] A photo (optional)

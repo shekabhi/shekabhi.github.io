@@ -8,6 +8,7 @@ layout: null
   <url><loc>https://shekabhi.github.io/work/pasoe.html</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://shekabhi.github.io/work/fips.html</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://shekabhi.github.io/work/rate-limiter.html</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://shekabhi.github.io/career/</loc><lastmod>2026-11-14</lastmod></url>
   <url><loc>https://shekabhi.github.io/learning/</loc><lastmod>{{ site.time | date: "%Y-%m-%d" }}</lastmod></url>
 {%- for n in site.notes %}
   <url><loc>{{ n.url | absolute_url }}</loc><lastmod>{{ n.updated | default: n.date | date: "%Y-%m-%d" }}</lastmod></url>

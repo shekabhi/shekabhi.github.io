@@ -287,15 +287,6 @@ button { font-family: inherit; }
 .principles h3 { font-size: 1.15rem; margin-bottom: 6px; letter-spacing: -.01em; }
 .principles p { color: var(--muted); font-size: .96rem; }
 
-/* ===== career ===== */
-.career { border-top: 1px solid var(--border); }
-.career li { display: grid; grid-template-columns: 170px 1fr; gap: 8px 32px; padding: 20px 0; border-bottom: 1px solid var(--border); }
-.career .when { font: .82rem "JetBrains Mono", monospace; color: var(--muted); padding-top: 3px; }
-.career h3 { font-size: 1.05rem; font-weight: 600; }
-.career p { color: var(--muted); font-size: .95rem; margin-top: 2px; }
-.toolbox { margin-top: 28px; color: var(--muted); font-size: .92rem; }
-.toolbox b { color: var(--text); font-weight: 600; }
-
 /* contact */
 .contact { text-align: center; max-width: 620px; }
 .contact h2 { font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 800; margin: 10px 0 18px; letter-spacing: -.02em; }
@@ -761,4 +752,44 @@ body { transition: background-color .25s, color .25s; }
 .teaser-words .t-caret { box-shadow: -2px 0 0 var(--accent); }
 @media (max-width: 860px) {
   .teaser { grid-template-columns: 1fr; gap: 26px; padding: 24px; }
+}
+
+/* ===== career page ===== */
+.career-hero { padding: 130px 24px 20px; max-width: 900px; }
+.career-hero h1 { font-size: clamp(2rem, 5.4vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; margin: 14px 0 16px; }
+.career-hero .summary { font-size: 1.12rem; color: var(--muted); max-width: 660px; }
+.career-hero .summary strong { color: var(--text); font-weight: 600; }
+.career-facts { display: flex; flex-wrap: wrap; gap: 14px 40px; margin: 30px 0; padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.career-facts dt { font: .72rem "JetBrains Mono", monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px; }
+.career-facts dd { font-size: .95rem; }
+.career-section { padding-top: 60px; max-width: 900px; }
+.career-h2 { font-size: clamp(1.5rem, 3.6vw, 2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 24px; }
+.career-h2 .mono { font-size: .9rem; font-weight: 400; color: var(--accent); margin-right: 12px; }
+.career-h3 { font-size: 1.1rem; margin: 36px 0 14px; color: var(--muted); font-weight: 600; }
+.roles { display: grid; gap: 18px; }
+.role { padding: 26px 28px; }
+.role-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px 20px; flex-wrap: wrap; margin-bottom: 14px; }
+.role h3 { font-size: 1.2rem; letter-spacing: -.01em; }
+.role-org { color: var(--accent); font-size: .95rem; margin-top: 2px; }
+.role-when { font-size: .8rem; color: var(--muted); white-space: nowrap; padding-top: 4px; }
+.role-points li { position: relative; padding-left: 22px; margin-bottom: 10px; color: var(--prose); }
+.role-points li::before { content: "▹"; position: absolute; left: 0; color: var(--accent); }
+.role-points li:last-child { margin-bottom: 0; }
+.role-points strong { color: var(--text); font-weight: 600; }
+.role-points a { color: var(--accent); white-space: nowrap; font-weight: 600; }
+.role-points a::after { content: " →"; }
+.role-points code { font: .88em "JetBrains Mono", monospace; color: var(--accent); background: rgba(94, 234, 212, .08); padding: 1px 6px; border-radius: 5px; }
+.skill-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.skill-groups .card { padding: 22px 24px; }
+.skill-groups dt { font-weight: 600; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tags li { font-size: .84rem; padding: 4px 12px; border-radius: 999px; color: var(--accent); background: rgba(94, 234, 212, .08); border: 1px solid rgba(94, 234, 212, .22); }
+.edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.edu-grid .card { padding: 22px 24px; }
+.edu-grid h3 { font-size: 1.05rem; margin: 6px 0 4px; }
+.edu-grid .role-when { padding-top: 0; }
+@media (max-width: 768px) {
+  .career-hero { padding: 110px 16px 10px; }
+  .career-section { padding-top: 44px; }
+  .role { padding: 22px 20px; }
 }
