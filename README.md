@@ -7,8 +7,9 @@ Personal portfolio at **https://shekabhi.github.io**: a dark, modern single page
 plain HTML, CSS and JavaScript, with no build step.
 
 ## Files
-- `index.html`: home page (hero, live demo, case study cards, principles, play teaser, contact)
-- `career/index.html`: Career page (experience, skills, education, achievements)
+- `index.html`: home page (hero, live demo, case study cards, play teaser, contact)
+- `about/index.html`: About page (bio, how I work, experience, skills, education & achievements)
+- `career/index.html`: forwards old `/career/` links to `/about/#experience`
 - `work/*.html`: one page per case study (problem, constraints, design, trade-offs, results)
 - `style.css`: theme and layout (accent colours are under `:root`)
 - `script.js`: mobile menu, scroll reveal, cursor glow
