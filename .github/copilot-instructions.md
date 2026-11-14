@@ -20,6 +20,10 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
   Don't turn it into a caching service worker.
 
 ## Rules
+- Colours: always use the CSS variables in `:root` (never hard-code a colour in a
+  component). The light theme overrides them under `:root[data-theme="light"]` and
+  `prefers-color-scheme: light`. Code-style panels (terminal, demo, diagrams, code
+  blocks) deliberately stay dark in both themes. `theme.js` handles the switch.
 - Mobile first: test at 390px width; no horizontal page scroll; inputs ≥ 16px.
 - Accessibility: buttons need `type`, icon-only links need `aria-label`,
   respect `prefers-reduced-motion`.
