@@ -75,7 +75,9 @@ rewrite in your own words (or delete) and change it to `reviewed: true`.
 - [ ] `idempotency-keys.md`
 
 ### "Test yourself" questions (`_notes/*.md`, `questions:`)
-Drafted by AI for the four starter notes (17 questions). Check the answers and rewrite them in your words.
+Drafted by AI for the four starter notes: 17 reveal-the-answer questions and 8 multiple-choice
+questions. Check the answers (and that each MCQ's `correct` number points at the right option),
+then rewrite them in your words.
 
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.

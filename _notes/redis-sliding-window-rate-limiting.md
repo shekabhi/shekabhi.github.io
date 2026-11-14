@@ -26,6 +26,27 @@ questions:
       Token bucket when short bursts are fine but you want a steady average rate. Sliding window
       counter (two fixed-window counters, weighted) when limits are very high and an
       approximation is acceptable, because it uses constant memory per user.
+  - q: Which command forgets requests that are older than the window?
+    options:
+      - "`ZREMRANGEBYSCORE`"
+      - "`ZCARD`"
+      - "`ZADD`"
+      - "`PEXPIRE`"
+    correct: 1
+    a: >-
+      `ZREMRANGEBYSCORE key 0 (now - window)` removes every member whose score, the request
+      timestamp, falls before the window. `ZCARD` only counts, `ZADD` adds, and `PEXPIRE` sets a
+      timeout on the whole key.
+  - q: Two servers both read 4/5 and both allow a request. What prevents this?
+    options:
+      - "Running the check and the add as one Lua script"
+      - "Setting a shorter expiry on the key"
+      - "Calling `ZCARD` twice before adding"
+      - "Using a longer window"
+    correct: 1
+    a: >-
+      Redis runs a Lua script atomically, so no other command can run between the count and the
+      add. The other options leave the read and the write as separate steps that can interleave.
 ---
 
 ## The idea

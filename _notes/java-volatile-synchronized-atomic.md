@@ -24,6 +24,28 @@ questions:
     a: >-
       Use `updateAndGet(x -> x < limit ? x + 1 : x)` or a `compareAndSet` loop. Calling `get()`
       and then `incrementAndGet()` is a race: two threads can both pass the check.
+  - q: Which makes `count++` safe from many threads without a lock?
+    options:
+      - "`AtomicInteger.incrementAndGet()`"
+      - "Declaring the field `volatile int count`"
+      - "Calling `Thread.yield()` before `count++`"
+      - "Declaring the field `final`"
+    correct: 1
+    a: >-
+      `incrementAndGet()` does the read-modify-write atomically with CAS. `volatile` gives
+      visibility but not atomicity, `yield()` changes nothing about the race, and a `final` field
+      can't be incremented at all.
+  - q: What does `volatile` guarantee?
+    options:
+      - "Visibility and ordering of reads and writes to that field"
+      - "Atomic read-modify-write operations"
+      - "Mutual exclusion, like `synchronized`"
+      - "Faster arithmetic on that field"
+    correct: 1
+    a: >-
+      A write to a `volatile` field is visible to every thread that reads it afterwards, and it
+      can't be reordered around other memory operations. It doesn't make compound operations
+      such as `count++` atomic, and it doesn't lock anything.
 ---
 
 ## The bug everyone writes once
