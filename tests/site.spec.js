@@ -13,6 +13,8 @@ const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOT
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
+  // behave like a returning visitor: the boot screen only plays on a first visit
+  await page.addInitScript(() => { try { sessionStorage.setItem("boot-seen", "1"); } catch { /* ignore */ } });
   page.errors = [];
   page.on("pageerror", (e) => page.errors.push(e.message));
   page.on("console", (m) => m.type() === "error" && page.errors.push(m.text()));
@@ -25,7 +27,10 @@ test.afterEach(async ({ page }) => {
 });
 
 const reveal = async (page) => {
-  await page.evaluate(() => document.querySelectorAll(".reveal").forEach((e) => e.classList.add("visible")));
+  await page.evaluate(() => {
+    document.querySelectorAll(".reveal").forEach((e) => e.classList.add("visible"));
+    window.portfolioMotion?.finishAll();
+  });
   await page.waitForTimeout(800);
 };
 
@@ -283,6 +288,8 @@ test.describe("theme switch", () => {
       }
       await expect(page.locator(".term-body")).toContainText("command not found: nope");
       await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(expected);
+      // let the terminal's opening fade finish, so contrast is measured on the final colours
+      await page.locator(".term-overlay").evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)));
       const results = await new AxeBuilder({ page }).include(".term").analyze();
       expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
     });
@@ -524,6 +531,142 @@ test.describe("about page", () => {
     await input.fill("experience");
     await input.press("Enter");
     await expect(page.locator(".term-body a[href='https://shekabhi.github.io/about/']")).toHaveCount(1);
+  });
+});
+
+test.describe("motion", () => {
+  const HEADLINE = "I build backends that survive production.";
+  const desktopOnly = (testInfo) => test.skip(isMobile(testInfo), "needs a mouse");
+
+  test("01 headline decrypts, then reads normally", async ({ page }) => {
+    await page.goto("/");
+    const h1 = page.locator(".hero h1");
+    await expect(h1).toHaveText(HEADLINE, { timeout: 4000 });
+    await expect(h1).not.toHaveAttribute("aria-label", /./);
+  });
+
+  test("02 network background is drawn behind the intro", async ({ page }) => {
+    await page.goto("/");
+    const canvas = page.locator(".hero canvas.net-bg");
+    await expect(canvas).toHaveCount(1);
+    const painted = await canvas.evaluate((c) => {
+      const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+      return false;
+    });
+    expect(painted).toBe(true);
+  });
+
+  test("03 requests flow through diagrams", async ({ page }) => {
+    await page.goto("/work/rate-limiter.html");
+    const fig = page.locator(".figure > svg[data-routes]");
+    await fig.scrollIntoViewIfNeeded();
+    await expect.poll(() => fig.locator(".pk").count(), { timeout: 8000 }).toBeGreaterThan(0);
+  });
+
+  test("04 diagrams draw themselves, then settle with their arrowheads", async ({ page }) => {
+    await page.goto("/work/fips.html");
+    const fig = page.locator(".figure > svg").first();
+    expect(await fig.locator(".d-box").first().evaluate((el) => el.style.opacity)).toBe("0");
+    await fig.scrollIntoViewIfNeeded();
+    await expect.poll(() => fig.evaluate((svg) =>
+      [...svg.querySelectorAll(".d-box, .d-text, .d-line")].every((el) => !el.style.opacity && !el.style.strokeDashoffset)
+    ), { timeout: 6000 }).toBe(true);
+    expect(await fig.locator(".d-line[marker-end]").count()).toBeGreaterThan(2);
+  });
+
+  test("05 numbers count up to the real values", async ({ page }) => {
+    await page.goto("/work/fips.html");
+    const results = page.locator(".case-body .results strong");
+    await results.first().scrollIntoViewIfNeeded();
+    await expect(results).toHaveText(["−40%", "+30%", "20+", "0"], { timeout: 5000 });
+  });
+
+  test("06 cards light up and tilt under the cursor", async ({ page }, testInfo) => {
+    desktopOnly(testInfo);
+    await page.goto("/");
+    await reveal(page);
+    const card = page.locator(".case-card").first();
+    await card.scrollIntoViewIfNeeded();
+    await card.hover({ position: { x: 40, y: 40 } });
+    await expect.poll(() => card.evaluate((el) => el.style.transform)).toContain("perspective");
+    await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue("--x"))).toMatch(/px$/);
+    await page.mouse.move(2, 2);
+    await expect.poll(() => card.evaluate((el) => el.style.transform)).toBe("");
+  });
+
+  test("07 theme switch ripples from the button", async ({ page }, testInfo) => {
+    await page.addInitScript(() => {
+      window.__vt = 0;
+      const orig = document.startViewTransition?.bind(document);
+      if (orig) document.startViewTransition = (cb) => { window.__vt++; return orig(cb); };
+    });
+    await page.goto("/");
+    if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
+    await page.locator(".nav-links .theme-btn").click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme-pref", "light");
+    expect(await page.evaluate(() => window.__vt)).toBe(1);
+  });
+
+  test("08 list items slide in one after another", async ({ page }) => {
+    await page.goto("/about/");
+    const list = page.locator("#how-i-work .principles");
+    expect(await list.evaluate((el) => el.classList.contains("st-wait"))).toBe(true);
+    await list.scrollIntoViewIfNeeded();
+    await expect.poll(() => list.locator("li").last().evaluate((el) => getComputedStyle(el).opacity), { timeout: 4000 }).toBe("1");
+  });
+
+  test("09 main buttons lean toward the cursor", async ({ page }, testInfo) => {
+    desktopOnly(testInfo);
+    await page.goto("/");
+    const btn = page.locator(".hero-cta .btn").first();
+    const box = await btn.boundingBox();
+    await page.mouse.move(box.x + box.width / 2 + 30, box.y + box.height / 2 + 10);
+    await expect.poll(() => btn.evaluate((el) => el.style.transform)).toContain("translate");
+  });
+
+  test("10 boot sequence plays once per visit and can be skipped", async ({ browser }) => {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    await page.goto("/");
+    const overlay = page.locator(".boot-overlay");
+    await expect(overlay).toBeVisible();
+    await expect(overlay).toContainText("Started in 0.42s");
+    await expect(overlay).toHaveCount(0, { timeout: 4000 });
+    await expect(page.locator(".hero h1")).toHaveText(HEADLINE, { timeout: 4000 });
+    // not again in the same visit: check right after load, before it could fade away by itself
+    await page.reload();
+    expect(await page.locator(".boot-overlay").count()).toBe(0);
+    // a fresh visit can skip it with any key
+    const page2 = await (await browser.newContext()).newPage();
+    await page2.goto("/");
+    await page2.keyboard.press("x");
+    await expect(page2.locator(".boot-overlay")).toHaveCount(0, { timeout: 1000 });
+    await ctx.close();
+  });
+
+  test("reduced motion: everything shows its final state straight away", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    const vt = [];
+    await page.addInitScript(() => {
+      window.__vt = 0;
+      const orig = document.startViewTransition?.bind(document);
+      if (orig) document.startViewTransition = (cb) => { window.__vt++; return orig(cb); };
+    });
+    await page.goto("/");
+    await expect(page.locator(".boot-overlay")).toHaveCount(0);
+    await expect(page.locator(".hero h1")).toHaveText(HEADLINE);
+    await expect(page.locator(".work-grid")).not.toHaveClass(/st-wait/);
+    await page.goto("/work/fips.html");
+    await expect(page.locator(".case-body .results strong").first()).toHaveText("−40%");
+    expect(await page.locator(".figure .d-box").first().evaluate((el) => el.style.opacity)).toBe("");
+    await page.waitForTimeout(1500);
+    await expect(page.locator(".pk")).toHaveCount(0);
+    await page.locator(".nav-links .theme-btn").evaluate((b) => b.click());
+    await expect(page.locator("html")).toHaveAttribute("data-theme-pref", "light");
+    expect(await page.evaluate(() => window.__vt)).toBe(0);
+    await ctx.close();
   });
 });
 

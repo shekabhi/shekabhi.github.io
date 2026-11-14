@@ -64,7 +64,7 @@
       <p>Customers in government, finance and healthcare can only run software that uses <strong>FIPS-validated cryptography</strong>. Supporting it means more than adding a library: every algorithm, key store and TLS setting has to come from the approved set.</p>
       <p data-draft>The painful part was how failures showed up. A server could start cleanly with a non-compliant setting and run fine until the first code path touched it. Then it threw a security exception that named an algorithm, not the setting that caused it.</p>
       <figure class="figure" tabindex="0">
-        <svg viewBox="0 0 760 300" role="img" aria-label="Before: misconfiguration surfaces as runtime exceptions. After: a FIPS check at JVM startup either passes or stops with a clear message"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-line" d="M0 0 10 5 0 10z"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-hi" d="M0 0 10 5 0 10z"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-warn" d="M0 0 10 5 0 10z"/></marker></defs>
+        <svg viewBox="0 0 760 300" data-routes='[{"pts": [[150, 204], [190, 204], [380, 192], [428, 176]], "cls": "ok", "w": 3}, {"pts": [[150, 204], [190, 204], [380, 216], [428, 240]], "cls": "bad", "w": 1}]' role="img" aria-label="Before: misconfiguration surfaces as runtime exceptions. After: a FIPS check at JVM startup either passes or stops with a clear message"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-line" d="M0 0 10 5 0 10z"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-hi" d="M0 0 10 5 0 10z"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-warn" d="M0 0 10 5 0 10z"/></marker></defs>
 <text class="d-head" x="20" y="24">BEFORE</text>
 <rect class="d-box " x="20" y="40" width="130" height="56" rx="10"/><text class="d-text" x="85.0" y="73.0" text-anchor="middle">JVM starts</text><rect class="d-box " x="200" y="40" width="150" height="56" rx="10"/><text class="d-text" x="275.0" y="73.0" text-anchor="middle">App serves traffic</text><rect class="d-box " x="400" y="40" width="200" height="56" rx="10"/><text class="d-text" x="500.0" y="65.0" text-anchor="middle">First TLS / crypto call</text><text class="d-sub" x="500.0" y="83.0" text-anchor="middle">later, in production</text>
 <rect class="d-box warn" x="640" y="40" width="110" height="56" rx="10"/><text class="d-text" x="695" y="64" text-anchor="middle">Runtime</text><text class="d-sub" x="695" y="82" text-anchor="middle">exception</text>
@@ -136,5 +136,6 @@
 
   <script src="../script.js"></script>
   <script src="../terminal.js"></script>
+  <script src="../motion.js"></script>
 </body>
 </html>
