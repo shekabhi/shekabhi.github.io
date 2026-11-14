@@ -745,3 +745,20 @@ body { transition: background-color .25s, color .25s; }
   .theme-text { display: inline; font-size: .95rem; color: var(--text); }
 }
 .r-keys { margin-left: 14px; font-size: .82rem; }
+
+/* ===== home: play teaser ===== */
+.teaser { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 36px; }
+.teaser:hover { transform: none; }
+.teaser .section-title { font-size: clamp(1.5rem, 3.4vw, 2.1rem); }
+.teaser .section-title code { font: inherit; overflow-wrap: anywhere; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.teaser .muted { margin-bottom: 18px; max-width: 460px; }
+.teaser-best { font-size: .86rem; color: var(--accent); margin-bottom: 22px; }
+.teaser-demo { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; min-width: 0; }
+.teaser-live { display: flex; gap: 24px; font-size: .8rem; color: var(--muted); margin-bottom: 12px; }
+.teaser-live b { color: var(--accent); font-size: 1.15rem; font-weight: 500; margin-right: 3px; }
+.teaser-words { font-size: 1.15rem; line-height: 1.9; color: var(--muted); min-height: 3.8em; overflow-wrap: anywhere; }
+.teaser-words .t-ok { color: var(--text); }
+.teaser-words .t-caret { box-shadow: -2px 0 0 var(--accent); }
+@media (max-width: 860px) {
+  .teaser { grid-template-columns: 1fr; gap: 26px; padding: 24px; }
+}

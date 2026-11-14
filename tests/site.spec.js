@@ -78,12 +78,36 @@ test.describe("home page", () => {
   test.beforeEach(async ({ page }) => { await page.goto("/"); });
 
   test("has every section and a card for each case study", async ({ page }) => {
-    for (const id of ["demo", "work", "principles", "career", "contact"]) {
+    for (const id of ["demo", "work", "principles", "career", "play-teaser", "contact"]) {
       await expect(page.locator(`#${id}`)).toHaveCount(1);
     }
     for (const c of CASES) {
       await expect(page.locator(`.case-card a[href="work/${c}.html"]`)).toHaveCount(1);
     }
+  });
+
+  test("play teaser links to the game and invites a first score", async ({ page }) => {
+    const teaser = page.locator("#play-teaser");
+    await expect(teaser.locator('a[href="/play/"]')).toHaveText("Play the typing test");
+    await expect(teaser.locator(".teaser-best")).toHaveText("No score yet. Set one in 30 seconds.");
+  });
+
+  test("play teaser shows the visitor's best score", async ({ page }) => {
+    await page.evaluate(() => localStorage.setItem("typing-pb", JSON.stringify({ "dev-30": 61, "common-15": 78 })));
+    await page.reload();
+    await expect(page.locator("#play-teaser .teaser-best")).toHaveText("Your best: 78 wpm · common words · 15s. Can you beat it?");
+  });
+
+  test("play teaser preview types itself, and stays still with reduced motion", async ({ page }) => {
+    await page.locator("#play-teaser").scrollIntoViewIfNeeded();
+    await expect.poll(() => page.locator("#play-teaser .t-ok").count()).toBeGreaterThan(3);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+    await page.locator("#play-teaser").scrollIntoViewIfNeeded();
+    const n = await page.locator("#play-teaser .t-ok").count();
+    await page.waitForTimeout(600);
+    await expect(page.locator("#play-teaser .t-ok")).toHaveCount(n);
+    expect(n).toBeGreaterThan(20);
   });
 
   test("link preview image exists", async ({ page, request }) => {
