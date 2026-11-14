@@ -398,6 +398,12 @@ test.describe("typing game", () => {
     await expect(page.locator(".type-results")).toBeVisible();
   });
 
+  test("terminal button tooltip doesn't mention T on the game page", async ({ page }) => {
+    await expect(page.locator(".nav-links .term-btn")).toHaveAttribute("title", "Open terminal (press ~)");
+    await page.goto("/");
+    await expect(page.locator(".nav-links .term-btn")).toHaveAttribute("title", "Open terminal (press ~ or T)");
+  });
+
   test("Esc on the results screen starts a new game", async ({ page }) => {
     await typeWords(page, await firstWords(page, 2));
     await page.clock.runFor(16000);

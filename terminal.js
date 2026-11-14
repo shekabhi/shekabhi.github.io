@@ -345,6 +345,11 @@
     } else if (e.key === "l" && e.ctrlKey) { e.preventDefault(); run("clear"); }
   });
 
+  // On pages where letters are game input, "T" isn't a shortcut, so don't advertise it
+  if (document.querySelector("[data-typing-test]")) {
+    document.querySelectorAll(".term-btn[title]").forEach((b) => (b.title = "Open terminal (press ~)"));
+  }
+
   // Open / close
   document.querySelectorAll(".term-btn").forEach((b) => b.addEventListener("click", open));
   wrap.querySelector(".term-x").addEventListener("click", close);
