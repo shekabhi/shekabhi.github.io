@@ -1,0 +1,174 @@
+---
+layout: base
+title: About
+description: About Abhishek Shukla, a Senior Software Engineer in Hyderabad. How I work, my experience at Progress Software and Tata Consultancy Services, skills, education and achievements.
+---
+    <section class="container career-hero" id="bio">
+      <p class="eyebrow">About</p>
+      <h1>Hi, I'm Abhishek.</h1>
+      <!-- Photo goes here, e.g. <img class="about-photo" src="/me.jpg" alt="Abhishek Shukla" /> -->
+      <div class="bio" data-draft>
+        <p>
+          I'm a backend engineer in Hyderabad. I studied Information Technology at
+          Dr. A.P.J. Abdul Kalam Technical University, started my career at
+          <strong>Tata Consultancy Services</strong> building Spring Boot services, and joined
+          <strong>Progress Software</strong> in 2023, where I now work on application servers,
+          security and AI infrastructure.
+        </p>
+        <p>
+          I like problems where security, upgrades and scale pull in different directions,
+          and I like owning them end to end. Outside work I solve problems on LeetCode, and
+          in 2024 I won 1st place at the XRPL Blockchain Hackathon at IIT Bombay.
+        </p>
+      </div>
+      <dl class="career-facts">
+        <div><dt>Now</dt><dd>Senior Software Engineer 1, Progress Software</dd></div>
+        <div><dt>Based in</dt><dd>Hyderabad, India</dd></div>
+        <div><dt>Experience</dt><dd>5+ years</dd></div>
+        <div><dt>Focus</dt><dd>Java, Spring Boot, security, AI infrastructure</dd></div>
+      </dl>
+      <div class="hero-cta">
+        <a href="mailto:shekabhi369@gmail.com" class="btn">Email me</a>
+        <a href="https://www.linkedin.com/in/abhishekshukla0" class="btn btn-ghost" target="_blank" rel="noopener">LinkedIn</a>
+        <!-- Résumé download goes here once a version without the phone number is ready. -->
+      </div>
+      <nav class="about-jump mono" aria-label="On this page">
+        <a href="#how-i-work">How I work</a>
+        <a href="#experience">Experience</a>
+        <a href="#skills">Skills</a>
+        <a href="#education">Education</a>
+      </nav>
+    </section>
+
+    <section class="container career-section" id="how-i-work" aria-labelledby="how-title">
+      <h2 id="how-title" class="career-h2"><span class="mono">01</span>How I work</h2>
+      <p class="muted section-lead">Things I've come to believe. Each of these cost me something to learn.</p>
+      <ol class="principles" data-draft>
+        <li>
+          <h3>If you can't upgrade it, you can't secure it.</h3>
+          <p>A fix that needs a full platform release isn't a fix yet. Upgrade paths are a security feature, so I design them first.</p>
+        </li>
+        <li>
+          <h3>Fail loudly at startup, not quietly in production.</h3>
+          <p>A clear error before the first request is worth more than a stack trace at 2 a.m. Validate configuration early and say exactly what to change.</p>
+        </li>
+        <li>
+          <h3>Make the safe path the easy path.</h3>
+          <p>People adopt security when it's the default and costs them nothing. If the secure setup needs a 12-step guide, the design isn't finished.</p>
+        </li>
+        <li>
+          <h3>Keep the hot path boring.</h3>
+          <p>Anything that can happen later should. Alerting, analytics and audit trails go on a queue; the request gets only what it needs to return.</p>
+        </li>
+        <li>
+          <h3>Logs are a feature, and they need an owner.</h3>
+          <p>Logging nobody manages eventually fills a disk. Rollover, retention and useful context get designed like any other feature.</p>
+        </li>
+        <li>
+          <h3>Design for the next consumer, even a non-human one.</h3>
+          <p>Yesterday it was another team, today it's an AI agent. Clear contracts and scoped access work for both.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="container career-section" id="experience" aria-labelledby="exp-title">
+      <h2 id="exp-title" class="career-h2"><span class="mono">02</span>Experience</h2>
+      <ol class="roles">
+        <li class="role card">
+          <div class="role-head">
+            <div>
+              <h3>Senior Software Engineer 1</h3>
+              <p class="role-org">Progress Software · Hyderabad</p>
+            </div>
+            <span class="role-when mono">Nov 2024 — now</span>
+          </div>
+          <ul class="role-points">
+            <li>Led the architecture of a <strong>version-independent application server (PASOE)</strong>, so security updates for <strong>200+ third-party libraries</strong> ship without waiting for the LTS release. Designed the cross-version negotiation protocol and phased rollout. <a href="/work/pasoe.html">Case study</a></li>
+            <li>Integrated the <strong>Bouncy Castle FIPS</strong> provider, driving <strong>+30%</strong> client security adoption. Startup FIPS validation cut security exceptions by <strong>40%</strong>. Remediated <strong>20+ CVEs</strong>, including critical RCEs, with zero production regressions. <a href="/work/fips.html">Case study</a></li>
+            <li>Architected the <strong>OpenEdge MCP Server</strong>, turning REST APIs into AI-consumable tools with JWT/JWKS, OAuth2 + PKCE and scope-based access control, plus a Docker deployment pipeline. <a href="/work/mcp-server.html">Case study</a></li>
+            <li>Designed production log management with a watcher thread for size-based rollover and retention, stopping uncontrolled disk growth and the outages it caused.</li>
+          </ul>
+        </li>
+        <li class="role card">
+          <div class="role-head">
+            <div>
+              <h3>Software Engineer 2</h3>
+              <p class="role-org">Progress Software · Hyderabad</p>
+            </div>
+            <span class="role-when mono">Jan 2023 — Nov 2024</span>
+          </div>
+          <ul class="role-points">
+            <li>Optimized client HTTP session management, cutting server resource use by <strong>20%</strong>.</li>
+            <li>Built a custom Logback <code>contextSelector</code> that improved logging in multi-application Tomcat environments.</li>
+            <li>Integrated Swagger into the REST layer, auto-generating API contracts and reducing cross-team integration time.</li>
+          </ul>
+        </li>
+        <li class="role card">
+          <div class="role-head">
+            <div>
+              <h3>Software Engineer</h3>
+              <p class="role-org">Tata Consultancy Services · New Delhi</p>
+            </div>
+            <span class="role-when mono">Jan 2021 — Jan 2023</span>
+          </div>
+          <ul class="role-points">
+            <li>Built Spring Boot REST APIs processing <strong>10K+ JSON payloads a day</strong>, and tuned MySQL with indexing and batch inserts for high-throughput writes.</li>
+            <li>Designed microservices with circuit breakers, retry policies and async messaging to stay available under peak traffic.</li>
+            <li>Awarded <strong>Performance Band A</strong>, 2021–22.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3 class="career-h3">Personal project</h3>
+      <div class="role card">
+        <div class="role-head">
+          <div>
+            <h3>Distributed Rate Limiter Service</h3>
+            <p class="role-org">Spring Boot · Redis · AWS · Docker</p>
+          </div>
+        </div>
+        <ul class="role-points">
+          <li>A sliding-window rate limiter on Redis that throttles per user or IP at high throughput, deployed on AWS (EC2, ElastiCache, SQS) with CloudWatch monitoring. Breach events go to SQS for alerting and analytics. <a href="/work/rate-limiter.html">Case study</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="container career-section" id="skills" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="career-h2"><span class="mono">03</span>Skills</h2>
+      <dl class="skill-groups">
+        <div class="card"><dt>Languages</dt><dd><ul class="tags"><li>Java (multithreading, concurrency)</li><li>SQL</li></ul></dd></div>
+        <div class="card"><dt>Frameworks &amp; platforms</dt><dd><ul class="tags"><li>Spring Boot</li><li>Spring MVC</li><li>Spring Security</li><li>Microservices</li><li>Tomcat</li></ul></dd></div>
+        <div class="card"><dt>Data &amp; messaging</dt><dd><ul class="tags"><li>MySQL</li><li>Redis</li><li>Hibernate/JPA</li><li>Kafka</li></ul></dd></div>
+        <div class="card"><dt>Cloud</dt><dd><ul class="tags"><li>AWS EC2</li><li>ElastiCache</li><li>SQS</li><li>CloudWatch</li><li>API Gateway</li></ul></dd></div>
+        <div class="card"><dt>Security</dt><dd><ul class="tags"><li>OAuth2</li><li>JWT/JWKS</li><li>FIPS</li><li>Bouncy Castle</li></ul></dd></div>
+        <div class="card"><dt>Tools &amp; DevOps</dt><dd><ul class="tags"><li>IntelliJ</li><li>Git</li><li>Linux</li><li>Docker</li><li>Gradle</li><li>TeamCity (CI/CD)</li><li>GitHub Copilot</li><li>MCP</li></ul></dd></div>
+      </dl>
+    </section>
+
+    <section class="container career-section" id="education" aria-labelledby="edu-title">
+      <h2 id="edu-title" class="career-h2"><span class="mono">04</span>Education &amp; achievements</h2>
+      <div class="edu-grid">
+        <div class="card">
+          <p class="role-when mono">2016 — 2020</p>
+          <h3>B.Tech, Information Technology</h3>
+          <p class="role-org">Dr. A.P.J. Abdul Kalam Technical University · CGPA 8.1</p>
+        </div>
+        <div class="card">
+          <p class="role-when mono">2024</p>
+          <h3>1st place, XRPL Blockchain Hackathon</h3>
+          <p class="role-org">IIT Bombay · out of 20 teams</p>
+        </div>
+        <div class="card">
+          <p class="role-when mono">2021 — 2022</p>
+          <h3>Performance Band A</h3>
+          <p class="role-org">Tata Consultancy Services</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container section contact">
+      <p class="eyebrow">Contact</p>
+      <h2>Looking for a backend engineer?</h2>
+      <p class="muted">Happy to talk about roles, architecture problems, or anything on this site.</p>
+      <a href="mailto:shekabhi369@gmail.com" class="btn">Say hello</a>
+    </section>

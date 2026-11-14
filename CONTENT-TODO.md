@@ -24,7 +24,11 @@ When you have rewritten a block in your own words, delete its `data-draft` attri
 
 ### Home page (`index.html`)
 - [ ] **Live demo blurb** — why a sliding window (check it matches your reasoning)
-- [ ] **"Things I've come to believe"** — six principles. Keep the ones you
+
+### About page (`about/index.html`)
+- [ ] **Bio** — drafted from the résumé; add something personal (where you're from, what got you into programming, hobbies)
+- [ ] Add a photo (see the comment in the page)
+- [ ] **"How I work"** — six principles. Keep the ones you
       actually hold, rewrite or delete the rest. Ideally tie each to a real story.
 
 ### MCP server (`work/mcp-server.html`)

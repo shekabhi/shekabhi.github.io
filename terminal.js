@@ -16,6 +16,8 @@
       "I own features end to end: research, design, implementation and",
       "production hardening. Strong in security engineering (FIPS, OAuth2)",
       "and AI infrastructure (Model Context Protocol).",
+      "",
+      "More: https://shekabhi.github.io/about/",
     ],
     "experience.txt": [
       "[2024-11 → now]   Senior Software Engineer 1 @ Progress Software",
@@ -26,7 +28,7 @@
       "                  Spring Boot APIs, 10K+ payloads/day · resilient microservices",
       "[2016 → 2020]     B.Tech IT @ Dr. A.P.J. Abdul Kalam Technical University (8.1)",
       "",
-      "More: https://shekabhi.github.io/career/",
+      "More: https://shekabhi.github.io/about/",
     ],
     "skills.txt": [
       "languages   Java (multithreading, concurrency), SQL",
@@ -36,13 +38,13 @@
       "security    OAuth2, JWT/JWKS, FIPS, Bouncy Castle",
       "tools       Git, Linux, Docker, Gradle, TeamCity, MCP",
       "",
-      "More: https://shekabhi.github.io/career/",
+      "More: https://shekabhi.github.io/about/",
     ],
     "achievements.txt": [
       "🏆 XRPL Blockchain Hackathon 2024: 1st place of 20 teams, IIT Bombay",
       "⭐ TCS Performance Recognition 2021–22: Performance Band A",
       "",
-      "More: https://shekabhi.github.io/career/",
+      "More: https://shekabhi.github.io/about/",
     ],
     "contact.txt": [
       `email     ${EMAIL}`,

@@ -793,3 +793,16 @@ body { transition: background-color .25s, color .25s; }
   .career-section { padding-top: 44px; }
   .role { padding: 22px 20px; }
 }
+
+/* ===== about page ===== */
+.bio p { font-size: 1.1rem; color: var(--prose); max-width: 680px; margin-bottom: 14px; }
+.bio strong { color: var(--text); font-weight: 600; }
+.about-photo { width: 140px; height: 140px; border-radius: 20px; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 18px; }
+.about-jump { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.about-jump a {
+  font-size: .82rem; color: var(--muted); padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--card); transition: color .2s, border-color .2s;
+}
+.about-jump a:hover { color: var(--accent); border-color: var(--accent); }
+.section-lead { margin: -10px 0 26px; }
+.career-section .principles { margin-top: 8px; }
