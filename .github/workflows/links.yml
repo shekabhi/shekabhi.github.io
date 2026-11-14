@@ -33,13 +33,17 @@ jobs:
         uses: lycheeverse/lychee-action@v2
         with:
           # LinkedIn and LeetCode block automated checks, and localhost only works on
-          # your own machine, so they are skipped. Email links are skipped by default.
+          # your own machine, so they are skipped. Links to this site's own address are
+          # skipped too: a new page isn't live until GitHub Pages finishes deploying, and
+          # internal links are already checked on the built files and by the CI tests.
+          # Email links are skipped by default.
           args: >-
             --no-progress
             --root-dir ${{ github.workspace }}/_site
             --exclude "linkedin\.com"
             --exclude "leetcode\.com"
             --exclude "localhost"
+            --exclude "^https://shekabhi\.github\.io"
             --accept 200,206,429
             "_site/**/*.html" README.md
           fail: true
