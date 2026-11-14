@@ -357,7 +357,8 @@
     const isShortcut = !mod && (
       e.code === "Backquote" ||                 // the ~ / ` key, on any layout
       e.key === "~" || e.key === "`" ||
-      e.key === "t" || e.key === "T"            // alternative shortcut
+      ((e.key === "t" || e.key === "T") &&     // alternative shortcut, except on pages
+        !document.querySelector("[data-typing-test]")) // where letters are game input
     );
     if (wrap.hidden && !typing && !e.repeat && isShortcut) { e.preventDefault(); open(); }
     else if (!wrap.hidden && e.key === "Escape") close();
