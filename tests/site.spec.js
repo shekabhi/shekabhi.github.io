@@ -217,9 +217,34 @@ test.describe("theme switch", () => {
     await page.evaluate(() => window.portfolioTheme.set("light"));
     const panelBg = await page.locator(".rl").evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(panelBg).toBe("rgb(13, 19, 32)");
+  });
+
+  for (const [theme, expected] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(7, 11, 17)"]]) {
+    test(`terminal follows the ${theme} theme and stays readable`, async ({ page }) => {
+      await page.goto("/");
+      await page.evaluate((t) => window.portfolioTheme.set(t), theme);
+      await page.locator(".term-btn").first().evaluate((b) => b.click());
+      const input = page.locator(".term-prompt input");
+      // print every kind of line: normal, accent, dim, error, success and links
+      for (const cmd of ["help", "contact", "nope", "email"]) {
+        await input.fill(cmd);
+        await input.press("Enter");
+      }
+      await expect(page.locator(".term-body")).toContainText("command not found: nope");
+      await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(expected);
+      const results = await new AxeBuilder({ page }).include(".term").analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
+    });
+  }
+
+  test("switching theme while the terminal is open recolours it", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => window.portfolioTheme.set("dark"));
     await page.locator(".term-btn").first().evaluate((b) => b.click());
-    const termBg = await page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(termBg).toBe("rgb(7, 11, 17)");
+    const input = page.locator(".term-prompt input");
+    await input.fill("theme light");
+    await input.press("Enter");
+    await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
   });
 
   test("works when the browser blocks storage", async ({ page }, testInfo) => {
