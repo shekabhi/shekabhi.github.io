@@ -84,12 +84,13 @@
     ["github | linkedin | leetcode", "open a profile"],
     ["email", "copy my email address"],
     ["notes", "my learning notes"],
+    ["play", "open the typing game"],
     ["theme [light|dark|system]", "switch the colour theme"],
     ["history", "commands you've typed"],
     ["clear", "clear the screen"],
     ["exit", "close the terminal (or press Esc)"],
   ];
-  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills", "notes", "learning", "theme",
+  const COMMANDS = ["help", "whoami", "ls", "cat", "projects", "experience", "skills", "notes", "learning", "theme", "play",
     "contact", "achievements", "github", "linkedin", "leetcode", "email", "history",
     "clear", "date", "echo", "pwd", "cd", "sudo", "exit"];
 
@@ -242,6 +243,10 @@
         else print(`theme: unknown option '${arg}'. Use light, dark or system.`, "err");
         break;
       }
+      case "play":
+        print("Loading the typing test…", "dim");
+        setTimeout(() => { location.href = "/play/"; }, 400);
+        break;
       case "notes":
       case "learning":
         print("Loading notes…", "dim");

@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url)];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url), "/play/"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -296,6 +296,111 @@ test.describe("theme switch", () => {
     await input.press("Enter");
     await expect(page.locator(".term-body")).toContainText("unknown option 'purple'");
   });
+});
+
+test.describe("typing game", () => {
+  const box = (page) => page.locator(".type-box");
+  const firstWords = (page, n) =>
+    page.$$eval(".type-words .w", (els, n) => els.slice(0, n).map((e) => e.textContent), n);
+  const typeWords = async (page, list) => { for (const w of list) await page.keyboard.type(w + " "); };
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.goto("/play/");
+    await page.locator('[data-time="15"]').click();
+    await box(page).click();
+  });
+
+  test("correct typing gives 100% accuracy and the right WPM", async ({ page }) => {
+    const words = await firstWords(page, 6);
+    await typeWords(page, words);
+    await page.clock.runFor(16000);
+    const results = page.locator(".type-results");
+    await expect(results).toBeVisible();
+    await expect(results.locator(".r-acc")).toHaveText("100%");
+    const chars = words.reduce((n, w) => n + w.length + 1, 0);
+    const expected = Math.round((chars / 5) / (15 / 60));
+    await expect(results.locator(".r-wpm")).toHaveText(String(expected));
+    await expect(results.locator(".r-chart polyline.c-wpm")).toHaveCount(1);
+    await expect(results.locator(".r-pb")).toHaveText("New personal best!");
+  });
+
+  test("mistakes lower accuracy, are marked and counted", async ({ page }) => {
+    const [w1, w2] = await firstWords(page, 2);
+    const wrong = (w1[0] === "x" ? "y" : "x") + w1.slice(1);
+    await typeWords(page, [wrong, w2]);
+    await expect(page.locator(".type-words .w").first()).toHaveClass(/wrong/);
+    await page.clock.runFor(16000);
+    const acc = parseInt(await page.locator(".r-acc").textContent(), 10);
+    expect(acc).toBeLessThan(100);
+    await expect(page.locator(".r-chars")).toHaveText(/^\d+ \/ 1 \/ 0 \/ 0$/);
+  });
+
+  test("the clock starts on the first keystroke", async ({ page }) => {
+    await page.clock.runFor(5000);
+    await expect(page.locator(".type-time")).toHaveText("15");
+    await page.keyboard.type("a");
+    await page.clock.runFor(3000);
+    await expect(page.locator(".type-time")).toHaveText("12");
+  });
+
+  test("Esc restarts with fresh words", async ({ page }) => {
+    const [w1] = await firstWords(page, 1);
+    await typeWords(page, [w1]);
+    await page.clock.runFor(2000);
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".type-time")).toHaveText("15");
+    await expect(page.locator(".type-words .w.done")).toHaveCount(0);
+    await expect(page.locator(".term-overlay")).toBeHidden();
+  });
+
+  test("personal best is remembered per mode", async ({ page }) => {
+    await typeWords(page, await firstWords(page, 8));
+    await page.clock.runFor(16000);
+    const best = await page.locator(".r-wpm").textContent();
+    await page.locator(".r-again").click();
+    await typeWords(page, await firstWords(page, 1));
+    await page.clock.runFor(16000);
+    await expect(page.locator(".r-pb")).toHaveText(`Personal best: ${best} wpm`);
+    // a different mode has its own best
+    await page.locator('[data-time="30"]').click();
+    await typeWords(page, await firstWords(page, 1));
+    await page.clock.runFor(31000);
+    await expect(page.locator(".r-pb")).toHaveText("New personal best!");
+  });
+
+  test("switching word list gives new words", async ({ page }) => {
+    const before = (await firstWords(page, 10)).join(" ");
+    await page.locator('[data-mode="common"]').click();
+    await expect(page.locator('[data-mode="common"]')).toHaveAttribute("aria-pressed", "true");
+    const after = (await firstWords(page, 10)).join(" ");
+    expect(after).not.toBe(before);
+  });
+
+  test("typing 't' in the game doesn't open the terminal", async ({ page }) => {
+    await page.keyboard.type("t");
+    await expect(page.locator(".term-overlay")).toBeHidden();
+  });
+
+  test("results pass the accessibility check in both themes", async ({ page }) => {
+    await typeWords(page, await firstWords(page, 4));
+    await page.clock.runFor(16000);
+    for (const theme of ["dark", "light"]) {
+      await page.evaluate((t) => window.portfolioTheme.set(t), theme);
+      await page.waitForTimeout(600); // the theme fade runs on real time, not the fake clock
+      const r = await new AxeBuilder({ page }).include(".play").analyze();
+      expect(r.violations.map((v) => `${theme} ${v.id}: ${v.help} (${v.nodes.map((n) => n.target).join(" ; ")})`)).toEqual([]);
+    }
+  });
+});
+
+test("terminal play command opens the game", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".term-btn").first().evaluate((b) => b.click());
+  const input = page.locator(".term-prompt input");
+  await input.fill("play");
+  await input.press("Enter");
+  await expect(page).toHaveURL(/\/play\/$/);
 });
 
 test.describe("MCP flow", () => {

@@ -14,6 +14,8 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 - `script.js`: mobile menu, scroll reveal, cursor glow, old service worker cleanup.
 - `demo.js`: rate limiter demo, mounts on `[data-ratelimit-demo]`.
 - `mcp-flow.js`: sequence diagram stepper, mounts on `[data-mcp-flow]`.
+- `play/index.html` + `typing.js`: typing-speed game (Jekyll page using `_layouts/base.html`;
+  page-specific scripts go in the `scripts:` front matter list). Word lists live in `typing.js`.
 - `terminal.js`: terminal mode (opens with `~`, `` ` ``, `T` or the `>_` button).
   Commands live in the `switch` inside `run()`; files live in `FILES` / `PROJECTS`.
 - `service-worker.js`: deliberately self-destructs to clear the old 2020 React site.

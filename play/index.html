@@ -1,0 +1,57 @@
+---
+layout: base
+title: Play
+description: A typing speed test with real backend vocabulary. How fast can you type idempotent, kafka and ZREMRANGEBYSCORE?
+scripts: [/typing.js]
+---
+    <section class="container play-hero">
+      <p class="eyebrow">Play</p>
+      <h1>How fast can you type <span class="grad">ZREMRANGEBYSCORE</span>?</h1>
+      <p class="summary">
+        A typing test made of the words I type all day: threads, tokens, queues and
+        caches. Pick a mode, start typing, and see your speed.
+      </p>
+    </section>
+
+    <section class="container play" data-typing-test aria-label="Typing test">
+      <div class="type-controls">
+        <div class="type-group" role="group" aria-label="Word list">
+          <button type="button" data-mode="dev" aria-pressed="true">dev words</button>
+          <button type="button" data-mode="common" aria-pressed="false">common words</button>
+        </div>
+        <div class="type-group" role="group" aria-label="Test length in seconds">
+          <button type="button" data-time="15" aria-pressed="false">15s</button>
+          <button type="button" data-time="30" aria-pressed="true">30s</button>
+          <button type="button" data-time="60" aria-pressed="false">60s</button>
+        </div>
+      </div>
+
+      <div class="type-stage">
+        <div class="type-live mono" aria-hidden="true">
+          <span><b class="type-time">30</b> s left</span>
+          <span><b class="type-live-wpm">0</b> wpm</span>
+        </div>
+        <div class="type-box">
+          <div class="type-words mono" role="group" aria-label="Words to type"></div>
+          <input class="type-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Type the words shown" />
+          <p class="type-focus mono" aria-hidden="true">Click here to keep typing</p>
+        </div>
+        <p class="type-hint mono muted">Start typing to begin</p>
+      </div>
+
+      <div class="type-results" hidden aria-live="polite">
+        <div class="r-main">
+          <div class="r-big"><span class="r-label mono">wpm</span><strong class="r-wpm">0</strong></div>
+          <div class="r-big"><span class="r-label mono">accuracy</span><strong class="r-acc">0%</strong></div>
+          <p class="r-pb mono"></p>
+        </div>
+        <svg class="r-chart" viewBox="0 0 600 160" role="img" aria-label="Words per minute over the test"></svg>
+        <p class="r-legend mono"><span class="k-wpm">wpm</span> <span class="k-raw">raw</span></p>
+        <dl class="r-stats">
+          <div><dt>test</dt><dd class="r-test"></dd></div>
+          <div><dt>raw speed</dt><dd class="r-raw"></dd></div>
+          <div><dt>characters</dt><dd class="r-chars"></dd><dd class="r-chars-key">correct / incorrect / extra / missed</dd></div>
+        </dl>
+        <button type="button" class="btn r-again">Try again</button>
+      </div>
+    </section>
