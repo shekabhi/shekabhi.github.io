@@ -20,6 +20,19 @@
   --term-backdrop: rgba(5, 8, 13, .72);
   --term-shadow: 0 40px 80px -20px rgba(0, 0, 0, .8), 0 0 0 1px rgba(94, 234, 212, .08);
   --term-hover: rgba(255, 255, 255, .06);
+  --panel-bg: #0d1320;
+  --panel-bg-2: #070b11;
+  --diagram-box: #131a26;
+  --diagram-stroke: #2a384d;
+  --diagram-line: #4b5b73;
+  --code-text: #d7dde6;
+  --syn-comment: #7d8ba0;
+  --syn-keyword: #c4b5fd;
+  --syn-type: #5eead4;
+  --syn-string: #fcd38d;
+  --syn-number: #f9a8d4;
+  --syn-func: #93c5fd;
+  --syn-punct: #b6c0ce;
   color-scheme: dark;
 }
 
@@ -45,6 +58,19 @@
   --term-backdrop: rgba(15, 23, 42, .35);
   --term-shadow: 0 30px 70px -20px rgba(15, 23, 42, .35), 0 0 0 1px rgba(15, 118, 110, .12);
   --term-hover: rgba(15, 23, 42, .06);
+  --panel-bg: #ffffff;
+  --panel-bg-2: #f5f7fa;
+  --diagram-box: #f1f5f9;
+  --diagram-stroke: #c5cfdb;
+  --diagram-line: #8a97a8;
+  --code-text: #1e293b;
+  --syn-comment: #5f6b7a;
+  --syn-keyword: #7c3aed;
+  --syn-type: #0f766e;
+  --syn-string: #a15c07;
+  --syn-number: #be185d;
+  --syn-func: #1d4ed8;
+  --syn-punct: #334155;
   color-scheme: light;
 }
 @media (prefers-color-scheme: light) {
@@ -68,13 +94,26 @@
     --term-backdrop: rgba(15, 23, 42, .35);
     --term-shadow: 0 30px 70px -20px rgba(15, 23, 42, .35), 0 0 0 1px rgba(15, 118, 110, .12);
     --term-hover: rgba(15, 23, 42, .06);
+    --panel-bg: #ffffff;
+    --panel-bg-2: #f5f7fa;
+    --diagram-box: #f1f5f9;
+    --diagram-stroke: #c5cfdb;
+    --diagram-line: #8a97a8;
+    --code-text: #1e293b;
+    --syn-comment: #5f6b7a;
+    --syn-keyword: #7c3aed;
+    --syn-type: #0f766e;
+    --syn-string: #a15c07;
+    --syn-number: #be185d;
+    --syn-func: #1d4ed8;
+    --syn-punct: #334155;
     color-scheme: light;
   }
 }
 
-/* Code-style panels (live demo, diagrams, code blocks) stay dark in every theme.
-   The terminal follows the page theme. Declaring the tokens on the element itself beats the light theme. */
-.rl, .figure, .note-body div.highlighter-rouge {
+/* The live rate limiter demo stays dark in every theme (it imitates a terminal).
+   Everything else, including the terminal, diagrams and code blocks, follows the theme. Declaring the tokens on the element itself beats the light theme. */
+.rl {
   --bg: #0b0f17;
   --bg-2: #111827;
   --card: #131a26;
@@ -284,10 +323,10 @@ button { font-family: inherit; }
 .case-body ul.bullets li { color: var(--prose); padding-left: 22px; position: relative; margin-bottom: 8px; }
 .case-body ul.bullets li::before { content: "▹"; position: absolute; left: 0; color: var(--accent); }
 .case-body code { font: .88em "JetBrains Mono", monospace; color: var(--accent); background: rgba(94, 234, 212, .08); padding: 1px 6px; border-radius: 5px; }
-.figure { margin: 26px 0 30px; background: #0d1320; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; overflow-x: auto; }
+.figure { margin: 26px 0 30px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; overflow-x: auto; }
 .figure svg { display: block; width: 100%; min-width: 560px; height: auto; }
 .figure figcaption { margin-top: 14px; font-size: .85rem; color: var(--muted); }
-.d-box { fill: #131a26; stroke: #2a384d; stroke-width: 1.5; }
+.d-box { fill: var(--diagram-box); stroke: var(--diagram-stroke); stroke-width: 1.5; }
 .d-box.hi { stroke: var(--accent); fill: rgba(94, 234, 212, .07); }
 .d-box.warn { stroke: var(--bad); fill: rgba(252, 165, 165, .06); }
 .d-text { fill: var(--text); font: 500 14px Inter, sans-serif; }
@@ -295,7 +334,10 @@ button { font-family: inherit; }
 .d-label { fill: var(--muted); font: 11px "JetBrains Mono", monospace; }
 .d-label.hi { fill: var(--accent); }
 .d-label.warn { fill: var(--bad); }
-.d-line { stroke: #4b5b73; stroke-width: 1.5; fill: none; }
+.d-line { stroke: var(--diagram-line); stroke-width: 1.5; fill: none; }
+.m-line { fill: var(--diagram-line); }
+.m-hi { fill: var(--accent); }
+.m-warn { fill: var(--bad); }
 .d-line.hi { stroke: var(--accent); }
 .d-line.warn { stroke: var(--bad); }
 .d-head { fill: var(--muted); font: 600 12px "JetBrains Mono", monospace; letter-spacing: .08em; }
@@ -324,7 +366,7 @@ button { font-family: inherit; }
 .next-case a:hover b { color: var(--accent); }
 
 /* MCP flow stepper */
-.flow-caption { margin-top: 16px; padding: 16px 18px; border-radius: 10px; background: #070b11; border: 1px solid var(--border); min-height: 118px; }
+.flow-caption { margin-top: 16px; padding: 16px 18px; border-radius: 10px; background: var(--panel-bg-2); border: 1px solid var(--border); min-height: 118px; }
 .flow-caption .step { font: .75rem "JetBrains Mono", monospace; color: var(--accent); }
 .flow-caption h3 { font-size: 1.02rem; margin: 4px 0 6px; }
 .flow-caption p { margin: 0; font-size: .92rem; color: var(--muted); max-width: none; }
@@ -332,14 +374,14 @@ button { font-family: inherit; }
 .flow-controls button { font: 500 .85rem "JetBrains Mono", monospace; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; cursor: pointer; }
 .flow-controls button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 .flow-controls button:disabled { opacity: .4; cursor: default; }
-.f-lane { fill: #131a26; stroke: #2a384d; stroke-width: 1.5; }
-.f-life { stroke: #2a384d; stroke-width: 1.5; stroke-dasharray: 4 5; }
+.f-lane { fill: var(--diagram-box); stroke: var(--diagram-stroke); stroke-width: 1.5; }
+.f-life { stroke: var(--diagram-stroke); stroke-width: 1.5; stroke-dasharray: 4 5; }
 .f-step { opacity: .22; transition: opacity .3s; }
 .f-step.done { opacity: .7; }
 .f-step.active { opacity: 1; }
 .f-step line { stroke: var(--muted); stroke-width: 1.6; }
 .f-step polygon { fill: var(--muted); }
-.f-step text { fill: var(--muted); font: 11.5px "JetBrains Mono", monospace; paint-order: stroke; stroke: #0d1320; stroke-width: 5px; stroke-linejoin: round; }
+.f-step text { fill: var(--muted); font: 11.5px "JetBrains Mono", monospace; paint-order: stroke; stroke: var(--panel-bg); stroke-width: 5px; stroke-linejoin: round; }
 .f-step.active line { stroke: var(--accent); stroke-width: 2.2; }
 .f-step.active polygon { fill: var(--accent); }
 .f-step.active text { fill: var(--accent); }
@@ -541,7 +583,7 @@ body.term-open { overflow: hidden; }
 .note-body .highlighter-rouge { position: relative; margin: 0 0 20px; }
 .note-body li .highlighter-rouge { margin-top: 10px; }
 .note-body pre {
-  font: .84rem/1.65 "JetBrains Mono", monospace; color: #d7dde6; background: #0d1320;
+  font: .84rem/1.65 "JetBrains Mono", monospace; color: var(--code-text); background: var(--panel-bg);
   border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; overflow-x: auto; tab-size: 2;
 }
 .note-body .has-copy pre { padding-top: 34px; }
@@ -559,15 +601,15 @@ body.term-open { overflow: hidden; }
 .nav-links a[aria-current="page"] { color: var(--accent); }
 
 /* syntax highlighting (Rouge) */
-.highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .cp, .highlight .cd { color: #7d8ba0; font-style: italic; }
-.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv, .highlight .ow { color: #c4b5fd; }
-.highlight .kt, .highlight .nc, .highlight .nn, .highlight .no { color: #5eead4; }
-.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr { color: #fcd38d; }
-.highlight .m, .highlight .mi, .highlight .mf, .highlight .mh, .highlight .il, .highlight .kc { color: #f9a8d4; }
-.highlight .nf, .highlight .fm, .highlight .nb, .highlight .bp { color: #93c5fd; }
-.highlight .na, .highlight .nt, .highlight .nl { color: #5eead4; }
-.highlight .o, .highlight .p { color: #b6c0ce; }
-.highlight .gh, .highlight .gu { color: #5eead4; font-weight: 600; }
+.highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .cp, .highlight .cd { color: var(--syn-comment); font-style: italic; }
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv, .highlight .ow { color: var(--syn-keyword); }
+.highlight .kt, .highlight .nc, .highlight .nn, .highlight .no { color: var(--syn-type); }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr { color: var(--syn-string); }
+.highlight .m, .highlight .mi, .highlight .mf, .highlight .mh, .highlight .il, .highlight .kc { color: var(--syn-number); }
+.highlight .nf, .highlight .fm, .highlight .nb, .highlight .bp { color: var(--syn-func); }
+.highlight .na, .highlight .nt, .highlight .nl { color: var(--syn-type); }
+.highlight .o, .highlight .p { color: var(--syn-punct); }
+.highlight .gh, .highlight .gu { color: var(--syn-type); font-weight: 600; }
 .highlight .err { color: inherit; background: none; }
 
 @media (max-width: 960px) {
