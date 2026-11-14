@@ -1,0 +1,45 @@
+---
+layout: base
+title: Quiz
+description: Test yourself on Abhishek Shukla's learning notes. Questions on Java, Redis, security and system design, with answers.
+scripts: [/quiz.js]
+---
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning</p>
+      <h1>Test yourself.</h1>
+      <p class="summary">Questions from the notes. Think of your answer, reveal it, and see how you did.</p>
+    </section>
+{% include learning-tabs.html %}
+    <section class="container quiz" data-quiz aria-label="Quiz">
+      <div class="topic-filters quiz-filters" role="group" aria-label="Quiz topic"></div>
+      <div class="quiz-card card">
+        <p class="quiz-meta mono"><span class="quiz-count"></span><a class="quiz-source" href="/learning/">Notes</a></p>
+        <h2 class="quiz-q">Loading questions…</h2>
+        <div class="quiz-a" hidden></div>
+        <div class="quiz-actions">
+          <button type="button" class="btn quiz-reveal">Show answer</button>
+          <button type="button" class="btn quiz-got" hidden>Got it</button>
+          <button type="button" class="btn btn-ghost quiz-again" hidden>Ask me again</button>
+        </div>
+        <p class="quiz-keys mono muted">Keys: <kbd>Space</kbd> show answer · <kbd>1</kbd> got it · <kbd>2</kbd> ask me again</p>
+      </div>
+      <div class="quiz-done card" hidden aria-live="polite">
+        <h2>Done!</h2>
+        <p class="quiz-score"></p>
+        <div class="quiz-review" hidden>
+          <p class="muted">Worth another look:</p>
+          <ul class="quiz-review-list"></ul>
+        </div>
+        <button type="button" class="btn quiz-restart">Start again</button>
+      </div>
+    </section>
+    <script type="application/json" id="quiz-data">
+[
+{%- assign first = true %}
+{%- assign qnotes = site.notes | sort: "date" | reverse %}
+{%- for n in qnotes %}{% for item in n.questions %}
+  {% unless first %},{% endunless %}{"id": {{ n.slug | append: "-" | append: forloop.index | jsonify }}, "note": {{ n.slug | jsonify }}, "noteTitle": {{ n.title | jsonify }}, "url": {{ n.url | jsonify }}, "topic": {{ n.topic | jsonify }}, "topicSlug": {{ n.topic | slugify | jsonify }}, "q": {{ item.q | markdownify | strip | jsonify }}, "a": {{ item.a | markdownify | strip | jsonify }}}
+  {%- assign first = false %}
+{%- endfor %}{% endfor %}
+]
+    </script>

@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", ...NOTES.map((n) => n.url), "/play/", "/about/"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", ...NOTES.map((n) => n.url), "/play/", "/about/"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -183,6 +183,125 @@ test.describe("learning hub", () => {
   });
 });
 
+test.describe("learning: topics, quiz and privacy", () => {
+  const QUIZ = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "quiz", "index.html"), "utf8")
+    .match(/id="quiz-data">([\s\S]*?)<\/script>/)[1]);
+  const planOn = (page) => page.addInitScript(() => localStorage.setItem("study-plan", "on"));
+  const visibleTopics = (page) => page.locator(".topic:not([hidden])");
+
+  test("tabs link Notes, Topics and Quiz and mark the current one", async ({ page }) => {
+    for (const [url, label] of [["/learning/", "Notes"], ["/learning/topics/", "Topics"], ["/learning/quiz/", "Quiz"]]) {
+      await page.goto(url);
+      await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText(label);
+      await expect(page.locator(".learn-tabs a")).toHaveCount(3);
+    }
+  });
+
+  test("visitors see only topics that have notes, and no plan", async ({ page }) => {
+    await page.goto("/learning/topics/");
+    await expect(visibleTopics(page)).toHaveCount(NOTES.length);
+    await expect(page.locator(".plan-banner")).toBeHidden();
+    await expect(page.locator(".plan-todo")).toHaveCount(0);
+    expect(await page.content()).not.toContain("not started");
+    for (const n of NOTES) await expect(page.locator(`.topic-notes a[href="${n.url}"]`)).toBeVisible();
+    // titles with commas must not be cut off
+    await expect(page.locator(".topic-name", { hasText: "Java memory model, volatile & atomics" })).toBeVisible();
+  });
+
+  test("public learning pages show no personal plan or progress", async ({ page }) => {
+    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", ...NOTES.map((n) => n.url)]) {
+      await page.goto(url);
+      const text = await page.locator("body").innerText();
+      expect(text, url).not.toMatch(/roadmap|revis|confidence|study plan|not started|my progress/i);
+    }
+  });
+
+  test("notes end with a Test yourself section that reveals answers", async ({ page }) => {
+    const note = NOTES[0];
+    const qs = QUIZ.filter((q) => q.url === note.url);
+    await page.goto(note.url);
+    await expect(page.locator("#test-yourself")).toHaveText("Test yourself");
+    await expect(page.locator(".qa")).toHaveCount(qs.length);
+    await expect(page.locator('.toc a[href="#test-yourself"]')).toHaveCount(1);
+    const first = page.locator(".qa").first();
+    await expect(first.locator(".qa-a")).toBeHidden();
+    await first.locator("summary").click();
+    await expect(first.locator(".qa-a")).toBeVisible();
+    await expect(page.locator(".qa-more a")).toHaveAttribute("href", `/learning/quiz/?note=${qs[0].note}`);
+  });
+
+  test("quiz: reveal, got it, ask again, and a summary at the end", async ({ page }) => {
+    const slug = QUIZ[0].note;
+    const n = QUIZ.filter((q) => q.note === slug).length;
+    await page.goto(`/learning/quiz/?note=${slug}`);
+    await expect(page.locator(".quiz-count")).toContainText(`Question 1 of ${n}`);
+    await expect(page.locator(".quiz-a")).toBeHidden();
+    await page.locator(".quiz-reveal").click();
+    await expect(page.locator(".quiz-a")).toBeVisible();
+    await page.locator(".quiz-again").click();             // first question: missed
+    for (let i = 0; i < n; i++) {                           // everything else, plus the repeat
+      await page.locator(".quiz-reveal").click();
+      await page.locator(".quiz-got").click();
+    }
+    await expect(page.locator(".quiz-done")).toBeVisible();
+    await expect(page.locator(".quiz-score")).toHaveText(`You knew ${n - 1} of ${n} on the first try.`);
+    await expect(page.locator(".quiz-review-list li")).toHaveCount(1);
+    await page.locator(".quiz-restart").click();
+    await expect(page.locator(".quiz-count")).toContainText(`Question 1 of ${n}`);
+  });
+
+  test("quiz: topic filter and keyboard keys", async ({ page }, testInfo) => {
+    await page.goto("/learning/quiz/");
+    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.length}`);
+    const topic = QUIZ[0].topic;
+    await page.locator(".quiz-filters button", { hasText: topic }).click();
+    await expect(page.locator(".quiz-count")).toContainText(`of ${QUIZ.filter((q) => q.topic === topic).length}`);
+    await expect(page).toHaveURL(/\?topic=/);
+    test.skip(isMobile(testInfo), "keyboard keys are for desktop");
+    await page.locator("h1").click();
+    await page.keyboard.press("Space");
+    await expect(page.locator(".quiz-a")).toBeVisible();
+    await page.keyboard.press("1");
+    await expect(page.locator(".quiz-count")).toContainText("Question 2");
+  });
+
+  test("quiz answers are not saved for visitors", async ({ page }) => {
+    await page.goto(`/learning/quiz/?note=${QUIZ[0].note}`);
+    await page.locator(".quiz-reveal").click();
+    await page.locator(".quiz-got").click();
+    expect(await page.evaluate(() => localStorage.getItem("study-progress"))).toBeNull();
+  });
+
+  test("private plan view: full catalogue and own quiz results, only after 'plan on'", async ({ page }) => {
+    await planOn(page);
+    const slug = QUIZ[0].note;
+    await page.goto(`/learning/quiz/?note=${slug}`);
+    await page.locator(".quiz-reveal").click();
+    await page.locator(".quiz-got").click();
+    await page.goto("/learning/topics/");
+    await expect(page.locator(".plan-banner")).toBeVisible();
+    expect(await visibleTopics(page).count()).toBeGreaterThan(NOTES.length + 30);
+    await expect(page.locator(".plan-area-stat").first()).toContainText("topics have notes");
+    expect(await page.locator(".plan-todo").count()).toBeGreaterThan(30);
+    await expect(page.locator(`.plan-stat[data-note="${slug}"]`)).toHaveText(/quiz 1\/\d+/);
+  });
+
+  test("terminal plan command is hidden from help and toggles the plan view", async ({ page }) => {
+    await page.goto("/learning/topics/");
+    await page.locator(".term-btn").first().evaluate((b) => b.click());
+    const input = page.locator(".term-prompt input");
+    await input.fill("help");
+    await input.press("Enter");
+    await expect(page.locator(".term-body")).not.toContainText("plan");
+    await input.fill("plan on");
+    await input.press("Enter");
+    expect(await page.evaluate(() => localStorage.getItem("study-plan"))).toBe("on");
+    await input.fill("plan off");
+    await input.press("Enter");
+    expect(await page.evaluate(() => localStorage.getItem("study-plan"))).toBeNull();
+  });
+});
+
 test.describe("note pages", () => {
   for (const note of NOTES) {
     test(`${note.url} has a table of contents, highlighted code and copy buttons`, async ({ page }) => {
@@ -289,7 +408,7 @@ test.describe("theme switch", () => {
       await expect(page.locator(".term-body")).toContainText("command not found: nope");
       await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(expected);
       // let the terminal's opening fade finish, so contrast is measured on the final colours
-      await page.locator(".term-overlay").evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)));
+      await page.locator(".term-overlay").evaluate((el) => Promise.allSettled(el.getAnimations({ subtree: true }).map((a) => a.finished)));
       const results = await new AxeBuilder({ page }).include(".term").analyze();
       expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
     });

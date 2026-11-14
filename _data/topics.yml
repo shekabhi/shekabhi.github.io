@@ -1,0 +1,119 @@
+# Topic catalogue: groups the learning notes by area.
+# A note belongs to a topic by naming its id in front matter, e.g.  catalog: rate-limiting
+# The Topics page shows only topics that have notes.
+
+- id: dsa
+  title: Data structures & algorithms
+  summary: Core patterns and when to use them.
+  topics:
+    - { id: two-pointers, title: "Arrays, strings & two pointers" }
+    - { id: hashing, title: "Hashing & frequency counting" }
+    - { id: sliding-window, title: "Sliding window" }
+    - { id: binary-search, title: "Binary search (incl. on the answer)" }
+    - { id: linked-lists, title: "Linked lists" }
+    - { id: stacks-queues, title: "Stacks, queues & monotonic stack" }
+    - { id: trees, title: "Trees & BST" }
+    - { id: heaps, title: "Heaps & top-K" }
+    - { id: graphs, title: "Graphs, BFS & DFS" }
+    - { id: topo-sort, title: "Topological sort" }
+    - { id: union-find, title: "Union-find" }
+    - { id: dynamic-programming, title: "Dynamic programming" }
+    - { id: backtracking, title: "Backtracking" }
+    - { id: tries, title: "Tries" }
+    - { id: intervals, title: "Intervals" }
+
+- id: system-design
+  title: System design
+  summary: Designing services that scale and stay up.
+  topics:
+    - { id: sd-fundamentals, title: "Latency, throughput & availability" }
+    - { id: load-balancing, title: "Load balancing" }
+    - { id: caching, title: "Caching strategies" }
+    - { id: db-scaling, title: "Replication & sharding" }
+    - { id: consistent-hashing, title: "Consistent hashing" }
+    - { id: message-queues, title: "Message queues & Kafka" }
+    - { id: rate-limiting, title: "Rate limiting" }
+    - { id: idempotency, title: "Idempotency & safe retries" }
+    - { id: api-design, title: "API design, pagination & versioning" }
+    - { id: cap, title: "CAP & consistency models" }
+    - { id: design-url-shortener, title: "Design: URL shortener" }
+    - { id: design-notifications, title: "Design: notification system" }
+    - { id: design-chat, title: "Design: chat system" }
+    - { id: design-payments, title: "Design: payment system" }
+
+- id: lld
+  title: Low-level design & OOP
+  summary: Clean object models and the patterns behind them.
+  topics:
+    - { id: solid, title: "SOLID principles" }
+    - { id: creational-patterns, title: "Creational patterns" }
+    - { id: structural-patterns, title: "Structural patterns" }
+    - { id: behavioral-patterns, title: "Behavioural patterns" }
+    - { id: lld-parking-lot, title: "LLD: parking lot" }
+    - { id: lld-lru-cache, title: "LLD: LRU cache" }
+    - { id: lld-rate-limiter, title: "LLD: rate limiter class" }
+    - { id: lld-splitwise, title: "LLD: expense sharing" }
+
+- id: java
+  title: Java & concurrency
+  summary: The language and its runtime.
+  topics:
+    - { id: collections-internals, title: "HashMap & ConcurrentHashMap internals" }
+    - { id: jmm-volatile, title: "Java memory model, volatile & atomics" }
+    - { id: locks, title: "synchronized, locks & conditions" }
+    - { id: executors, title: "Executors & CompletableFuture" }
+    - { id: jvm-gc, title: "JVM memory & garbage collection" }
+    - { id: streams, title: "Streams & lambdas" }
+    - { id: modern-java, title: "Records, sealed types & virtual threads" }
+
+- id: spring
+  title: Spring Boot
+  summary: How the framework actually works under the annotations.
+  topics:
+    - { id: spring-di, title: "Dependency injection & bean lifecycle" }
+    - { id: spring-autoconfig, title: "Auto-configuration" }
+    - { id: spring-transactions, title: "@Transactional and its pitfalls" }
+    - { id: spring-jpa, title: "Spring Data JPA & the N+1 problem" }
+    - { id: spring-security, title: "Spring Security" }
+    - { id: spring-testing, title: "Testing Spring apps" }
+    - { id: spring-observability, title: "Actuator & observability" }
+
+- id: databases
+  title: Databases
+  summary: Indexes, transactions and when to reach for NoSQL.
+  topics:
+    - { id: indexing, title: "Indexes & query plans" }
+    - { id: isolation-levels, title: "Transactions & isolation levels" }
+    - { id: locking, title: "Optimistic vs pessimistic locking" }
+    - { id: sql-vs-nosql, title: "SQL vs NoSQL" }
+    - { id: redis-structures, title: "Redis data structures" }
+
+- id: distributed
+  title: Distributed systems
+  summary: What changes when there's more than one machine.
+  topics:
+    - { id: replication, title: "Replication & consistency" }
+    - { id: consensus, title: "Consensus & leader election" }
+    - { id: distributed-transactions, title: "2PC, sagas & the outbox pattern" }
+    - { id: resilience, title: "Circuit breakers, retries & backoff" }
+    - { id: observability, title: "Logs, metrics & traces" }
+    - { id: clocks, title: "Clocks & ordering" }
+
+- id: security
+  title: Security
+  summary: Identity, crypto and secure defaults.
+  topics:
+    - { id: oauth2-pkce, title: "OAuth2 & PKCE" }
+    - { id: jwt, title: "JWT & JWKS" }
+    - { id: tls, title: "TLS basics" }
+    - { id: owasp, title: "OWASP Top 10" }
+    - { id: secrets, title: "Secrets management" }
+
+- id: people
+  title: Working with people
+  summary: Ownership, judgement and collaboration.
+  topics:
+    - { id: ownership, title: "Ownership & impact" }
+    - { id: disagreement, title: "Handling disagreement" }
+    - { id: learning-from-failure, title: "Learning from failure" }
+    - { id: mentoring, title: "Mentoring & leading without authority" }

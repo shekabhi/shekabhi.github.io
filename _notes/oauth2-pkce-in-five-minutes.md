@@ -5,6 +5,25 @@ date: 2026-11-06
 tags: [oauth2, pkce, authentication, java]
 summary: Why apps that can't keep a secret send a hash first and the secret later, with the Java to do it.
 reviewed: false
+catalog: oauth2-pkce
+questions:
+  - q: Why do public clients need PKCE?
+    a: >-
+      They can't keep a client secret, so whoever intercepts the authorization code could swap it
+      for a token. PKCE binds the code to the client that started the flow.
+  - q: How is the S256 code challenge computed?
+    a: >-
+      `BASE64URL(SHA-256(code_verifier))` without padding. The verifier is 43 to 128 random
+      characters from `A-Z a-z 0-9 - . _ ~`.
+  - q: Why is the `plain` challenge method discouraged?
+    a: >-
+      With `plain` the challenge is the verifier itself, so anyone who sees the authorization
+      request can redeem the code.
+  - q: Does PKCE replace the `state` parameter?
+    a: >-
+      Not entirely. PKCE stops code injection, but `state` is still the simple way to check that a
+      response matches a request you actually sent. OAuth 2.1 recommends PKCE for every client,
+      confidential ones included.
 ---
 
 ## Why PKCE exists

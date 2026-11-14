@@ -255,6 +255,16 @@
         print("Loading the typing test…", "dim");
         setTimeout(() => { location.href = "/play/"; }, 400);
         break;
+      case "plan": {
+        // Not listed in help: turns the owner's private plan view on or off in this browser.
+        try {
+          const v = arg.toLowerCase();
+          if (v === "on") { localStorage.setItem("study-plan", "on"); print("✓ Private plan view on, in this browser only. See it on the Topics page: https://shekabhi.github.io/learning/topics/", "ok"); }
+          else if (v === "off") { localStorage.removeItem("study-plan"); print("✓ Private plan view off.", "ok"); }
+          else print(`plan: ${localStorage.getItem("study-plan") === "on" ? "on" : "off"}. Use: plan on | plan off`);
+        } catch { print("plan: this browser blocks storage.", "err"); }
+        break;
+      }
       case "notes":
       case "learning":
         print("Loading notes…", "dim");
