@@ -1,4 +1,6 @@
-<!doctype html>
+---
+---
+{%- assign v = site.time | date: '%s' -%}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -48,8 +50,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script src="theme.js"></script>
-  <link rel="stylesheet" href="style.css" />
+  <script src="theme.js?v={{ v }}"></script>
+  <link rel="stylesheet" href="style.css?v={{ v }}" />
 </head>
 <body>
   <div class="bg-glow" aria-hidden="true"></div>
@@ -241,9 +243,9 @@
     Designed &amp; built by Abhishek Shukla · <span id="year"></span>
   </footer>
 
-  <script src="script.js"></script>
-  <script src="demo.js"></script>
-  <script src="terminal.js"></script>
-  <script src="motion.js"></script>
+  <script src="script.js?v={{ v }}"></script>
+  <script src="demo.js?v={{ v }}"></script>
+  <script src="terminal.js?v={{ v }}"></script>
+  <script src="motion.js?v={{ v }}"></script>
 </body>
 </html>
