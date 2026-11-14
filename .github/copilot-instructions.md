@@ -22,8 +22,8 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 ## Rules
 - Colours: always use the CSS variables in `:root` (never hard-code a colour in a
   component). The light theme overrides them under `:root[data-theme="light"]` and
-  `prefers-color-scheme: light`. Code-style panels (live demo, diagrams, code blocks)
-  deliberately stay dark in both themes; the terminal follows the theme. `theme.js` handles the switch.
+  `prefers-color-scheme: light`. Only the live rate limiter demo deliberately stays dark;
+  the terminal, diagrams (SVG classes `d-*`, `f-*`, `m-*`) and code blocks follow the theme. `theme.js` handles the switch.
 - Mobile first: test at 390px width; no horizontal page scroll; inputs ≥ 16px.
 - Accessibility: buttons need `type`, icon-only links need `aria-label`,
   respect `prefers-reduced-motion`.

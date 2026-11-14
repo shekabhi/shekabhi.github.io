@@ -212,12 +212,30 @@ test.describe("theme switch", () => {
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
   });
 
-  test("code panels stay dark in the light theme", async ({ page }) => {
+  test("live demo stays dark in the light theme", async ({ page }) => {
     await page.goto("/");
     await page.evaluate(() => window.portfolioTheme.set("light"));
     const panelBg = await page.locator(".rl").evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(panelBg).toBe("rgb(13, 19, 32)");
   });
+
+  for (const [theme, panel] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(13, 19, 32)"]]) {
+    test(`diagrams and code blocks follow the ${theme} theme`, async ({ page }) => {
+      const bgOf = (sel) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).backgroundColor);
+      await page.goto("/work/fips.html");
+      await page.evaluate((t) => window.portfolioTheme.set(t), theme);
+      await expect.poll(() => bgOf(".figure")).toBe(panel);
+      // diagram arrows use theme colours, not fixed ones
+      const arrow = await page.locator(".figure .m-line").first().evaluate((el) => getComputedStyle(el).fill);
+      const line = await page.locator(".figure .d-line").first().evaluate((el) => getComputedStyle(el).stroke);
+      expect(arrow).toBe(line);
+
+      await page.goto("/learning/oauth2-pkce-in-five-minutes/");
+      await expect.poll(() => bgOf(".note-body pre")).toBe(panel);
+      const keyword = await page.locator(".note-body .highlight .k").first().evaluate((el) => getComputedStyle(el).color);
+      expect(keyword).toBe(theme === "light" ? "rgb(124, 58, 237)" : "rgb(196, 181, 253)");
+    });
+  }
 
   for (const [theme, expected] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(7, 11, 17)"]]) {
     test(`terminal follows the ${theme} theme and stays readable`, async ({ page }) => {
