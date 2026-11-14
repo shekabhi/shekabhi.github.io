@@ -382,6 +382,32 @@ test.describe("typing game", () => {
     await expect(page.locator(".term-overlay")).toBeHidden();
   });
 
+  test("keys pressed right after time runs out don't open the terminal", async ({ page }) => {
+    await typeWords(page, await firstWords(page, 2));
+    await page.keyboard.type("tes");          // still typing as the clock hits zero
+    await page.clock.runFor(16000);
+    await expect(page.locator(".type-results")).toBeVisible();
+    await page.keyboard.type("ttT");          // momentum keystrokes after the end
+    await expect(page.locator(".term-overlay")).toBeHidden();
+    // ~ still opens the terminal on purpose
+    await page.keyboard.press("Shift+Backquote");
+    await expect(page.locator(".term-overlay")).toBeVisible();
+    // and Esc closes it without restarting the game
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".term-overlay")).toBeHidden();
+    await expect(page.locator(".type-results")).toBeVisible();
+  });
+
+  test("Esc on the results screen starts a new game", async ({ page }) => {
+    await typeWords(page, await firstWords(page, 2));
+    await page.clock.runFor(16000);
+    await expect(page.locator(".type-results")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".type-stage")).toBeVisible();
+    await expect(page.locator(".type-input")).toBeFocused();
+    await expect(page.locator(".type-time")).toHaveText("15");
+  });
+
   test("results pass the accessibility check in both themes", async ({ page }) => {
     await typeWords(page, await firstWords(page, 4));
     await page.clock.runFor(16000);

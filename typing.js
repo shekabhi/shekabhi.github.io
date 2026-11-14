@@ -262,6 +262,12 @@
   input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); reset(); }
   });
+  // On the results screen the text box is disabled, so listen on the page:
+  // Esc starts a new game, just like during a game.
+  document.addEventListener("keydown", (e) => {
+    const termOpen = document.querySelector(".term-overlay:not([hidden])");
+    if (!results.hidden && !termOpen && e.key === "Escape") { e.preventDefault(); reset(); }
+  }, true); // capture phase: decide before the terminal's own Esc handler closes it
   input.addEventListener("focus", () => stage.classList.add("focused"));
   input.addEventListener("blur", () => stage.classList.remove("focused"));
   stage.addEventListener("click", () => input.focus());

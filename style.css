@@ -744,3 +744,4 @@ body { transition: background-color .25s, color .25s; }
   .theme-btn { width: auto; height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
   .theme-text { display: inline; font-size: .95rem; color: var(--text); }
 }
+.r-keys { margin-left: 14px; font-size: .82rem; }
