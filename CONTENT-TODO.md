@@ -79,6 +79,10 @@ Drafted by AI for the four starter notes: 17 reveal-the-answer questions and 8 m
 questions. Check the answers (and that each MCQ's `correct` number points at the right option),
 then rewrite them in your words.
 
+### Java concurrency series (`_notes/java-*.md`)
+- [ ] `java-threads-lifecycle-interrupts.md` — chapter 1, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Check every fact and answer, then rewrite in your words.
+
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
 

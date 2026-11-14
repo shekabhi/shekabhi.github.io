@@ -1,11 +1,13 @@
 ---
 title: volatile vs synchronized vs AtomicInteger
-topic: Java
+topic: Java concurrency
 date: 2026-11-10
 tags: [java, concurrency, multithreading]
 summary: Two different problems, visibility and atomicity, and which tool fixes which.
 reviewed: false
 catalog: jmm-volatile
+series: java-concurrency
+priority: high
 questions:
   - q: Why isn't `count++` thread-safe, even on a `volatile int`?
     a: >-

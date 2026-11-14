@@ -20,10 +20,13 @@ scripts: [/topics.js]
       <section class="topic-area card{% if area_count == 0 %} plan-only{% endif %}" id="area-{{ area.id }}"{% if area_count == 0 %} hidden{% endif %} data-area="{{ area.id }}">
         <h2>{{ area.title | escape }}</h2>
         <p class="muted">{{ area.summary | escape }}</p>
+        {%- if area.series and area_count > 0 %}
+        <p class="series-cta"><a href="/learning/{{ area.id }}/">Read it as a series</a></p>
+        {%- endif %}
         <ul class="topic-list">
           {%- for t in area.topics %}
           {%- assign tnotes = site.notes | where: "catalog", t.id | sort: "date" %}
-          <li class="topic{% if tnotes.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}"{% if tnotes.size == 0 %} hidden{% endif %}>
+          <li class="topic{% if tnotes.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}" data-key="{{ t.key | default: false }}"{% if tnotes.size == 0 %} hidden{% endif %}>
             <span class="topic-name">{{ t.title | escape }}</span>
             {%- if tnotes.size > 0 %}
             <ul class="topic-notes">

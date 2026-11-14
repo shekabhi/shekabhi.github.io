@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", ...NOTES.map((n) => n.url), "/play/", "/about/"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -220,11 +220,11 @@ test.describe("learning: topics, quiz and privacy", () => {
     expect(await page.content()).not.toContain("not started");
     for (const n of NOTES) await expect(page.locator(`.topic-notes a[href="${n.url}"]`)).toBeVisible();
     // titles with commas must not be cut off
-    await expect(page.locator(".topic-name", { hasText: "Java memory model, volatile & atomics" })).toBeVisible();
+    await expect(page.locator(".topic-name", { hasText: "Java memory model, volatile & happens-before" })).toBeVisible();
   });
 
   test("public learning pages show no personal plan or progress", async ({ page }) => {
-    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", ...NOTES.map((n) => n.url)]) {
+    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
       await page.goto(url);
       const text = await page.locator("body").innerText();
       expect(text, url).not.toMatch(/roadmap|revis|confidence|study plan|not started|my progress/i);
@@ -308,6 +308,48 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator(".quiz-score")).toHaveText(`You skipped all ${total} questions.`);
   });
 
+  test("series page lists written chapters in order, nothing planned", async ({ page }) => {
+    await page.goto("/learning/java-concurrency/");
+    const links = page.locator(".series-item:not([hidden]) .series-link");
+    await expect(links).toHaveCount(NOTES.filter((n) => n.url.includes("java-")).length);
+    await expect(links.first()).toHaveText(/Threads in Java/);
+    await expect(page.locator(".series-problems")).toBeHidden();
+    await expect(page.locator(".plan-star, .plan-todo")).toHaveCount(0);
+    expect(await page.content()).not.toContain("not started");
+    await page.goto("/learning/topics/");
+    await expect(page.locator('.series-cta a[href="/learning/java-concurrency/"]')).toBeVisible();
+  });
+
+  test("series notes link to the series and to previous / next chapters", async ({ page }) => {
+    await page.goto("/learning/java-threads-lifecycle-interrupts/");
+    await expect(page.locator('.note-head .eyebrow a[href="/learning/java-concurrency/"]')).toContainText("SERIES");
+    const next = page.locator(".next-case a.next");
+    await expect(next).toContainText("Next in Java concurrency");
+    await expect(next).toHaveAttribute("href", "/learning/java-volatile-synchronized-atomic/");
+    await page.goto("/learning/java-volatile-synchronized-atomic/");
+    await expect(page.locator(".next-case a").first()).toHaveAttribute("href", "/learning/java-threads-lifecycle-interrupts/");
+  });
+
+  test("questions split into Common questions and Test yourself", async ({ page }) => {
+    const note = "/learning/java-threads-lifecycle-interrupts/";
+    const qs = QUIZ.filter((q) => q.url === note);
+    await page.goto(note);
+    await expect(page.locator("#common-questions")).toHaveText("Common questions");
+    await expect(page.locator("#common-questions + .qa-list .qa")).toHaveCount(qs.filter((q) => !q.options.length).length);
+    await expect(page.locator("#test-yourself + .qa-list .qa")).toHaveCount(qs.filter((q) => q.options.length).length);
+    await expect(page.locator("#test-yourself + .qa-list .qa-options")).toHaveCount(qs.filter((q) => q.options.length).length);
+    await expect(page.locator('.toc a[href="#common-questions"]')).toHaveCount(1);
+  });
+
+  test("private plan view shows every chapter and stars key topics", async ({ page }) => {
+    await planOn(page);
+    await page.goto("/learning/java-concurrency/");
+    await expect(page.locator(".plan-banner")).toBeVisible();
+    await expect(page.locator(".series-item:not([hidden])")).toHaveCount(24);
+    await expect(page.locator(".series-problems")).toBeVisible();
+    expect(await page.locator(".plan-star").count()).toBeGreaterThan(15);
+  });
+
   test("multiple-choice data is valid: 2-6 options and a correct answer", async () => {
     const mcqs = QUIZ.filter((q) => q.options.length);
     expect(mcqs.length).toBeGreaterThan(3);
@@ -321,6 +363,7 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("MCQ: picking the right option marks it correct", async ({ page }) => {
     const q = QUIZ.find((x) => x.options.length);
+    const n = QUIZ.filter((x) => x.note === q.note && x.options.length).length;
     await page.goto(`/learning/quiz/?note=${q.note}&type=mcq`);
     await expect(page.locator(".quiz-option")).toHaveCount(4);
     await expect(page.locator(".quiz-reveal")).toBeHidden();
@@ -331,7 +374,7 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator(".quiz-a")).toBeVisible();
     await expect(page.locator(".quiz-option").first()).toBeDisabled();
     await page.locator(".quiz-next").click();
-    await expect(page.locator(".quiz-count")).toContainText("Question 2 of 2");
+    await expect(page.locator(".quiz-count")).toContainText(`Question 2 of ${n}`);
   });
 
   test("MCQ: a wrong pick shows the right answer and comes back later", async ({ page }) => {

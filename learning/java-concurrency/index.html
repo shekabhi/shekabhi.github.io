@@ -1,0 +1,59 @@
+---
+layout: base
+title: Java concurrency
+description: A series of notes on Java concurrency, from threads and the memory model to locks, atomics, thread pools, CompletableFuture and concurrent collections, with practice problems.
+series_id: java-concurrency
+scripts: [/topics.js]
+---
+{%- assign area = site.data.topics | where: "id", page.series_id | first -%}
+{%- assign chapters = area.topics | where_exp: "t", "t.problem != true" -%}
+{%- assign problems = area.topics | where_exp: "t", "t.problem == true" -%}
+{%- assign written_problems = 0 -%}
+{%- for t in problems %}{% assign tn = site.notes | where: "catalog", t.id %}{% assign written_problems = written_problems | plus: tn.size %}{% endfor -%}
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning · Series</p>
+      <h1>{{ area.title }}</h1>
+      <p class="summary">{{ area.summary }} Read it in order, or jump to the part you need.</p>
+    </section>
+{% include learning-tabs.html %}
+    <p class="plan-banner container mono" hidden>
+      Private plan view. Only you see this, in this browser. Type <code>plan off</code> in the terminal to hide it.
+    </p>
+    <section class="container series" aria-label="{{ area.title }} series">
+      <h2 class="series-h2">Chapters</h2>
+      <ol class="series-list">
+        {%- for t in chapters %}
+        {%- assign tn = site.notes | where: "catalog", t.id | sort: "date" %}
+        <li class="topic series-item{% if tn.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}" data-key="{{ t.key | default: false }}"{% if tn.size == 0 %} hidden{% endif %}>
+          {%- if tn.size > 0 %}
+          {%- for n in tn %}
+          <a class="series-link" href="{{ n.url }}">{{ n.title }}</a>
+          <p class="muted">{{ n.summary }}</p>
+          {%- if n.questions %}<span class="plan-stat mono" data-note="{{ n.slug }}" data-questions="{{ n.questions.size }}" hidden></span>{% endif %}
+          {%- endfor %}
+          {%- else %}
+          <span class="topic-name">{{ t.title | escape }}</span>
+          {%- endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+
+      <div class="series-problems{% if written_problems == 0 %} plan-only{% endif %}"{% if written_problems == 0 %} hidden{% endif %}>
+        <h2 class="series-h2">Practice problems</h2>
+        <ol class="series-list">
+          {%- for t in problems %}
+          {%- assign tn = site.notes | where: "catalog", t.id | sort: "date" %}
+          <li class="topic series-item{% if tn.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}" data-key="{{ t.key | default: false }}"{% if tn.size == 0 %} hidden{% endif %}>
+            {%- if tn.size > 0 %}
+            {%- for n in tn %}
+            <a class="series-link" href="{{ n.url }}">{{ n.title }}</a>
+            <p class="muted">{{ n.summary }}</p>
+            {%- endfor %}
+            {%- else %}
+            <span class="topic-name">{{ t.title | remove: "Problem: " | escape }}</span>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ol>
+      </div>
+    </section>

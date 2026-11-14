@@ -43,6 +43,9 @@ You can do this on github.com too: open the `_notes` folder, click **Add file â†
 
 - A **new `topic`** automatically gets its own filter button.
 - Add `catalog: <topic id>` (from `_data/topics.yml`) to list the note on the Topics page.
+- Add `series: java-concurrency` to make the note a chapter: it appears on the series page
+  (`/learning/java-concurrency/`) in catalogue order, with previous/next links between chapters.
+- Questions without options show under "Common questions"; multiple-choice ones under "Test yourself".
 - Add `questions:` (each with `q` and `a`) to show a "Test yourself" section and include them in the Quiz.
   Add `options:` and `correct:` (counting from 1) to a question to make it multiple choice.
 - Private plan view: type `plan on` in the site's terminal. This browser then also shows every

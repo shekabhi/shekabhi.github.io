@@ -18,6 +18,15 @@
     li.appendChild(tag);
   });
 
+  // key topics get a star, only in the private view
+  document.querySelectorAll('[data-key="true"]').forEach((li) => {
+    const star = document.createElement("span");
+    star.className = "plan-star";
+    star.title = "Key topic";
+    star.textContent = "★";
+    li.prepend(star);
+  });
+
   document.querySelectorAll(".topic-area").forEach((area) => {
     const all = area.querySelectorAll(".topic").length;
     const covered = area.querySelectorAll(".topic:not(.plan-only)").length;

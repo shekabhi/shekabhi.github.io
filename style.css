@@ -516,7 +516,7 @@ body.term-open { overflow: hidden; }
   font: 500 .86rem Inter, sans-serif; color: var(--muted); background: var(--card); cursor: pointer;
   border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; transition: color .2s, border-color .2s, background .2s;
 }
-.topic-filters button span { font: .75rem "JetBrains Mono", monospace; opacity: .75; margin-left: 4px; }
+.topic-filters button span { font: .75rem "JetBrains Mono", monospace; margin-left: 4px; }
 .topic-filters button:hover { color: var(--text); border-color: var(--hover-border); }
 .topic-filters button[aria-pressed="true"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
 .learn-search {
@@ -957,3 +957,21 @@ body { transition: background-color .25s, color .25s; }
 .quiz-skip[hidden] { display: none; }
 .quiz-review-list em { font-style: normal; color: var(--muted-2); }
 @media (hover: none) { .quiz-keys { display: none; } }
+
+/* ===== series page ===== */
+.series { padding-top: 30px; padding-bottom: 90px; max-width: 860px; }
+.series-h2 { font-size: 1.3rem; letter-spacing: -.01em; margin: 10px 0 14px; }
+.series-problems { margin-top: 40px; }
+.series-problems[hidden] { display: none; }
+.series-list { counter-reset: ch; }
+.series-item { counter-increment: ch; position: relative; padding: 16px 0 16px 52px; border-top: 1px solid var(--border); }
+.series-item[hidden] { display: none; }
+.series-item::before { content: counter(ch, decimal-leading-zero); position: absolute; left: 0; top: 18px; font: .85rem "JetBrains Mono", monospace; color: var(--accent); }
+.series-link { font-size: 1.08rem; font-weight: 600; color: var(--text); }
+.series-link:hover { color: var(--accent); }
+.series-item p { font-size: .92rem; margin-top: 2px; }
+.series-item .topic-name { color: var(--muted); font-weight: 500; }
+.series-cta { margin: -6px 0 12px; font-size: .9rem; }
+.series-cta a { color: var(--accent); font-weight: 600; }
+.series-cta a::after { content: " →"; }
+.plan-star { color: #f5b301; margin-right: 6px; }

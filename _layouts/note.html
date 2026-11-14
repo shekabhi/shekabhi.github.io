@@ -3,15 +3,39 @@ layout: base
 ---
 {%- assign words = content | number_of_words -%}
 {%- assign minutes = words | divided_by: 200 | plus: 1 -%}
-{%- assign same = site.notes | where: "topic", page.topic | sort: "date" -%}
+{%- comment -%} Previous/next: in series order for series notes, otherwise by date within the topic {%- endcomment -%}
+{%- if page.series -%}
+  {%- assign sarea = site.data.topics | where: "id", page.series | first -%}
+  {%- assign same = "" | split: "" -%}
+  {%- for t in sarea.topics -%}
+    {%- assign tn = site.notes | where: "catalog", t.id | where: "series", page.series | sort: "date" -%}
+    {%- assign same = same | concat: tn -%}
+  {%- endfor -%}
+  {%- assign prev_label = "← Previous in " | append: sarea.title -%}
+  {%- assign next_label = "Next in " | append: sarea.title | append: " →" -%}
+  {%- assign end_url = "/learning/" | append: page.series | append: "/" -%}
+  {%- assign end_title = sarea.title | append: " series" -%}
+{%- else -%}
+  {%- assign same = site.notes | where: "topic", page.topic | sort: "date" -%}
+  {%- assign prev_label = "← Older in " | append: page.topic -%}
+  {%- assign next_label = "Newer in " | append: page.topic | append: " →" -%}
+  {%- capture end_url %}/learning/?topic={{ page.topic | slugify }}{% endcapture -%}
+  {%- assign end_title = "All " | append: page.topic | append: " notes" -%}
+{%- endif -%}
 {%- assign idx = -1 -%}
 {%- for n in same -%}{%- if n.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
 {%- assign prev_i = idx | minus: 1 -%}
 {%- assign next_i = idx | plus: 1 -%}
+{%- assign common = page.questions | where_exp: "q", "q.options == nil" -%}
+{%- assign mcqs = page.questions | where_exp: "q", "q.options != nil" -%}
     <article class="container note">
       <header class="note-head">
         <a class="back" href="/learning/">← All notes</a>
+        {%- if page.series %}
+        <p class="eyebrow case-tag"><a href="/learning/{{ page.series }}/">{{ sarea.title | upcase }} · SERIES</a></p>
+        {%- else %}
         <p class="eyebrow case-tag"><a href="/learning/?topic={{ page.topic | slugify }}">{{ page.topic | upcase }}</a></p>
+        {%- endif %}
         <h1>{{ page.title }}</h1>
         {%- if page.summary %}
         <p class="summary">{{ page.summary }}</p>
@@ -32,42 +56,32 @@ layout: base
         <nav class="toc" aria-label="On this page" hidden></nav>
         <div class="note-body">
 {{ content }}
-          {%- if page.questions %}
+          {%- if common.size > 0 %}
+          <h2 id="common-questions">Common questions</h2>
+          {%- include qa-list.html items=common %}
+          {%- endif %}
+          {%- if mcqs.size > 0 %}
           <h2 id="test-yourself">Test yourself</h2>
-          <div class="qa-list">
-            {%- for item in page.questions %}
-            <details class="qa">
-              <summary>{{ item.q | markdownify | remove: "<p>" | remove: "</p>" | strip }}</summary>
-              <div class="qa-a">
-                {%- if item.options %}
-                <ol class="qa-options">
-                  {%- for o in item.options %}
-                  <li{% if forloop.index == item.correct %} class="right"{% endif %}>{{ o | markdownify | remove: "<p>" | remove: "</p>" | strip }}{% if forloop.index == item.correct %}<span class="sr-only"> (correct answer)</span>{% endif %}</li>
-                  {%- endfor %}
-                </ol>
-                {%- endif %}
-                {{ item.a | markdownify }}
-              </div>
-            </details>
-            {%- endfor %}
-          </div>
+          {%- include qa-list.html items=mcqs %}
+          {%- endif %}
+          {%- if page.questions %}
           <p class="qa-more"><a href="/learning/quiz/?note={{ page.slug }}">Quiz me on this note</a></p>
           {%- endif %}
         </div>
       </div>
 
-      <nav class="next-case" aria-label="More notes on {{ page.topic }}">
+      <nav class="next-case" aria-label="More notes">
         {%- if idx > 0 %}
         {%- assign p = same[prev_i] %}
-        <a href="{{ p.url }}"><small>← Older in {{ page.topic }}</small><b>{{ p.title }}</b></a>
+        <a href="{{ p.url }}"><small>{{ prev_label }}</small><b>{{ p.title }}</b></a>
         {%- else %}
         <a href="/learning/"><small>← Back to</small><b>All notes</b></a>
         {%- endif %}
         {%- assign nx = same[next_i] %}
         {%- if nx %}
-        <a class="next" href="{{ nx.url }}"><small>Newer in {{ page.topic }} →</small><b>{{ nx.title }}</b></a>
+        <a class="next" href="{{ nx.url }}"><small>{{ next_label }}</small><b>{{ nx.title }}</b></a>
         {%- else %}
-        <a class="next" href="/learning/?topic={{ page.topic | slugify }}"><small>More →</small><b>All {{ page.topic }} notes</b></a>
+        <a class="next" href="{{ end_url }}"><small>More →</small><b>{{ end_title }}</b></a>
         {%- endif %}
       </nav>
     </article>

@@ -1,0 +1,17 @@
+          <div class="qa-list">
+            {%- for item in include.items %}
+            <details class="qa">
+              <summary>{{ item.q | markdownify | remove: "<p>" | remove: "</p>" | strip }}</summary>
+              <div class="qa-a">
+                {%- if item.options %}
+                <ol class="qa-options">
+                  {%- for o in item.options %}
+                  <li{% if forloop.index == item.correct %} class="right"{% endif %}>{{ o | markdownify | remove: "<p>" | remove: "</p>" | strip }}{% if forloop.index == item.correct %}<span class="sr-only"> (correct answer)</span>{% endif %}</li>
+                  {%- endfor %}
+                </ol>
+                {%- endif %}
+                {{ item.a | markdownify }}
+              </div>
+            </details>
+            {%- endfor %}
+          </div>
