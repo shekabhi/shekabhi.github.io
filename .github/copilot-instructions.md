@@ -40,6 +40,11 @@ This is Abhishek Shukla's personal portfolio, served by GitHub Pages from the
 - Text marked `data-draft` is an unreviewed draft (see `CONTENT-TODO.md`). Keep the
   attribute on any new drafted text; remove it only when Abhishek has reviewed it.
 
+## Caching
+- GitHub Pages caches files for about 10 minutes. Every stylesheet and script link carries
+  `?v={{ v }}` (the build time, set at the top of each page) so a new deploy never mixes new HTML
+  with old cached CSS/JS. Keep the stamp on any new local `<script>` or stylesheet.
+
 ## Checks
 - `npm run check` = Jekyll build + HTML validation + Playwright tests (desktop and mobile).
 - Tests read `_site/learning/notes.json`, so every new note is tested automatically.

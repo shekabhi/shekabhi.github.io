@@ -59,6 +59,21 @@ for (const path of PAGES) {
       }
     });
 
+    test("stylesheets and scripts carry the build version, so updates are never mixed with old cached files", async ({ page, request }) => {
+      const urls = await page.$$eval('link[rel="stylesheet"][href$=".css"], link[rel="stylesheet"][href*=".css?"], script[src]',
+        (els) => els.map((e) => e.getAttribute("href") || e.getAttribute("src")).filter((u) => !/^https?:/.test(u)));
+      expect(urls.length).toBeGreaterThan(2);
+      const versions = new Set();
+      for (const u of urls) {
+        const m = u.match(/\?v=(\d+)$/);
+        expect(m, `${u} has a version`).not.toBeNull();
+        versions.add(m[1]);
+        const res = await request.get(new URL(u, page.url()).pathname);
+        expect(res.status(), `${u} loads`).toBe(200);
+      }
+      expect(versions.size).toBe(1);
+    });
+
     test("page is never wider than the screen", async ({ page }) => {
       // Phone browsers widen the layout to fit overflowing content, so compare
       // against the real screen width rather than window.innerWidth.
