@@ -212,12 +212,21 @@ test.describe("theme switch", () => {
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
   });
 
-  test("live demo stays dark in the light theme", async ({ page }) => {
-    await page.goto("/");
-    await page.evaluate(() => window.portfolioTheme.set("light"));
-    const panelBg = await page.locator(".rl").evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(panelBg).toBe("rgb(13, 19, 32)");
-  });
+  for (const [theme, panel, log] of [["light", "rgb(255, 255, 255)", "rgb(245, 247, 250)"], ["dark", "rgb(13, 19, 32)", "rgb(7, 11, 17)"]]) {
+    test(`live demo follows the ${theme} theme and stays readable`, async ({ page }) => {
+      await page.goto("/");
+      await page.evaluate((t) => window.portfolioTheme.set(t), theme);
+      const demo = page.locator("[data-ratelimit-demo]");
+      await expect.poll(() => demo.locator(".rl").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(panel);
+      await expect.poll(() => demo.locator(".rl-log").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(log);
+      // fill the log with allowed and rejected lines, then check contrast
+      for (let i = 0; i < 7; i++) await demo.locator(".rl-send").click();
+      await expect(demo.locator(".rl-log .bad")).toHaveCount(2);
+      await demo.scrollIntoViewIfNeeded();
+      const results = await new AxeBuilder({ page }).include("[data-ratelimit-demo]").analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes[0].target})`)).toEqual([]);
+    });
+  }
 
   for (const [theme, panel] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(13, 19, 32)"]]) {
     test(`diagrams and code blocks follow the ${theme} theme`, async ({ page }) => {

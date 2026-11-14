@@ -33,6 +33,11 @@
   --syn-number: #f9a8d4;
   --syn-func: #93c5fd;
   --syn-punct: #b6c0ce;
+  --panel-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7);
+  --grid-line: rgba(255, 255, 255, .05);
+  --grid-fill: rgba(255, 255, 255, .02);
+  --ok-glow: rgba(74, 222, 128, .6);
+  --bad-glow: rgba(252, 165, 165, .5);
   color-scheme: dark;
 }
 
@@ -71,6 +76,11 @@
   --syn-number: #be185d;
   --syn-func: #1d4ed8;
   --syn-punct: #334155;
+  --panel-shadow: 0 20px 50px -25px rgba(15, 23, 42, .25);
+  --grid-line: rgba(15, 23, 42, .08);
+  --grid-fill: rgba(15, 23, 42, .02);
+  --ok-glow: rgba(21, 128, 61, .35);
+  --bad-glow: rgba(185, 28, 28, .3);
   color-scheme: light;
 }
 @media (prefers-color-scheme: light) {
@@ -107,30 +117,17 @@
     --syn-number: #be185d;
     --syn-func: #1d4ed8;
     --syn-punct: #334155;
+    --panel-shadow: 0 20px 50px -25px rgba(15, 23, 42, .25);
+    --grid-line: rgba(15, 23, 42, .08);
+    --grid-fill: rgba(15, 23, 42, .02);
+    --ok-glow: rgba(21, 128, 61, .35);
+    --bad-glow: rgba(185, 28, 28, .3);
     color-scheme: light;
   }
 }
 
-/* The live rate limiter demo stays dark in every theme (it imitates a terminal).
-   Everything else, including the terminal, diagrams and code blocks, follows the theme. Declaring the tokens on the element itself beats the light theme. */
-.rl {
-  --bg: #0b0f17;
-  --bg-2: #111827;
-  --card: #131a26;
-  --border: #1f2a3a;
-  --text: #e5e9f0;
-  --muted: #8b97a8;
-  --accent: #5eead4;
-  --accent-2: #818cf8;
-  --ok: #4ade80;
-  --bad: #fca5a5;
-  --prose: #b6c0ce;
-  --muted-2: #8794a8;
-  --on-accent: #0b0f17;
-  --hover-border: #3a4a62;
-  color-scheme: dark;
-  color: var(--text);
-}
+/* Every panel, including the live demo, terminal, diagrams and code blocks,
+   follows the theme through the variables above. */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; }
@@ -242,19 +239,19 @@ button { font-family: inherit; }
 .demo-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 48px; align-items: center; }
 .demo-copy p { color: var(--muted); margin-bottom: 14px; }
 .demo-copy p strong { color: var(--text); font-weight: 600; }
-.rl { background: #0d1320; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7); }
+.rl { background: var(--panel-bg); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--panel-shadow); }
 .rl-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 18px; background: var(--bg-2); border-bottom: 1px solid var(--border); font-size: .8rem; color: var(--muted); }
 .rl-head b { color: var(--accent); font-weight: 500; }
 .rl-main { padding: 22px 18px 18px; }
 .rl-track {
   position: relative; height: 64px; border-radius: 10px; overflow: hidden;
-  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(255, 255, 255, .05) calc(10% - 1px) 10%), rgba(255, 255, 255, .02);
+  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), var(--grid-line) calc(10% - 1px) 10%), var(--grid-fill);
   border: 1px solid var(--border);
 }
-.rl-track::before { content: "10 s ago"; position: absolute; left: 8px; bottom: 4px; font: .68rem "JetBrains Mono", monospace; color: #8794a8; }
-.rl-track::after { content: "now"; position: absolute; right: 8px; bottom: 4px; font: .68rem "JetBrains Mono", monospace; color: #8794a8; }
-.rl-dot { position: absolute; top: 18px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px rgba(74, 222, 128, .6); will-change: left; }
-.rl-dot.bad { background: var(--bad); box-shadow: 0 0 12px rgba(252, 165, 165, .5); top: 26px; width: 10px; height: 10px; margin-left: -5px; opacity: .85; }
+.rl-track::before { content: "10 s ago"; position: absolute; left: 8px; bottom: 4px; font: .68rem "JetBrains Mono", monospace; color: var(--muted-2); }
+.rl-track::after { content: "now"; position: absolute; right: 8px; bottom: 4px; font: .68rem "JetBrains Mono", monospace; color: var(--muted-2); }
+.rl-dot { position: absolute; top: 18px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok-glow); will-change: left; }
+.rl-dot.bad { background: var(--bad); box-shadow: 0 0 12px var(--bad-glow); top: 26px; width: 10px; height: 10px; margin-left: -5px; opacity: .85; }
 .rl-meter { display: flex; align-items: baseline; gap: 10px; margin: 16px 0; font-size: .9rem; color: var(--muted); flex-wrap: wrap; }
 .rl-count { font: 800 1.9rem Inter, sans-serif; color: var(--ok); letter-spacing: -.02em; }
 .rl-count.full { color: var(--bad); }
@@ -262,11 +259,11 @@ button { font-family: inherit; }
 .rl-actions .btn { padding: 11px 20px; font-size: .95rem; }
 .rl-actions .rl-reset { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: .9rem; padding: 0 8px; }
 .rl-actions .rl-reset:hover { color: var(--text); }
-.rl-log { margin-top: 16px; padding: 12px 14px; min-height: 148px; border-radius: 10px; background: #070b11; border: 1px solid var(--border); font-size: .76rem; line-height: 1.75; color: var(--muted); overflow: hidden; }
+.rl-log { margin-top: 16px; padding: 12px 14px; min-height: 148px; border-radius: 10px; background: var(--panel-bg-2); border: 1px solid var(--border); font-size: .76rem; line-height: 1.75; color: var(--muted); overflow: hidden; }
 .rl-log li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rl-log .ok { color: var(--ok); }
 .rl-log .bad { color: var(--bad); }
-.rl-log .hint { color: #8794a8; }
+.rl-log .hint { color: var(--muted-2); }
 
 /* ===== work (case study cards) ===== */
 .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
