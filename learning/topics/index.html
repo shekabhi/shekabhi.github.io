@@ -1,7 +1,7 @@
 ---
 layout: base
 title: Topics
-description: Abhishek Shukla's learning notes grouped by area, from Java and Spring Boot to system design, databases, distributed systems and security.
+description: Abhishek Shukla's learning notes grouped by area, from system design and Redis to security. Java has its own section.
 scripts: [/topics.js]
 ---
     <section class="container learn-hero">
@@ -14,7 +14,14 @@ scripts: [/topics.js]
       Private plan view. Only you see this, in this browser. Type <code>plan off</code> in the terminal to hide it.
     </p>
     <section class="container topic-areas" aria-label="Topics">
+      <a class="series-feature card" href="/learning/java/">
+        <span class="tag">JAVA</span>
+        <span class="sf-title">Java has its own section</span>
+        <span class="sf-sum">Core Java and Java concurrency, chapter by chapter.</span>
+        <span class="sf-go">Open the Java section</span>
+      </a>
       {%- for area in site.data.topics %}
+      {%- if area.series %}{% continue %}{% endif %}
       {%- assign area_count = 0 %}
       {%- for t in area.topics %}{% assign tn = site.notes | where: "catalog", t.id %}{% assign area_count = area_count | plus: tn.size %}{% endfor %}
       <section class="topic-area card{% if area_count == 0 %} plan-only{% endif %}" id="area-{{ area.id }}"{% if area_count == 0 %} hidden{% endif %} data-area="{{ area.id }}">

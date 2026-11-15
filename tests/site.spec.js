@@ -9,6 +9,9 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
+// Java series chapters live in the Java section; the Notes and Topics tabs list everything else.
+const JAVA_TOPICS = ["Core Java", "Java concurrency"];
+const OTHER_NOTES = NOTES.filter((n) => !JAVA_TOPICS.includes(n.topic));
 const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
 
 // Collect JavaScript errors and failed requests on every page
@@ -162,26 +165,27 @@ test.describe("learning hub", () => {
   test.beforeEach(async ({ page }) => { await page.goto("/learning/"); });
   const cards = (page) => page.locator(".note-card:not([hidden])");
 
-  test("lists every note, newest first", async ({ page }) => {
-    await expect(cards(page)).toHaveCount(NOTES.length);
+  test("lists every note outside the Java section, newest first", async ({ page }) => {
+    await expect(cards(page)).toHaveCount(OTHER_NOTES.length);
+    for (const n of NOTES.filter((x) => JAVA_TOPICS.includes(x.topic))) await expect(page.locator(`.note-card a[href="${n.url}"]`)).toHaveCount(0);
     const dates = await page.$$eval(".note-card time", (ts) => ts.map((t) => t.getAttribute("datetime")));
     expect(dates).toEqual([...dates].sort().reverse());
   });
 
   test("topic filter shows only that topic, and survives a reload", async ({ page }) => {
-    const topic = NOTES[0].topic;
-    const expected = NOTES.filter((n) => n.topic === topic).length;
+    const topic = OTHER_NOTES[0].topic;
+    const expected = OTHER_NOTES.filter((n) => n.topic === topic).length;
     await page.locator(".topic-filters button", { hasText: topic }).click();
     await expect(cards(page)).toHaveCount(expected);
     await expect(page).toHaveURL(/\?topic=/);
     await page.reload();
     await expect(cards(page)).toHaveCount(expected);
     await page.locator('.topic-filters button[data-topic="all"]').click();
-    await expect(cards(page)).toHaveCount(NOTES.length);
+    await expect(cards(page)).toHaveCount(OTHER_NOTES.length);
   });
 
   test("search narrows the list and shows a message when nothing matches", async ({ page }) => {
-    const word = NOTES[0].title.split(" ")[0];
+    const word = OTHER_NOTES[0].title.split(" ")[0];
     await page.locator(".learn-search").fill(word.toLowerCase());
     expect(await cards(page).count()).toBeGreaterThan(0);
     await page.locator(".learn-search").fill("zzzz-no-such-note");
@@ -214,13 +218,14 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("visitors see only topics that have notes, and no plan", async ({ page }) => {
     await page.goto("/learning/topics/");
-    await expect(visibleTopics(page)).toHaveCount(NOTES.length);
+    await expect(visibleTopics(page)).toHaveCount(OTHER_NOTES.length);
     await expect(page.locator(".plan-banner")).toBeHidden();
     await expect(page.locator(".plan-todo")).toHaveCount(0);
     expect(await page.content()).not.toContain("not started");
-    for (const n of NOTES) await expect(page.locator(`.topic-notes a[href="${n.url}"]`)).toBeVisible();
-    // titles with commas must not be cut off
-    await expect(page.locator(".topic-name", { hasText: "Java memory model, volatile & happens-before" })).toBeVisible();
+    for (const n of OTHER_NOTES) await expect(page.locator(`.topic-notes a[href="${n.url}"]`)).toBeVisible();
+    // Java areas are not listed here; a card points to the Java section instead
+    await expect(page.locator("#area-core-java, #area-java-concurrency")).toHaveCount(0);
+    await expect(page.locator('.topic-areas .series-feature[href="/learning/java/"]')).toBeVisible();
   });
 
   test("public learning pages show no personal plan or progress", async ({ page }) => {
@@ -316,8 +321,8 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator(".series-problems")).toBeHidden();
     await expect(page.locator(".plan-star, .plan-todo")).toHaveCount(0);
     expect(await page.content()).not.toContain("not started");
-    await page.goto("/learning/topics/");
-    await expect(page.locator('.series-cta a[href="/learning/java-concurrency/"]')).toBeVisible();
+    await page.goto("/learning/java/");
+    await expect(page.locator('.java-hub a[href="/learning/java-concurrency/"]')).toBeVisible();
   });
 
   test("series notes link to the series and to previous / next chapters", async ({ page }) => {
@@ -383,6 +388,9 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(cards.nth(0)).toHaveAttribute("href", "/learning/core-java/");
     await expect(cards.nth(1)).toHaveAttribute("href", "/learning/java-concurrency/");
     await expect(cards.nth(0).locator(".sf-title")).toHaveText("Core Java");
+    await expect(page.locator('.java-practice a[href="/learning/quiz/?topic=core-java"]')).toBeVisible();
+    await page.locator('.java-practice a[href="/learning/quiz/?topic=java-concurrency"]').click();
+    await expect(page.locator(".quiz-source")).toContainText("Java concurrency");
   });
 
   test("Core Java series lists its chapters and links them in order", async ({ page }) => {
@@ -482,13 +490,13 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("private plan view: full catalogue and own quiz results, only after 'plan on'", async ({ page }) => {
     await planOn(page);
-    const slug = QUIZ[0].note;
+    const slug = QUIZ.find((q) => !JAVA_TOPICS.includes(q.topic)).note;
     await page.goto(`/learning/quiz/?note=${slug}&type=card`);
     await page.locator(".quiz-reveal").click();
     await page.locator(".quiz-got").click();
     await page.goto("/learning/topics/");
     await expect(page.locator(".plan-banner")).toBeVisible();
-    expect(await visibleTopics(page).count()).toBeGreaterThan(NOTES.length + 30);
+    expect(await visibleTopics(page).count()).toBeGreaterThan(OTHER_NOTES.length + 30);
     await expect(page.locator(".plan-area-stat").first()).toContainText("topics have notes");
     expect(await page.locator(".plan-todo").count()).toBeGreaterThan(30);
     await expect(page.locator(`.plan-stat[data-note="${slug}"]`)).toHaveText(/quiz 1\/\d+/);

@@ -26,4 +26,18 @@ description: Abhishek Shukla's Java notes in one place, in two series. Core Java
         <span class="sf-go">Open the series</span>
       </a>
       {%- endfor %}
+      <div class="java-practice card">
+        <span class="tag">PRACTICE</span>
+        <h2>Test yourself</h2>
+        <p class="muted">Multiple-choice questions and flashcards from each series, one at a time.</p>
+        <div class="hero-cta">
+          {%- for sid in series_ids %}
+          {%- assign area = site.data.topics | where: "id", sid | first %}
+          {%- assign written = site.notes | where: "series", sid %}
+          {%- if written.size > 0 %}
+          <a class="btn{% unless forloop.first %} btn-ghost{% endunless %}" href="/learning/quiz/?topic={{ area.title | slugify }}">{{ area.title | escape }} quiz</a>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+      </div>
     </section>

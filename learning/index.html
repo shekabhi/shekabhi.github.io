@@ -3,8 +3,10 @@ layout: base
 title: Learning notes
 description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redis, Kafka, system design, security and AWS. Short, practical, with code.
 ---
-{%- assign notes = site.notes | sort: "date" | reverse -%}
-{%- assign groups = site.notes | group_by: "topic" | sort: "name" -%}
+{%- comment -%} Java series chapters live in the Java section (/learning/java/), not in this list {%- endcomment -%}
+{%- assign standalone = site.notes | where_exp: "n", "n.series == nil" -%}
+{%- assign notes = standalone | sort: "date" | reverse -%}
+{%- assign groups = standalone | group_by: "topic" | sort: "name" -%}
     <section class="container learn-hero">
       <p class="eyebrow">Learning</p>
       <h1>Notes I write so I never learn the same thing twice.</h1>
