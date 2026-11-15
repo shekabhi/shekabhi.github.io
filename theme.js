@@ -20,7 +20,7 @@
     if (pref === "system") delete root.dataset.theme; else root.dataset.theme = pref;
     root.dataset.themePref = pref;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", effective() === "light" ? "#f7f4ec" : "#0e1a36");
+    if (meta) meta.setAttribute("content", effective() === "light" ? "#f7f4ec" : "#0c0d10");
     const label = `Theme: ${LABEL[pref]}. Click to switch.`;
     document.querySelectorAll(".theme-btn").forEach((b) => {
       b.setAttribute("aria-label", label);

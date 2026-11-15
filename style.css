@@ -1,30 +1,30 @@
 :root {
-  --bg: #0e1a36;
-  --bg-2: #122247;
-  --card: #14264f;
-  --border: #2a3f6e;
-  --text: #eef2fb;
-  --muted: #a6b4d2;
+  --bg: #0c0d10;
+  --bg-2: #131419;
+  --card: #16181d;
+  --border: #2b2e37;
+  --text: #eef0f5;
+  --muted: #a9afbd;
   --accent: #8fb0ff;
   --accent-2: #8fb0ff;
   --ok: #4fe0b0;
   --bad: #ff8a6b;
   --radius: 14px;
   --max: 1100px;
-  --prose: #c9d3e8;          /* body text in long-form content */
-  --muted-2: #97a7c8;        /* dates, small print */
-  --nav-bg: rgba(14, 26, 54, 0.92);
-  --on-accent: #0e1a36;      /* text on accent-coloured buttons */
-  --hover-border: #eef2fb;
-  --term-bg: #0b1530;
+  --prose: #cdd2dc;          /* body text in long-form content */
+  --muted-2: #9aa1b0;        /* dates, small print */
+  --nav-bg: rgba(12, 13, 16, 0.92);
+  --on-accent: #0c0d10;      /* text on accent-coloured buttons */
+  --hover-border: #eef0f5;
+  --term-bg: #101115;
   --term-backdrop: rgba(5, 8, 13, .72);
   --term-shadow: 0 40px 80px -20px rgba(0, 0, 0, .8), 0 0 0 1px rgba(94, 234, 212, .08);
   --term-hover: rgba(255, 255, 255, .06);
-  --panel-bg: #14264f;
-  --panel-bg-2: #0e1a36;
-  --diagram-box: #14264f;
-  --diagram-stroke: #9fb2d9;
-  --diagram-line: #8fa3cc;
+  --panel-bg: #16181d;
+  --panel-bg-2: #0c0d10;
+  --diagram-box: #16181d;
+  --diagram-stroke: #a9afbd;
+  --diagram-line: #8c93a3;
   --code-text: #d7dde6;
   --syn-comment: #a3b1cf;
   --syn-keyword: #c4b5fd;
@@ -38,10 +38,10 @@
   --grid-fill: rgba(255, 255, 255, .02);
   --ok-glow: transparent;
   --bad-glow: transparent;
-  --ink: #eef2fb;
-  --on-ink: #0e1a36;
-  --paper-grid: #172a55;
-  --paper-grid-major: #22396e;
+  --ink: #eef0f5;
+  --on-ink: #0c0d10;
+  --paper-grid: #191b21;
+  --paper-grid-major: #262933;
   --sh-1: #5b7cff;
   --sh-2: #ffc23d;
   --sh-3: #ff6b4a;
@@ -1056,7 +1056,7 @@ body { transition: background-color .25s, color .25s; }
 
 /* ===== "Engineering notebook" look (both themes) =====
    Graph-paper background, inked outlines and flat offset shadows in four colours.
-   Light = cream paper; dark = navy "blueprint" paper. Colours come from the theme tokens. */
+   Light = cream paper; dark = black paper with a faint grid. Colours come from the theme tokens. */
 body {
   background-color: var(--bg);
   background-image:

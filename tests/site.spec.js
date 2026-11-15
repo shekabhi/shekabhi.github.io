@@ -504,7 +504,7 @@ test.describe("note pages", () => {
 
 test.describe("theme switch", () => {
   const bg = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  const DARK = "rgb(14, 26, 54)", LIGHT = "rgb(247, 244, 236)";
+  const DARK = "rgb(12, 13, 16)", LIGHT = "rgb(247, 244, 236)";
   const themeBtn = async (page, testInfo) => {
     if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
     return page.locator(".nav-links .theme-btn");
@@ -546,7 +546,7 @@ test.describe("theme switch", () => {
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
   });
 
-  for (const [theme, panel, log] of [["light", "rgb(255, 253, 248)", "rgb(247, 244, 236)"], ["dark", "rgb(20, 38, 79)", "rgb(14, 26, 54)"]]) {
+  for (const [theme, panel, log] of [["light", "rgb(255, 253, 248)", "rgb(247, 244, 236)"], ["dark", "rgb(22, 24, 29)", "rgb(12, 13, 16)"]]) {
     test(`live demo follows the ${theme} theme and stays readable`, async ({ page }) => {
       await page.goto("/");
       await page.evaluate((t) => window.portfolioTheme.set(t), theme);
@@ -562,7 +562,7 @@ test.describe("theme switch", () => {
     });
   }
 
-  for (const [theme, panel] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(20, 38, 79)"]]) {
+  for (const [theme, panel] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(22, 24, 29)"]]) {
     test(`diagrams and code blocks follow the ${theme} theme`, async ({ page }) => {
       const bgOf = (sel) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).backgroundColor);
       await page.goto("/work/fips.html");
@@ -580,7 +580,7 @@ test.describe("theme switch", () => {
     });
   }
 
-  for (const [theme, expected] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(11, 21, 48)"]]) {
+  for (const [theme, expected] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(16, 17, 21)"]]) {
     test(`terminal follows the ${theme} theme and stays readable`, async ({ page }) => {
       await page.goto("/");
       await page.evaluate((t) => window.portfolioTheme.set(t), theme);
