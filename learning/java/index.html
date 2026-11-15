@@ -1,0 +1,29 @@
+---
+layout: base
+title: Java
+description: Abhishek Shukla's Java notes in one place, in two series. Core Java covers the language and the JVM; Java concurrency covers threads, locks, pools and async code.
+---
+{%- assign series_ids = "core-java,java-concurrency" | split: "," -%}
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning · Java</p>
+      <h1>Java, from the JVM up.</h1>
+      <p class="summary">
+        Two series, each meant to be read in order. Start with the language and the runtime,
+        then move on to running code on many threads at once.
+      </p>
+    </section>
+{% include learning-tabs.html %}
+    <section class="container learn-main java-hub" aria-label="Java series">
+      {%- for sid in series_ids %}
+      {%- assign area = site.data.topics | where: "id", sid | first %}
+      {%- assign written = site.notes | where: "series", sid %}
+      {%- assign qcount = 0 %}{% for n in written %}{% assign qcount = qcount | plus: n.questions.size %}{% endfor %}
+      <a class="series-feature card" href="/learning/{{ sid }}/">
+        <span class="tag">SERIES {{ forloop.index }}</span>
+        <span class="sf-title">{{ area.title | escape }}</span>
+        <span class="sf-sum">{{ area.summary | escape }} {{ area.blurb | escape }}</span>
+        <span class="sf-meta mono">{{ written.size }} {% if written.size == 1 %}chapter{% else %}chapters{% endif %} · {{ qcount }} questions</span>
+        <span class="sf-go">Open the series</span>
+      </a>
+      {%- endfor %}
+    </section>

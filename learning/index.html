@@ -26,8 +26,8 @@ description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redi
       <a class="series-feature card" href="/learning/{{ area.id }}/">
         <span class="tag">SERIES</span>
         <span class="sf-title">{{ area.title | escape }}</span>
-        <span class="sf-sum">{{ area.summary | escape }} Read it in order, from threads to Spring.</span>
-        <span class="sf-meta mono">{{ chapters.size }} chapters · {{ qcount }} questions</span>
+        <span class="sf-sum">{{ area.summary | escape }} {{ area.blurb | escape }}</span>
+        <span class="sf-meta mono">{{ chapters.size }} {% if chapters.size == 1 %}chapter{% else %}chapters{% endif %} · {{ qcount }} questions</span>
         <span class="sf-go">Start the series</span>
       </a>
       {%- endif %}

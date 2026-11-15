@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -204,11 +204,11 @@ test.describe("learning: topics, quiz and privacy", () => {
   const planOn = (page) => page.addInitScript(() => localStorage.setItem("study-plan", "on"));
   const visibleTopics = (page) => page.locator(".topic:not([hidden])");
 
-  test("tabs link Notes, Topics and Quiz and mark the current one", async ({ page }) => {
-    for (const [url, label] of [["/learning/", "Notes"], ["/learning/topics/", "Topics"], ["/learning/quiz/", "Quiz"]]) {
+  test("tabs link Notes, Java, Topics and Quiz and mark the current one", async ({ page }) => {
+    for (const [url, label] of [["/learning/", "Notes"], ["/learning/java/", "Java"], ["/learning/topics/", "Topics"], ["/learning/quiz/", "Quiz"]]) {
       await page.goto(url);
       await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText(label);
-      await expect(page.locator(".learn-tabs a")).toHaveCount(3);
+      await expect(page.locator(".learn-tabs a")).toHaveCount(4);
     }
   });
 
@@ -224,7 +224,7 @@ test.describe("learning: topics, quiz and privacy", () => {
   });
 
   test("public learning pages show no personal plan or progress", async ({ page }) => {
-    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
+    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
       await page.goto(url);
       const text = await page.locator("body").innerText();
       expect(text, url).not.toMatch(/roadmap|revis|confidence|study plan|not started|my progress/i);
@@ -311,7 +311,7 @@ test.describe("learning: topics, quiz and privacy", () => {
   test("series page lists written chapters in order, nothing planned", async ({ page }) => {
     await page.goto("/learning/java-concurrency/");
     const links = page.locator(".series-item:not([hidden]) .series-link");
-    await expect(links).toHaveCount(NOTES.filter((n) => n.url.includes("java-")).length);
+    await expect(links).toHaveCount(NOTES.filter((n) => n.topic === "Java concurrency").length);
     await expect(links.first()).toHaveText(/Threads in Java/);
     await expect(page.locator(".series-problems")).toBeHidden();
     await expect(page.locator(".plan-star, .plan-todo")).toHaveCount(0);
@@ -363,13 +363,39 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("learning hub features the series", async ({ page }) => {
     await page.goto("/learning/");
-    const card = page.locator(".series-feature");
+    await expect(page.locator(".series-feature")).toHaveCount(2);
+    const core = page.locator('.series-feature[href="/learning/core-java/"]');
+    await expect(core.locator(".sf-title")).toHaveText("Core Java");
+    const coreCount = NOTES.filter((n) => n.topic === "Core Java").length;
+    await expect(core.locator(".sf-meta")).toContainText(`${coreCount} chapter`);
+    const card = page.locator('.series-feature[href="/learning/java-concurrency/"]');
     await expect(card).toHaveAttribute("href", "/learning/java-concurrency/");
     await expect(card.locator(".sf-title")).toHaveText("Java concurrency");
     const chapters = NOTES.filter((n) => n.topic === "Java concurrency").length;
     await expect(card.locator(".sf-meta")).toContainText(`${chapters} chapters`);
     await card.click();
     await expect(page).toHaveURL(/\/learning\/java-concurrency\/$/);
+  });
+
+  test("Java section groups both series and is linked from the learning tabs", async ({ page }) => {
+    await page.goto("/learning/");
+    await page.locator('.learn-tabs a[href="/learning/java/"]').click();
+    await expect(page).toHaveURL(/\/learning\/java\/$/);
+    await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText("Java");
+    const cards = page.locator(".java-hub .series-feature");
+    await expect(cards).toHaveCount(2);
+    await expect(cards.nth(0)).toHaveAttribute("href", "/learning/core-java/");
+    await expect(cards.nth(1)).toHaveAttribute("href", "/learning/java-concurrency/");
+    await expect(cards.nth(0).locator(".sf-title")).toHaveText("Core Java");
+  });
+
+  test("Core Java series lists its chapters and links them in order", async ({ page }) => {
+    await page.goto("/learning/core-java/");
+    const links = page.locator(".series-item:not([hidden]) .series-link");
+    await expect(links).toHaveCount(NOTES.filter((n) => n.topic === "Core Java").length);
+    await expect(links.first()).toHaveText(/How Java runs/);
+    await links.first().click();
+    await expect(page.locator('.note-head .eyebrow a[href="/learning/core-java/"]')).toContainText("CORE JAVA · SERIES");
   });
 
   test("multiple-choice data is valid: 2-6 options and a correct answer", async () => {

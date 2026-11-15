@@ -1111,6 +1111,13 @@ h1, .section-title, .contact h2 { font-weight: 700; letter-spacing: -.035em; }
 .outcomes { border-top: 2px dashed var(--paper-grid-major); }
 .link-arrow { color: var(--text); font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: .9rem; }
 
+/* series cards */
+.series-feature { background: var(--card); border-color: var(--ink); }
+.series-feature:hover { transform: translate(-2px, -2px); border-color: var(--ink); box-shadow: 8px 8px 0 var(--c, var(--sh-1)); }
+.series-feature .tag { font-weight: 700; }
+.series-feature + .series-feature { --c: var(--sh-4); }
+.series-feature + .series-feature .tag, .series-feature + .series-feature .sf-go { color: var(--tag-4); }
+
 /* live demo */
 .rl { --c: var(--sh-3); }
 .rl-head { background: var(--ink); color: var(--on-ink); border-bottom: 2px solid var(--ink); }

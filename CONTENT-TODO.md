@@ -109,6 +109,13 @@ then rewrite them in your words.
 - [ ] `java-volatile-synchronized-atomic.md` — chapter 2, rewritten by AI to the full template
       (memory model and happens-before), with 6 common questions and 4 multiple-choice questions.
 
+### Core Java series (`_notes/how-java-runs.md`, `learning/core-java/`, `learning/java/`)
+- [ ] `how-java-runs.md` — chapter 1, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Behaviour checked on Java 21 (bytecode, class loaders,
+      class initialisation, JIT tiers); still check every fact and rewrite in your words.
+- [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
+- [ ] Intro text on the Java section page (`learning/java/index.html`).
+
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
 

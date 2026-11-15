@@ -54,18 +54,32 @@
     - { id: lld-rate-limiter, title: "LLD: rate limiter class" }
     - { id: lld-splitwise, title: "LLD: expense sharing" }
 
-- id: java
-  title: "Java"
-  summary: The language and its runtime.
+- id: core-java
+  title: "Core Java"
+  summary: The language and the runtime underneath it.
+  blurb: Read it in order, from how the JVM runs your code to records and garbage collection.
+  series: true
   topics:
-    - { id: collections-internals, title: "HashMap & collections internals" }
-    - { id: jvm-gc, title: "JVM memory & garbage collection" }
-    - { id: streams, title: "Streams & lambdas" }
-    - { id: modern-java, title: "Records, sealed types & pattern matching" }
+    - { id: jvm-basics, title: "How Java runs: JDK, JVM, bytecode & JIT", key: true }
+    - { id: types-wrappers, title: "Primitives, wrappers & autoboxing", key: true }
+    - { id: strings, title: "Strings, the string pool & StringBuilder", key: true }
+    - { id: classes-objects, title: "Classes, objects & initialisation order", key: true }
+    - { id: oop, title: "Inheritance, polymorphism & interfaces", key: true }
+    - { id: equals-hashcode, title: "equals, hashCode & comparing objects", key: true }
+    - { id: exceptions, title: "Exceptions & try-with-resources", key: true }
+    - { id: generics, title: "Generics, type erasure & wildcards", key: true }
+    - { id: collections, title: "The collections framework", key: true }
+    - { id: collections-internals, title: "HashMap & collections internals", key: true }
+    - { id: streams, title: "Lambdas, functional interfaces & streams", key: true }
+    - { id: optional, title: "Optional & handling null" }
+    - { id: modern-java, title: "Records, sealed types & pattern matching", key: true }
+    - { id: jvm-gc, title: "JVM memory & garbage collection", key: true }
+    - { id: reflection, title: "Reflection & annotations" }
 
 - id: java-concurrency
   title: "Java concurrency"
   summary: Threads, memory, locks and the tools built on them.
+  blurb: Read it in order, from threads to Spring.
   series: true
   topics:
     - { id: thread-basics, title: "Threads, lifecycle & interrupts", key: true }
