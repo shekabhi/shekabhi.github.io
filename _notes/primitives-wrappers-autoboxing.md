@@ -161,21 +161,55 @@ When one side of `==` or an arithmetic operator is a primitive, the wrapper is *
 
 ### Number traps
 
+Press **Run** to see what Java 21 prints for each line.
+
 ```java
-Integer.MAX_VALUE + 1          // -2147483648: int overflow wraps silently
-Math.addExact(Integer.MAX_VALUE, 1)   // throws ArithmeticException: integer overflow
-0.1 + 0.2                      // 0.30000000000000004
-new BigDecimal(0.1)            // 0.1000000000000000055511151231257827...
-new BigDecimal("0.1").add(new BigDecimal("0.2"))   // 0.3
-(byte) 200                     // -56: narrowing keeps the low 8 bits
-'a' + 1                        // 98: char arithmetic gives an int
--7 / 2                         // -3: integer division rounds toward zero
--7 % 2                         // -1: the remainder takes the sign of the dividend
-Math.floorMod(-7, 2)           // 1
-1 / 0                          // throws ArithmeticException: / by zero
-1 / 0.0                        // Infinity
-Double.NaN == Double.NaN       // false
+import java.math.BigDecimal;
+
+public class NumberTraps {
+    public static void main(String[] args) {
+        System.out.println("Integer.MAX_VALUE + 1 = " + (Integer.MAX_VALUE + 1));   // wraps silently
+        try {
+            Math.addExact(Integer.MAX_VALUE, 1);
+        } catch (ArithmeticException e) {
+            System.out.println("Math.addExact         -> " + e.getMessage());
+        }
+        System.out.println("0.1 + 0.2             = " + (0.1 + 0.2));
+        System.out.println("new BigDecimal(0.1)   = " + new BigDecimal(0.1));
+        System.out.println("BigDecimal 0.1 + 0.2  = " + new BigDecimal("0.1").add(new BigDecimal("0.2")));
+        System.out.println("(byte) 200            = " + (byte) 200);           // keeps the low 8 bits
+        System.out.println("'a' + 1               = " + ('a' + 1));            // char arithmetic gives an int
+        System.out.println("-7 / 2                = " + (-7 / 2));             // rounds toward zero
+        System.out.println("-7 % 2                = " + (-7 % 2));             // sign of the dividend
+        System.out.println("Math.floorMod(-7, 2)  = " + Math.floorMod(-7, 2));
+        System.out.println("1 / 0.0               = " + (1 / 0.0));
+        System.out.println("NaN == NaN            = " + (Double.NaN == Double.NaN));
+        try {
+            System.out.println(1 / 0);
+        } catch (ArithmeticException e) {
+            System.out.println("1 / 0                 -> " + e.getMessage());
+        }
+    }
+}
 ```
+{: .runnable}
+
+```text
+Integer.MAX_VALUE + 1 = -2147483648
+Math.addExact         -> integer overflow
+0.1 + 0.2             = 0.30000000000000004
+new BigDecimal(0.1)   = 0.1000000000000000055511151231257827021181583404541015625
+BigDecimal 0.1 + 0.2  = 0.3
+(byte) 200            = -56
+'a' + 1               = 98
+-7 / 2                = -3
+-7 % 2                = -1
+Math.floorMod(-7, 2)  = 1
+1 / 0.0               = Infinity
+NaN == NaN            = false
+1 / 0                 -> / by zero
+```
+{: .run-output}
 
 Widening isn't always safe either: `long` to `float` or `double`, and `int` to `float`, can lose
 precision. `(int) (float) 16_777_217` gives `16777216`.
@@ -186,24 +220,54 @@ Compound assignment casts for you: `byte b = 10; b += 300;` compiles and gives `
 ## In code: the hidden unboxing
 
 ```java
-Map<String, Integer> stock = new HashMap<>();
+import java.util.*;
 
-// 1. A ternary with a primitive branch has type int, so null is unboxed
-boolean known = true;
-Integer count = known ? stock.get("pens") : 0;   // NullPointerException
+public class HiddenUnboxing {
+    public static void main(String[] args) {
+        // 1. == on wrappers compares references; small values come from a cache
+        Integer a = 127, b = 127, c = 128, d = 128;
+        System.out.println("127 == 127: " + (a == b));
+        System.out.println("128 == 128: " + (c == d));
+        System.out.println("128 equals: " + c.equals(d));
 
-// Fix: keep both branches as Integer, or use getOrDefault
-Integer safe = stock.getOrDefault("pens", 0);
+        // 2. A ternary with a primitive branch has type int, so null is unboxed
+        Map<String, Integer> stock = new HashMap<>();
+        boolean known = true;
+        try {
+            Integer count = known ? stock.get("pens") : 0;
+            System.out.println("count: " + count);
+        } catch (NullPointerException e) {
+            System.out.println("ternary: NullPointerException");
+        }
+        System.out.println("getOrDefault: " + stock.getOrDefault("pens", 0));   // the fix
 
-// 2. Overload choice: remove(int index) wins over remove(Object)
-List<Integer> ids = new ArrayList<>(List.of(10, 20, 30));
-ids.remove(1);                     // removes index 1 → [10, 30]
-ids.remove(Integer.valueOf(10));   // removes the value 10 → [30]
+        // 3. Overload choice: remove(int index) wins over remove(Object)
+        List<Integer> ids = new ArrayList<>(List.of(10, 20, 30));
+        ids.remove(1);
+        System.out.println("remove(1): " + ids);
+        ids.remove(Integer.valueOf(10));
+        System.out.println("remove(Integer.valueOf(10)): " + ids);
 
-// 3. Different wrapper types are never equal
-Long.valueOf(1).equals(1);         // false: 1 is boxed to Integer
-Long.valueOf(1).equals(1L);        // true
+        // 4. Different wrapper types are never equal
+        System.out.println("Long.valueOf(1).equals(1):  " + Long.valueOf(1).equals(1));
+        System.out.println("Long.valueOf(1).equals(1L): " + Long.valueOf(1).equals(1L));
+    }
+}
 ```
+{: .runnable}
+
+```text
+127 == 127: true
+128 == 128: false
+128 equals: true
+ternary: NullPointerException
+getOrDefault: 0
+remove(1): [10, 30]
+remove(Integer.valueOf(10)): [30]
+Long.valueOf(1).equals(1):  false
+Long.valueOf(1).equals(1L): true
+```
+{: .run-output}
 
 ## Pitfalls
 

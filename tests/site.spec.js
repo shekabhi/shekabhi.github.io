@@ -404,6 +404,38 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator('.note-head .eyebrow a[href="/learning/core-java/"]')).toContainText("CORE JAVA · SERIES");
   });
 
+  test("Run shows the recorded Java output for runnable examples", async ({ page }) => {
+    await page.goto("/learning/strings-pool-stringbuilder/");
+    const block = page.locator("div.runnable").first();
+    const out = page.locator(".run-output").first();
+    await expect(out).toBeHidden();
+    const run = block.locator(".code-run");
+    await expect(run).toHaveText("▶ Run");
+    await expect(run).toHaveAttribute("aria-expanded", "false");
+    await run.click();
+    await expect(out).toBeVisible();
+    await expect(out).toContainText("recorded from a real run on Java 21");
+    await expect(out).toContainText("s1 == s3:          false");
+    await expect(run).toHaveText("↻ Run again");
+    await expect(run).toHaveAttribute("aria-expanded", "true");
+    // every runnable block on every note has an output and a Run button
+    for (const n of NOTES) {
+      await page.goto(n.url);
+      const blocks = await page.locator("div.runnable").count();
+      await expect(page.locator(".code-run"), n.url).toHaveCount(blocks);
+      await expect(page.locator(".run-output"), n.url).toHaveCount(blocks);
+    }
+  });
+
+  test("without JavaScript the recorded output is simply shown", async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto("/learning/primitives-wrappers-autoboxing/");
+    await expect(page.locator(".run-output").first()).toBeVisible();
+    await expect(page.locator(".code-run")).toHaveCount(0);
+    await ctx.close();
+  });
+
   test("multiple-choice data is valid: 2-6 options and a correct answer", async () => {
     const mcqs = QUIZ.filter((q) => q.options.length);
     expect(mcqs.length).toBeGreaterThan(3);

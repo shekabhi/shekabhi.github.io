@@ -202,14 +202,56 @@ A Java `char` is a 16-bit UTF-16 code unit, not always a whole character. Most e
 Since Java 18 the default charset is UTF-8 everywhere. Still, name the charset when converting
 between bytes and text (`StandardCharsets.UTF_8`) so the code doesn't depend on the platform.
 
-## In code: `split` surprises
+## In code: string surprises
 
 ```java
-"a.b.c".split(".")          // []: "." is a regex meaning "any character"
-"a.b.c".split("\\.")        // [a, b, c]
-"a,b,,".split(",")          // [a, b]: trailing empty strings are dropped
-"a,b,,".split(",", -1)      // [a, b, , ]: a negative limit keeps them
+import java.util.Arrays;
+
+public class StringSurprises {
+    public static void main(String[] args) {
+        // The pool: equal literals share one object; new String doesn't
+        String s1 = "hello", s2 = "hello", s3 = new String("hello");
+        System.out.println("s1 == s2:          " + (s1 == s2));
+        System.out.println("s1 == s3:          " + (s1 == s3));
+        System.out.println("s1.equals(s3):     " + s1.equals(s3));
+        System.out.println("s1 == s3.intern(): " + (s1 == s3.intern()));
+
+        // Compile-time constants are folded and pooled; run-time concatenation isn't
+        final String fa = "a";
+        String va = "a";
+        System.out.println("fa + \"b\" == \"ab\":  " + ((fa + "b") == "ab"));
+        System.out.println("va + \"b\" == \"ab\":  " + ((va + "b") == "ab"));
+
+        // split takes a regex, and drops trailing empty strings
+        System.out.println("\"a.b.c\".split(\".\"):     " + Arrays.toString("a.b.c".split(".")));
+        System.out.println("\"a.b.c\".split(\"\\\\.\"):   " + Arrays.toString("a.b.c".split("\\.")));
+        System.out.println("\"a,b,,\".split(\",\"):     " + Arrays.toString("a,b,,".split(",")));
+        System.out.println("\"a,b,,\".split(\",\", -1): " + Arrays.toString("a,b,,".split(",", -1)));
+
+        // length() counts UTF-16 code units, not characters
+        String emoji = "\uD83D\uDE00";   // 😀
+        System.out.println("emoji length:      " + emoji.length());
+        System.out.println("emoji code points: " + emoji.codePointCount(0, emoji.length()));
+    }
+}
 ```
+{: .runnable}
+
+```text
+s1 == s2:          true
+s1 == s3:          false
+s1.equals(s3):     true
+s1 == s3.intern(): true
+fa + "b" == "ab":  true
+va + "b" == "ab":  false
+"a.b.c".split("."):     []
+"a.b.c".split("\\."):   [a, b, c]
+"a,b,,".split(","):     [a, b]
+"a,b,,".split(",", -1): [a, b, , ]
+emoji length:      2
+emoji code points: 1
+```
+{: .run-output}
 
 ## Pitfalls
 

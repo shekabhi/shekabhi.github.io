@@ -244,6 +244,7 @@ public class Init {
     }
 }
 ```
+{: .runnable}
 
 ```text
 1. Config.class
@@ -252,6 +253,7 @@ public class Init {
   Config initialised
 4. again
 ```
+{: .run-output}
 
 `LIMIT` is a compile-time constant, so `javac` copied the value `5` into `main` and the class
 wasn't touched. `STARTED` needs the class, so reading it runs the static block, exactly once.

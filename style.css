@@ -625,6 +625,22 @@ body.term-open { overflow: hidden; }
   background: var(--bg-2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px;
 }
 .code-copy:hover { color: var(--accent); border-color: var(--accent); }
+/* Run button on runnable examples, beside Copy; the output panel opens under the code */
+.code-run {
+  position: absolute; top: 8px; right: 92px; z-index: 1; cursor: pointer;
+  font-size: .75rem; font-weight: 700; padding: 3px 12px; border-radius: 6px;
+  color: var(--on-ink); background: var(--ink); border: 1.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--sh-4); transition: transform .12s, box-shadow .12s;
+}
+.code-run:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--sh-4); }
+.code-run:disabled { opacity: .7; cursor: progress; }
+.note-body .is-runnable { margin-bottom: 0; }
+.run-output { margin-top: 10px; border-left: 4px solid var(--sh-4); border-radius: 0 var(--radius) var(--radius) 0; }
+.run-output .code-copy { display: none; }
+.note-body .run-output.has-copy pre { padding-top: 14px; }
+.run-output .run-label { font-size: .72rem; font-weight: 700; color: var(--tag-4); letter-spacing: .04em; margin: 0 0 -4px; padding: 8px 14px 0; }
+.run-output.show { animation: runReveal .45s ease both; }
+@keyframes runReveal { from { opacity: 0; transform: translateY(-6px); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
 .table-wrap { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 12px; }
 .note-body table { border-collapse: collapse; width: 100%; font-size: .9rem; }
 .note-body th, .note-body td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--prose); }

@@ -9,7 +9,8 @@
     "validate": "html-validate \"_site/**/*.html\"",
     "test": "playwright test",
     "check": "npm run build && npm run validate && npm test",
-    "og": "npm run build && node scripts/make-og.js"
+    "og": "npm run build && node scripts/make-og.js",
+    "examples": "python3 scripts/check-examples.py"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

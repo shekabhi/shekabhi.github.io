@@ -50,6 +50,25 @@ The mechanism, step by step. Use `### sub-headings`, tables and diagrams in `tex
 | --- | --- |
 | ... | ... |
 
+<!-- Runnable example (optional): a complete program with a `public class`, tagged {: .runnable},
+followed by a text block tagged {: .run-output}. Readers get a Run button that shows the output.
+Record the real output with `python3 scripts/check-examples.py --update`; CI fails if it drifts.
+
+```java
+public class Demo {
+    public static void main(String[] args) {
+        System.out.println("hello");
+    }
+}
+```
+{: .runnable}
+
+```text
+hello
+```
+{: .run-output}
+-->
+
 <!-- Every table column needs a header, including the first (an empty header cell fails the accessibility check). -->
 
 ## Further reading

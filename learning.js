@@ -73,6 +73,43 @@
       block.appendChild(btn);
     });
 
+    // Run buttons. A runnable example is a Java block followed by its recorded output, which
+    // scripts/check-examples.py verifies against a real Java 21 run (CI fails if they differ).
+    // Without JavaScript the output simply shows under the code.
+    body.querySelectorAll("div.runnable").forEach((block, i) => {
+      const out = block.nextElementSibling;
+      if (!out || !out.classList.contains("run-output")) return;
+      out.id = `run-output-${i + 1}`;
+      out.hidden = true;
+      const label = document.createElement("p");
+      label.className = "run-label mono";
+      label.textContent = "Output · recorded from a real run on Java 21";
+      out.prepend(label);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "code-run mono";
+      btn.textContent = "▶ Run";
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-controls", out.id);
+      btn.addEventListener("click", () => {
+        btn.disabled = true;
+        btn.textContent = "Running…";
+        out.hidden = true;
+        out.classList.remove("show");
+        setTimeout(() => {
+          out.hidden = false;
+          void out.offsetWidth;          // restart the reveal animation
+          out.classList.add("show");
+          btn.disabled = false;
+          btn.textContent = "↻ Run again";
+          btn.setAttribute("aria-expanded", "true");
+          if (out.getBoundingClientRect().top > innerHeight - 80) out.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }, 350);
+      });
+      block.classList.add("is-runnable");
+      block.appendChild(btn);
+    });
+
     // Code blocks that scroll sideways must be reachable by keyboard
     body.querySelectorAll("pre").forEach((pre) => pre.setAttribute("tabindex", "0"));
     body.querySelectorAll("table").forEach((t) => {
