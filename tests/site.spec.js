@@ -504,7 +504,7 @@ test.describe("note pages", () => {
 
 test.describe("theme switch", () => {
   const bg = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  const DARK = "rgb(11, 15, 23)", LIGHT = "rgb(247, 248, 251)";
+  const DARK = "rgb(14, 26, 54)", LIGHT = "rgb(247, 244, 236)";
   const themeBtn = async (page, testInfo) => {
     if (isMobile(testInfo)) await page.locator(".nav-toggle").click();
     return page.locator(".nav-links .theme-btn");
@@ -530,7 +530,7 @@ test.describe("theme switch", () => {
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await expect.poll(() => bg(page)).toBe(LIGHT);
     await expect(btn).toHaveAttribute("aria-label", /Light/);
-    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#f7f8fb");
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#f7f4ec");
 
     // remembered on reload and on other pages
     await page.goto("/learning/");
@@ -546,7 +546,7 @@ test.describe("theme switch", () => {
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
   });
 
-  for (const [theme, panel, log] of [["light", "rgb(255, 255, 255)", "rgb(245, 247, 250)"], ["dark", "rgb(13, 19, 32)", "rgb(7, 11, 17)"]]) {
+  for (const [theme, panel, log] of [["light", "rgb(255, 253, 248)", "rgb(247, 244, 236)"], ["dark", "rgb(20, 38, 79)", "rgb(14, 26, 54)"]]) {
     test(`live demo follows the ${theme} theme and stays readable`, async ({ page }) => {
       await page.goto("/");
       await page.evaluate((t) => window.portfolioTheme.set(t), theme);
@@ -562,7 +562,7 @@ test.describe("theme switch", () => {
     });
   }
 
-  for (const [theme, panel] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(13, 19, 32)"]]) {
+  for (const [theme, panel] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(20, 38, 79)"]]) {
     test(`diagrams and code blocks follow the ${theme} theme`, async ({ page }) => {
       const bgOf = (sel) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).backgroundColor);
       await page.goto("/work/fips.html");
@@ -580,7 +580,7 @@ test.describe("theme switch", () => {
     });
   }
 
-  for (const [theme, expected] of [["light", "rgb(255, 255, 255)"], ["dark", "rgb(7, 11, 17)"]]) {
+  for (const [theme, expected] of [["light", "rgb(255, 253, 248)"], ["dark", "rgb(11, 21, 48)"]]) {
     test(`terminal follows the ${theme} theme and stays readable`, async ({ page }) => {
       await page.goto("/");
       await page.evaluate((t) => window.portfolioTheme.set(t), theme);
@@ -607,7 +607,7 @@ test.describe("theme switch", () => {
     const input = page.locator(".term-prompt input");
     await input.fill("theme light");
     await input.press("Enter");
-    await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 255, 255)");
+    await expect.poll(() => page.locator(".term").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(255, 253, 248)");
   });
 
   test("works when the browser blocks storage", async ({ page }, testInfo) => {
