@@ -7,6 +7,7 @@ summary: How thread pools decide what to do with each task, how to size and conf
 catalog: thread-pools
 series: java-concurrency
 priority: high
+scripts: [/pool-sim.js]
 questions:
   - q: Why use a thread pool instead of creating a thread per task?
     a: >-
@@ -115,6 +116,14 @@ new ThreadPoolExecutor(
 <svg viewBox="0 0 760 260" role="img" aria-labelledby="tpe-title tpe-desc" data-routes='[{"pts": [[100, 10], [100, 72], [290, 72], [290, 212]], "cls": "hi", "w": 3}, {"pts": [[100, 10], [100, 72], [100, 212]], "cls": "ok", "w": 1}, {"pts": [[100, 10], [100, 72], [290, 72], [480, 72], [480, 212]], "cls": "ev", "w": 1}, {"pts": [[100, 10], [100, 72], [290, 72], [480, 72], [665, 72]], "cls": "bad", "w": 1}]'><title id="tpe-title">What happens when you submit a task to ThreadPoolExecutor</title><desc id="tpe-desc">First, if fewer than corePoolSize threads are running, a new core thread runs the task. Otherwise the task goes into the queue if it has room. If the queue is full and fewer than maximumPoolSize threads are running, a new extra thread runs it. Otherwise the task is rejected and the rejection handler decides what happens.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-line" d="M0 0 10 5 0 10z"/></marker><marker id="ah-hi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-hi" d="M0 0 10 5 0 10z"/></marker><marker id="ah-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-warn" d="M0 0 10 5 0 10z"/></marker></defs><rect class="d-box" x="20" y="40" width="160" height="64" rx="10"/><text class="d-text" x="100" y="77" text-anchor="middle">threads &lt; core?</text><rect class="d-box" x="210" y="40" width="160" height="64" rx="10"/><text class="d-text" x="290" y="77" text-anchor="middle">queue has room?</text><rect class="d-box" x="400" y="40" width="160" height="64" rx="10"/><text class="d-text" x="480" y="77" text-anchor="middle">threads &lt; max?</text><rect class="d-box warn" x="590" y="40" width="150" height="64" rx="10"/><text class="d-text" x="665" y="69" text-anchor="middle">Rejected</text><text class="d-sub" x="665" y="87" text-anchor="middle">handler decides</text><rect class="d-box" x="20" y="180" width="160" height="64" rx="10"/><text class="d-text" x="100" y="209" text-anchor="middle">New core thread</text><text class="d-sub" x="100" y="227" text-anchor="middle">runs the task</text><rect class="d-box hi" x="210" y="180" width="160" height="64" rx="10"/><text class="d-text" x="290" y="209" text-anchor="middle">Queued</text><text class="d-sub" x="290" y="227" text-anchor="middle">until a thread is free</text><rect class="d-box" x="400" y="180" width="160" height="64" rx="10"/><text class="d-text" x="480" y="209" text-anchor="middle">New extra thread</text><text class="d-sub" x="480" y="227" text-anchor="middle">runs the task</text><line class="d-line" x1="180" y1="72" x2="208" y2="72" marker-end="url(#ah)"/><text class="d-label" x="194" y="62" text-anchor="middle">no</text><line class="d-line" x1="370" y1="72" x2="398" y2="72" marker-end="url(#ah)"/><text class="d-label" x="384" y="62" text-anchor="middle">no</text><line class="d-line warn" x1="560" y1="72" x2="588" y2="72" marker-end="url(#ah-warn)"/><text class="d-label warn" x="574" y="62" text-anchor="middle">no</text><line class="d-line" x1="100" y1="104" x2="100" y2="178" marker-end="url(#ah)"/><text class="d-label" x="110" y="146" text-anchor="start">yes</text><line class="d-line hi" x1="290" y1="104" x2="290" y2="178" marker-end="url(#ah-hi)"/><text class="d-label hi" x="300" y="146" text-anchor="start">yes</text><line class="d-line" x1="480" y1="104" x2="480" y2="178" marker-end="url(#ah)"/><text class="d-label" x="490" y="146" text-anchor="start">yes</text></svg>
 <figcaption>The order surprises people: extra threads beyond the core size are only created when the queue is <strong>full</strong>. With an unbounded queue, the pool never grows past its core size.</figcaption>
 </figure>
+
+### Try it
+
+Set the pool up, then submit tasks. Each task runs for 2.5 seconds, and an extra thread that stays
+idle for 4 seconds retires. Try a **burst of 10** with the defaults, then switch the queue to
+**unbounded** and burst again: the pool never grows past its core size.
+
+<div class="pool-sim" data-pool-sim></div>
 
 ### Queues
 

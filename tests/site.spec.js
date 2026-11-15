@@ -997,6 +997,65 @@ test("404 page shows the missing address and links back into the site", async ({
   for (const href of ["/", "/learning/", "/about/"]) await expect(page.locator(`.notfound-links a[href="${href}"]`)).toHaveCount(1);
 });
 
+test.describe("thread pool simulator", () => {
+  const stat = (page, k) => page.locator(`.ps-stats [data-s="${k}"]`);
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.goto("/learning/java-thread-pools/");
+    await page.locator("[data-pool-sim]").scrollIntoViewIfNeeded();
+  });
+
+  test("defaults (core 2, max 4, queue 3): a burst of 10 → 4 threads, 3 queued, 3 rejected", async ({ page }) => {
+    await page.locator(".ps-burst").click();
+    await expect(stat(page, "threads")).toHaveText("4");
+    await expect(stat(page, "queued")).toHaveText("3");
+    await expect(stat(page, "rejected")).toHaveText("3");
+    await expect(page.locator(".ps-slot.busy")).toHaveCount(4);
+    // queued tasks are picked up as threads finish, then everything completes
+    await page.clock.runFor(2600);
+    await expect(stat(page, "queued")).toHaveText("0");
+    await page.clock.runFor(2600);
+    await expect(stat(page, "done")).toHaveText("7");
+    // idle extra threads retire after keep-alive; core threads stay
+    await page.clock.runFor(4500);
+    await expect(stat(page, "threads")).toHaveText("2");
+    await expect(stat(page, "largest")).toHaveText("4");
+  });
+
+  test("unbounded queue: the pool never grows past core size", async ({ page }) => {
+    await page.locator('select[data-k="queue"]').selectOption("-1");
+    await page.locator(".ps-burst").click();
+    await expect(stat(page, "threads")).toHaveText("2");
+    await expect(stat(page, "queued")).toHaveText("8");
+    await expect(stat(page, "rejected")).toHaveText("0");
+  });
+
+  test("CallerRunsPolicy and DiscardPolicy instead of rejection", async ({ page }) => {
+    await page.locator('select[data-k="policy"]').selectOption("caller");
+    await page.locator(".ps-burst").click();
+    await expect(stat(page, "caller")).toHaveText("3");
+    await expect(stat(page, "rejected")).toHaveText("0");
+    await page.locator('select[data-k="policy"]').selectOption("discard");
+    await page.locator(".ps-burst").click();
+    await expect(stat(page, "discarded")).toHaveText("3");
+  });
+
+  test("a new core thread starts even when another core thread is idle", async ({ page }) => {
+    await page.locator(".ps-one").click();
+    await page.clock.runFor(2600);                       // core-1 finishes and is idle
+    await page.locator(".ps-one").click();
+    await expect(stat(page, "threads")).toHaveText("2");
+    await expect(page.locator(".ps-log")).toContainText("new thread core-2");
+  });
+
+  test("max can't be set below core", async ({ page }) => {
+    await page.locator('select[data-k="core"]').selectOption("4");
+    await page.locator('select[data-k="max"]').selectOption("2");
+    await expect(page.locator('select[data-k="max"]')).toHaveValue("4");
+    await expect(page.locator(".ps-summary")).toContainText("core 4 · max 4");
+  });
+});
+
 test.describe("MCP flow", () => {
   test("steps forward and back through all 12 steps", async ({ page }) => {
     await page.goto("/work/mcp-server.html");
