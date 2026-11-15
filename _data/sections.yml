@@ -1,0 +1,25 @@
+# Learning sections, in tab order. Each area in _data/topics.yml names its section.
+# A section's tab appears once it has at least one note (Java is always shown).
+- id: java
+  title: Java
+  url: /learning/java/
+- id: system-design
+  title: System design
+  url: /learning/system-design/
+  heading: Designing systems that scale and stay up.
+  summary: System design, object-oriented design and distributed systems, with the trade-offs behind each choice.
+- id: databases
+  title: Databases
+  url: /learning/databases/
+  heading: Where the data lives, and how it stays correct.
+  summary: Indexes, transactions, locking, and when to reach for Redis or NoSQL.
+- id: security
+  title: Security
+  url: /learning/security/
+  heading: Secure by default.
+  summary: Identity, tokens, TLS and the common ways applications get broken.
+- id: ai
+  title: AI
+  url: /learning/ai/
+  heading: Building on large language models.
+  summary: How LLMs work, retrieval, agents and tool use, and keeping AI features safe.

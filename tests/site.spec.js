@@ -9,10 +9,9 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-// Java series chapters live in the Java section; the Notes and Topics tabs list everything else.
-const JAVA_TOPICS = ["Core Java", "Java concurrency"];
-const OTHER_NOTES = NOTES.filter((n) => !JAVA_TOPICS.includes(n.topic));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
+// Learning sections that have notes (AI has none yet, so its tab is hidden)
+const SECTIONS = ["/learning/java/", "/learning/system-design/", "/learning/databases/", "/learning/security/"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -165,27 +164,26 @@ test.describe("learning hub", () => {
   test.beforeEach(async ({ page }) => { await page.goto("/learning/"); });
   const cards = (page) => page.locator(".note-card:not([hidden])");
 
-  test("lists every note outside the Java section, newest first", async ({ page }) => {
-    await expect(cards(page)).toHaveCount(OTHER_NOTES.length);
-    for (const n of NOTES.filter((x) => JAVA_TOPICS.includes(x.topic))) await expect(page.locator(`.note-card a[href="${n.url}"]`)).toHaveCount(0);
+  test("lists every note, newest first, including every section's", async ({ page }) => {
+    await expect(cards(page)).toHaveCount(NOTES.length);
     const dates = await page.$$eval(".note-card time", (ts) => ts.map((t) => t.getAttribute("datetime")));
     expect(dates).toEqual([...dates].sort().reverse());
   });
 
   test("topic filter shows only that topic, and survives a reload", async ({ page }) => {
-    const topic = OTHER_NOTES[0].topic;
-    const expected = OTHER_NOTES.filter((n) => n.topic === topic).length;
+    const topic = NOTES[0].topic;
+    const expected = NOTES.filter((n) => n.topic === topic).length;
     await page.locator(".topic-filters button", { hasText: topic }).click();
     await expect(cards(page)).toHaveCount(expected);
     await expect(page).toHaveURL(/\?topic=/);
     await page.reload();
     await expect(cards(page)).toHaveCount(expected);
     await page.locator('.topic-filters button[data-topic="all"]').click();
-    await expect(cards(page)).toHaveCount(OTHER_NOTES.length);
+    await expect(cards(page)).toHaveCount(NOTES.length);
   });
 
   test("search narrows the list and shows a message when nothing matches", async ({ page }) => {
-    const word = OTHER_NOTES[0].title.split(" ")[0];
+    const word = NOTES[0].title.split(" ")[0];
     await page.locator(".learn-search").fill(word.toLowerCase());
     expect(await cards(page).count()).toBeGreaterThan(0);
     await page.locator(".learn-search").fill("zzzz-no-such-note");
@@ -208,28 +206,44 @@ test.describe("learning: topics, quiz and privacy", () => {
   const planOn = (page) => page.addInitScript(() => localStorage.setItem("study-plan", "on"));
   const visibleTopics = (page) => page.locator(".topic:not([hidden])");
 
-  test("tabs link Notes, Java, Topics and Quiz and mark the current one", async ({ page }) => {
-    for (const [url, label] of [["/learning/", "Notes"], ["/learning/java/", "Java"], ["/learning/topics/", "Topics"], ["/learning/quiz/", "Quiz"]]) {
+  test("tabs link Notes, each section and Quiz, and mark the current one", async ({ page }) => {
+    const tabs = [["/learning/", "Notes"], ["/learning/java/", "Java"], ["/learning/system-design/", "System design"], ["/learning/databases/", "Databases"], ["/learning/security/", "Security"], ["/learning/quiz/", "Quiz"]];
+    for (const [url, label] of [...tabs, ["/learning/core-java/", "Java"]]) {
       await page.goto(url);
       await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText(label);
-      await expect(page.locator(".learn-tabs a")).toHaveCount(4);
+      await expect(page.locator(".learn-tabs a")).toHaveText(tabs.map((t) => t[1]));
     }
   });
 
-  test("visitors see only topics that have notes, and no plan", async ({ page }) => {
+  test("each section lists only its own topics that have notes, and no plan", async ({ page }) => {
+    const expected = {
+      "/learning/system-design/": ["/learning/redis-sliding-window-rate-limiting/", "/learning/idempotency-keys/"],
+      "/learning/databases/": ["/learning/redis-sliding-window-rate-limiting/"],
+      "/learning/security/": ["/learning/oauth2-pkce-in-five-minutes/"],
+    };
+    for (const [url, notes] of Object.entries(expected)) {
+      await page.goto(url);
+      await expect(page.locator(".topic-notes a")).toHaveCount(notes.length);
+      for (const n of notes) await expect(page.locator(`.topic-notes a[href="${n}"]`)).toBeVisible();
+      await expect(page.locator(".plan-banner")).toBeHidden();
+      await expect(page.locator(".plan-todo")).toHaveCount(0);
+      await expect(page.locator(".section-empty")).toHaveCount(0);
+    }
+    // AI has no notes yet: no tab, and its page says so
+    await expect(page.locator('.learn-tabs a[href="/learning/ai/"]')).toHaveCount(0);
+    await page.goto("/learning/ai/");
+    await expect(page.locator(".section-empty")).toBeVisible();
+    await expect(visibleTopics(page)).toHaveCount(0);
+  });
+
+  test("the old Topics page is private: visitors are sent to Notes", async ({ page }) => {
     await page.goto("/learning/topics/");
-    await expect(visibleTopics(page)).toHaveCount(OTHER_NOTES.length);
-    await expect(page.locator(".plan-banner")).toBeHidden();
-    await expect(page.locator(".plan-todo")).toHaveCount(0);
-    expect(await page.content()).not.toContain("not started");
-    for (const n of OTHER_NOTES) await expect(page.locator(`.topic-notes a[href="${n.url}"]`)).toBeVisible();
-    // Java areas are not listed here; a card points to the Java section instead
-    await expect(page.locator("#area-core-java, #area-java-concurrency")).toHaveCount(0);
-    await expect(page.locator('.topic-areas .series-feature[href="/learning/java/"]')).toBeVisible();
+    await expect(page).toHaveURL(/\/learning\/$/);
+    await expect(page.locator("h1")).toContainText("Notes");
   });
 
   test("public learning pages show no personal plan or progress", async ({ page }) => {
-    for (const url of ["/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
+    for (const url of ["/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
       await page.goto(url);
       const text = await page.locator("body").innerText();
       expect(text, url).not.toMatch(/roadmap|revis|confidence|study plan|not started|my progress/i);
@@ -366,18 +380,6 @@ test.describe("learning: topics, quiz and privacy", () => {
     }
   });
 
-  test("learning hub points to the Java section with one card", async ({ page }) => {
-    await page.goto("/learning/");
-    const card = page.locator(".series-feature");
-    await expect(card).toHaveCount(1);
-    await expect(card).toHaveAttribute("href", "/learning/java/");
-    await expect(card.locator(".sf-sum")).toContainText("Core Java and Java concurrency");
-    const chapters = NOTES.filter((n) => n.topic === "Core Java" || n.topic === "Java concurrency").length;
-    await expect(card.locator(".sf-meta")).toHaveText(`${chapters} chapters`);
-    await card.click();
-    await expect(page).toHaveURL(/\/learning\/java\/$/);
-  });
-
   test("Java section groups both series and is linked from the learning tabs", async ({ page }) => {
     await page.goto("/learning/");
     await page.locator('.learn-tabs a[href="/learning/java/"]').click();
@@ -490,20 +492,22 @@ test.describe("learning: topics, quiz and privacy", () => {
 
   test("private plan view: full catalogue and own quiz results, only after 'plan on'", async ({ page }) => {
     await planOn(page);
-    const slug = QUIZ.find((q) => !JAVA_TOPICS.includes(q.topic)).note;
+    const slug = QUIZ[0].note;
     await page.goto(`/learning/quiz/?note=${slug}&type=card`);
     await page.locator(".quiz-reveal").click();
     await page.locator(".quiz-got").click();
     await page.goto("/learning/topics/");
     await expect(page.locator(".plan-banner")).toBeVisible();
-    expect(await visibleTopics(page).count()).toBeGreaterThan(OTHER_NOTES.length + 30);
+    expect(await visibleTopics(page).count()).toBeGreaterThan(NOTES.length + 60);
+    // the plan page holds the whole catalogue, including areas without a section
+    await expect(page.locator("#area-dsa, #area-people, #area-ai")).toHaveCount(3);
     await expect(page.locator(".plan-area-stat").first()).toContainText("topics have notes");
     expect(await page.locator(".plan-todo").count()).toBeGreaterThan(30);
     await expect(page.locator(`.plan-stat[data-note="${slug}"]`)).toHaveText(/quiz 1\/\d+/);
   });
 
   test("terminal plan command is hidden from help and toggles the plan view", async ({ page }) => {
-    await page.goto("/learning/topics/");
+    await page.goto("/learning/");
     await page.locator(".term-btn").first().evaluate((b) => b.click());
     const input = page.locator(".term-prompt input");
     await input.fill("help");

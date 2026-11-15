@@ -1,0 +1,21 @@
+---
+layout: base
+scripts: [/topics.js]
+---
+{%- assign sec = site.data.sections | where: "id", page.section | first -%}
+{%- include section-count.html section=sec.id -%}{%- assign this_section_notes = section_notes -%}
+    <section class="container learn-hero">
+      <p class="eyebrow">Learning · {{ sec.title }}</p>
+      <h1>{{ sec.heading }}</h1>
+      <p class="summary">{{ sec.summary }}</p>
+    </section>
+{% include learning-tabs.html %}
+    <p class="plan-banner container mono" hidden>
+      Private plan view. Only you see this, in this browser. Type <code>plan off</code> in the terminal to hide it.
+    </p>
+    <section class="container topic-areas" aria-label="{{ sec.title }} topics">
+      {%- if this_section_notes == 0 %}
+      <p class="section-empty muted">The first notes for this section are on the way.</p>
+      {%- endif %}
+{% include topic-areas.html section=sec.id %}
+    </section>

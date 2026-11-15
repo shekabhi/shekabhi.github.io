@@ -1,6 +1,8 @@
 # Topic catalogue: groups the learning notes by area.
 # A note belongs to a topic by naming its id in front matter, e.g.  catalog: rate-limiting
-# The Topics page shows only topics that have notes.
+# `section` puts an area on a Learning section page (see _data/sections.yml).
+# Areas without a section appear only in the private plan view (/learning/topics/ after `plan on`).
+# Visitors see only topics that have notes.
 
 - id: dsa
   title: Data structures & algorithms
@@ -23,6 +25,7 @@
     - { id: intervals, title: "Intervals" }
 
 - id: system-design
+  section: system-design
   title: System design
   summary: Designing services that scale and stay up.
   topics:
@@ -42,6 +45,7 @@
     - { id: design-payments, title: "Design: payment system" }
 
 - id: lld
+  section: system-design
   title: Low-level design & OOP
   summary: Clean object models and the patterns behind them.
   topics:
@@ -55,6 +59,7 @@
     - { id: lld-splitwise, title: "LLD: expense sharing" }
 
 - id: core-java
+  section: java
   title: "Core Java"
   summary: The language and the runtime underneath it.
   blurb: Read it in order, from how the JVM runs your code to records and garbage collection.
@@ -77,6 +82,7 @@
     - { id: reflection, title: "Reflection & annotations" }
 
 - id: java-concurrency
+  section: java
   title: "Java concurrency"
   summary: Threads, memory, locks and the tools built on them.
   blurb: Read it in order, from threads to Spring.
@@ -108,6 +114,7 @@
     - { id: problem-rate-limiter, title: "Problem: thread-safe rate limiter", problem: true }
 
 - id: spring
+  section: java
   title: Spring Boot
   summary: How the framework actually works under the annotations.
   topics:
@@ -120,6 +127,7 @@
     - { id: spring-observability, title: "Actuator & observability" }
 
 - id: databases
+  section: databases
   title: Databases
   summary: Indexes, transactions and when to reach for NoSQL.
   topics:
@@ -130,6 +138,7 @@
     - { id: redis-structures, title: "Redis data structures" }
 
 - id: distributed
+  section: system-design
   title: Distributed systems
   summary: What changes when there's more than one machine.
   topics:
@@ -141,6 +150,7 @@
     - { id: clocks, title: "Clocks & ordering" }
 
 - id: security
+  section: security
   title: Security
   summary: Identity, crypto and secure defaults.
   topics:
@@ -149,6 +159,18 @@
     - { id: tls, title: "TLS basics" }
     - { id: owasp, title: "OWASP Top 10" }
     - { id: secrets, title: "Secrets management" }
+
+- id: ai
+  section: ai
+  title: AI engineering
+  summary: Building on large language models, safely.
+  topics:
+    - { id: llm-basics, title: "How LLMs work: tokens, context and sampling" }
+    - { id: rag, title: "Retrieval-augmented generation (RAG)" }
+    - { id: agents-tools, title: "Agents & tool use" }
+    - { id: mcp, title: "MCP: letting AI agents call your APIs" }
+    - { id: llm-evals, title: "Evaluating LLM apps" }
+    - { id: ai-security, title: "AI security: prompt injection & data leaks" }
 
 - id: people
   title: Working with people

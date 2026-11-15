@@ -25,7 +25,8 @@ plain HTML, CSS and JavaScript, with no build step.
 - `learning/`: the Learning hub page and a JSON feed of notes
 - `_layouts/`: page templates for the Learning section
 - `learning.js`: topic filters, search, table of contents and copy buttons
-- `learning/topics/` + `topics.js`: notes grouped by area (`_data/topics.yml` is the catalogue)
+- `learning/java/`, `learning/system-design/`, `learning/databases/`, `learning/security/`, `learning/ai/`: Learning sections (`_data/sections.yml`; each area in `_data/topics.yml` names its section)
+- `learning/topics/` + `topics.js`: private plan page with the whole catalogue (visitors are sent to `/learning/`)
 - `learning/quiz/` + `quiz.js`: quiz built from each note's `questions`
 - `tests/`: browser tests that run on every push
 - `CONTENT-TODO.md`: **AI-drafted text that still needs your review** (marked `data-draft` in the HTML)

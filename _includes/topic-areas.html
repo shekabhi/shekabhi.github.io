@@ -1,0 +1,35 @@
+{%- comment -%}
+  Lists topic areas as cards, each with its topics and the notes on them.
+  include.section: only areas of that section (series areas are skipped: they have their own pages).
+  No section given: every area (the private plan page).
+  Topics and areas without notes are marked plan-only and hidden from visitors.
+{%- endcomment -%}
+      {%- for area in site.data.topics %}
+      {%- if include.section %}{% if area.section != include.section or area.series %}{% continue %}{% endif %}{% endif %}
+      {%- assign area_count = 0 %}
+      {%- for t in area.topics %}{% assign tn = site.notes | where: "catalog", t.id %}{% assign tx = site.notes | where_exp: "n", "n.also_in contains t.id" %}{% assign area_count = area_count | plus: tn.size | plus: tx.size %}{% endfor %}
+      <section class="topic-area card{% if area_count == 0 %} plan-only{% endif %}" id="area-{{ area.id }}"{% if area_count == 0 %} hidden{% endif %} data-area="{{ area.id }}">
+        <h2>{{ area.title | escape }}</h2>
+        <p class="muted">{{ area.summary | escape }}</p>
+        {%- if area.series and area_count > 0 %}
+        <p class="series-cta"><a href="/learning/{{ area.id }}/">Read it as a series</a></p>
+        {%- endif %}
+        <ul class="topic-list">
+          {%- for t in area.topics %}
+          {%- assign tn = site.notes | where: "catalog", t.id %}
+          {%- assign tx = site.notes | where_exp: "n", "n.also_in contains t.id" %}
+          {%- assign tnotes = tn | concat: tx | sort: "date" %}
+          <li class="topic{% if tnotes.size == 0 %} plan-only{% endif %}" data-topic-id="{{ t.id }}" data-key="{{ t.key | default: false }}"{% if tnotes.size == 0 %} hidden{% endif %}>
+            <span class="topic-name">{{ t.title | escape }}</span>
+            {%- if tnotes.size > 0 %}
+            <ul class="topic-notes">
+              {%- for n in tnotes %}
+              <li><a href="{{ n.url }}" data-note="{{ n.slug }}">{{ n.title }}</a>{% if n.questions %} <span class="plan-stat mono" data-note="{{ n.slug }}" data-questions="{{ n.questions.size }}" hidden></span>{% endif %}</li>
+              {%- endfor %}
+            </ul>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- endfor %}

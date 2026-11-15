@@ -7,6 +7,10 @@
   {%- assign desc = page.summary | default: page.description %}
   <meta name="description" content="{{ desc | strip_html | escape }}" />
   <link rel="canonical" href="{{ page.url | absolute_url }}" />
+  {%- if page.private %}
+  <meta name="robots" content="noindex" />
+  <script>try { if (localStorage.getItem("study-plan") !== "on") location.replace("/learning/"); } catch (e) { location.replace("/learning/"); }</script>
+  {%- endif %}
   <meta name="author" content="Abhishek Shukla" />
   <meta name="theme-color" content="#0c0d10" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

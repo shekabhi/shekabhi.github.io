@@ -1,0 +1,5 @@
+{%- comment -%} Sets section_notes to the number of notes in include.section (areas + series), counting a note once per topic it's listed under. {%- endcomment -%}
+{%- assign section_notes = 0 -%}
+{%- for area in site.data.topics -%}{%- if area.section == include.section -%}
+{%- for t in area.topics -%}{%- assign tn = site.notes | where: "catalog", t.id -%}{%- assign tx = site.notes | where_exp: "n", "n.also_in contains t.id" -%}{%- assign section_notes = section_notes | plus: tn.size | plus: tx.size -%}{%- endfor -%}
+{%- endif -%}{%- endfor -%}

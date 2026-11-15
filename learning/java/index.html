@@ -1,6 +1,8 @@
 ---
 layout: base
 title: Java
+section: java
+scripts: [/topics.js]
 description: Abhishek Shukla's Java notes in one place, in two series. Core Java covers the language and the JVM; Java concurrency covers threads, locks, pools and async code.
 ---
 {%- assign series_ids = "core-java,java-concurrency" | split: "," -%}
@@ -40,4 +42,10 @@ description: Abhishek Shukla's Java notes in one place, in two series. Core Java
           {%- endfor %}
         </div>
       </div>
+    </section>
+    <p class="plan-banner container mono" hidden>
+      Private plan view. Only you see this, in this browser. Type <code>plan off</code> in the terminal to hide it.
+    </p>
+    <section class="container topic-areas" aria-label="More Java topics">
+{% include topic-areas.html section="java" %}
     </section>

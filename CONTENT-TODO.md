@@ -116,6 +116,11 @@ then rewrite them in your words.
 - [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
+### Learning sections (`_data/sections.yml`)
+- [ ] Headings and summaries for System design, Databases, Security and AI, drafted by AI.
+- [ ] The new **AI engineering** topic list in `_data/topics.yml` (6 topics). The AI tab
+      appears automatically once the first AI note exists.
+
 ### Topic catalogue (`_data/topics.yml`)
 A starting list of areas and topics. Add, remove or rename freely.
 

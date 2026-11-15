@@ -1,6 +1,17 @@
     <nav class="learn-tabs container" aria-label="Learning sections">
       <a href="/learning/"{% if page.url == '/learning/' %} aria-current="page"{% endif %}>Notes</a>
-      <a href="/learning/java/"{% if page.url == '/learning/java/' %} aria-current="page"{% endif %}>Java</a>
-      <a href="/learning/topics/"{% if page.url == '/learning/topics/' %} aria-current="page"{% endif %}>Topics</a>
+      {%- for s in site.data.sections %}
+      {%- include section-count.html section=s.id %}
+      {%- if s.id == "java" or section_notes > 0 %}
+      <a href="{{ s.url }}"{% if page.url == s.url or page.section == s.id %} aria-current="page"{% endif %}>{{ s.title }}</a>
+      {%- endif %}
+      {%- endfor %}
       <a href="/learning/quiz/"{% if page.url == '/learning/quiz/' %} aria-current="page"{% endif %}>Quiz</a>
     </nav>
+    <script>
+      // On narrow screens the tab row scrolls: bring the current tab into view.
+      (() => {
+        const nav = document.currentScript.previousElementSibling, cur = nav.querySelector('[aria-current="page"]');
+        if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2;
+      })();
+    </script>

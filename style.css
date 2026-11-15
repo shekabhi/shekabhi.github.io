@@ -901,8 +901,9 @@ body { transition: background-color .25s, color .25s; }
 .theme-switching, .theme-switching * { transition: none !important; }
 
 /* ===== learning: tabs, topics, quiz, test yourself ===== */
-.learn-tabs { display: flex; gap: 6px; margin-top: 26px; border-bottom: 1px solid var(--border); }
-.learn-tabs a { padding: 10px 16px; color: var(--muted); font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .2s, border-color .2s; }
+.learn-tabs { display: flex; gap: 6px; margin-top: 26px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.learn-tabs::-webkit-scrollbar { display: none; }
+.learn-tabs a { flex-shrink: 0; white-space: nowrap; padding: 10px 16px; color: var(--muted); font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: 0; transition: color .2s, border-color .2s; }
 .learn-tabs a:hover { color: var(--text); }
 .learn-tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
 
@@ -1122,7 +1123,8 @@ h1, .section-title, .contact h2 { font-weight: 700; letter-spacing: -.035em; }
 .java-practice .tag { font: 700 .72rem "JetBrains Mono", monospace; letter-spacing: .08em; color: var(--tag-3); }
 .java-practice h2 { font-size: 1.5rem; margin: 6px 0 4px; }
 .java-practice .muted { margin-bottom: 18px; }
-.topic-areas > .series-feature { grid-column: 1 / -1; margin: 0 0 12px; }
+.section-empty { grid-column: 1 / -1; font-size: 1.05rem; }
+.topic-areas:not(:has(> :not([hidden]))) { padding: 0; }
 
 /* live demo */
 .rl { --c: var(--sh-3); }

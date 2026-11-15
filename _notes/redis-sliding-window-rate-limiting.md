@@ -6,6 +6,7 @@ tags: [redis, rate-limiting, lua, distributed-systems]
 summary: Three Redis commands and one Lua script give every server the same answer to "is this user over the limit?"
 reviewed: false
 catalog: rate-limiting
+also_in: [redis-structures]   # also listed under Databases
 questions:
   - q: Why use a sorted set instead of a simple counter for a sliding window?
     a: >-

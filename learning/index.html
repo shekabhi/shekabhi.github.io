@@ -1,12 +1,10 @@
 ---
 layout: base
 title: Learning notes
-description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redis, Kafka, system design, security and AWS. Short, practical, with code.
+description: Every note Abhishek Shukla writes while learning Java, Spring Boot, Redis, Kafka, system design, security and AWS. Short, practical, with code.
 ---
-{%- comment -%} Java series chapters live in the Java section (/learning/java/), not in this list {%- endcomment -%}
-{%- assign standalone = site.notes | where_exp: "n", "n.series == nil" -%}
-{%- assign notes = standalone | sort: "date" | reverse -%}
-{%- assign groups = standalone | group_by: "topic" | sort: "name" -%}
+{%- assign notes = site.notes | sort: "date" | reverse -%}
+{%- assign groups = site.notes | group_by: "topic" | sort: "name" -%}
     <section class="container learn-hero">
       <p class="eyebrow">Learning</p>
       <h1>Notes I write so I never learn the same thing twice.</h1>
@@ -19,23 +17,6 @@ description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redi
 
 {% include learning-tabs.html %}
     <section class="container learn-main" aria-label="Notes">
-      {%- assign series_count = 0 %}{% assign chapter_count = 0 %}{% assign series_names = "" %}
-      {%- for area in site.data.topics %}{% if area.series %}
-      {%- assign chapters = site.notes | where: "series", area.id %}
-      {%- if chapters.size > 0 %}
-      {%- assign series_count = series_count | plus: 1 %}{% assign chapter_count = chapter_count | plus: chapters.size %}
-      {%- if series_names != "" %}{% assign series_names = series_names | append: " and " %}{% endif %}{% assign series_names = series_names | append: area.title %}
-      {%- endif %}
-      {%- endif %}{% endfor %}
-      {%- if series_count > 0 %}
-      <a class="series-feature card" href="/learning/java/">
-        <span class="tag">JAVA · {{ series_count }} SERIES</span>
-        <span class="sf-title">Java, from the JVM up</span>
-        <span class="sf-sum">{{ series_names | escape }}, each meant to be read in order.</span>
-        <span class="sf-meta mono">{{ chapter_count }} chapters</span>
-        <span class="sf-go">Open the Java section</span>
-      </a>
-      {%- endif %}
       <div class="learn-controls">
         <div class="topic-filters" role="group" aria-label="Filter by topic">
           <button type="button" data-topic="all" aria-pressed="true">All <span>{{ notes.size }}</span></button>
