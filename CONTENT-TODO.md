@@ -113,6 +113,12 @@ then rewrite them in your words.
 - [ ] `how-java-runs.md` — chapter 1, drafted by AI with 6 common questions and
       4 multiple-choice questions. Behaviour checked on Java 21 (bytecode, class loaders,
       class initialisation, JIT tiers); still check every fact and rewrite in your words.
+- [ ] `primitives-wrappers-autoboxing.md` — chapter 2, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Every behaviour (wrapper cache, unboxing NPEs, overflow,
+      casts, `remove(int)`) checked on Java 21.
+- [ ] `strings-pool-stringbuilder.md` — chapter 3, drafted by AI with 6 common questions and
+      4 multiple-choice questions. String pool, constant folding, `split`, `strip`, text blocks
+      and `invokedynamic` concatenation checked on Java 21.
 - [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
