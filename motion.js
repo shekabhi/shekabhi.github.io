@@ -78,32 +78,50 @@
   }
 
   // ---------- 01. decrypting headline ----------
+  // The real headline text stays in the page the whole time (for search engines, link
+  // previews and screen readers). It's made invisible, and a decorative layer on top shows
+  // the scramble through CSS `content`, which isn't part of the page text.
   if (heading && !reduce) {
     const GLYPHS = "!<>-_/[]{}=+*^?#01";
-    const nodes = [];
-    const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
-    while (walker.nextNode()) if (walker.currentNode.textContent.trim()) nodes.push({ node: walker.currentNode, text: walker.currentNode.textContent });
-    const full = nodes.map((n) => n.text).join("");
+    const real = document.createElement("span");
+    real.className = "h-real";
+    while (heading.firstChild) real.appendChild(heading.firstChild);
+    const fx = document.createElement("span");
+    fx.className = "h-fx";
+    fx.setAttribute("aria-hidden", "true");
+    const parts = [];
+    real.childNodes.forEach((n) => {
+      if (n.nodeType === Node.TEXT_NODE && !n.textContent.trim()) return;
+      const el = n.nodeType === Node.TEXT_NODE ? document.createElement("span") : n.cloneNode(false);
+      el.classList.add("fx-t");
+      fx.appendChild(el);
+      parts.push({ el, text: n.textContent });
+    });
+    heading.append(real, fx);
+    heading.classList.add("scrambling");
+
+    const full = parts.map((x) => x.text).join("");
     let raf, done = false;
     const restore = () => {
+      if (done) return;
       done = true;
       cancelAnimationFrame(raf);
-      nodes.forEach((n) => (n.node.textContent = n.text));
-      heading.removeAttribute("aria-label");
+      fx.remove();
+      while (real.firstChild) heading.insertBefore(real.firstChild, real);
+      real.remove();
+      heading.classList.remove("scrambling");
     };
-    heading.setAttribute("aria-label", heading.textContent.trim());
-    // show scrambled text straight away so the real headline doesn't flash first
     let offset = 0;
-    const settle = nodes.map((n) => { const s = offset; offset += n.text.length; return s; });
+    const starts = parts.map((x) => { const at = offset; offset += x.text.length; return at; });
     const frameAt = (pos) => 8 + (pos / full.length) * 42;
     const draw = (frame) => {
-      nodes.forEach((n, k) => {
+      parts.forEach((x, k) => {
         let out = "";
-        for (let i = 0; i < n.text.length; i++) {
-          const ch = n.text[i];
-          out += ch === " " || frame >= frameAt(settle[k] + i) ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        for (let i = 0; i < x.text.length; i++) {
+          const ch = x.text[i];
+          out += ch === " " || frame >= frameAt(starts[k] + i) ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
         }
-        n.node.textContent = out;
+        x.el.dataset.t = out;
       });
     };
     draw(0);

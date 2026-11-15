@@ -17,6 +17,21 @@ description: Notes Abhishek Shukla writes while learning Java, Spring Boot, Redi
 
 {% include learning-tabs.html %}
     <section class="container learn-main" aria-label="Notes">
+      {%- for area in site.data.topics %}{% if area.series %}
+      {%- assign chapters = site.notes | where: "series", area.id %}
+      {%- if chapters.size > 0 %}
+      {%- assign qcount = 0 %}{% for n in chapters %}{% assign qcount = qcount | plus: n.questions.size %}{% endfor %}
+      {%- assign first_topic = area.topics | first %}
+      {%- assign first_note = site.notes | where: "catalog", first_topic.id | first %}
+      <a class="series-feature card" href="/learning/{{ area.id }}/">
+        <span class="tag">SERIES</span>
+        <span class="sf-title">{{ area.title | escape }}</span>
+        <span class="sf-sum">{{ area.summary | escape }} Read it in order, from threads to Spring.</span>
+        <span class="sf-meta mono">{{ chapters.size }} chapters · {{ qcount }} questions</span>
+        <span class="sf-go">Start the series</span>
+      </a>
+      {%- endif %}
+      {%- endif %}{% endfor %}
       <div class="learn-controls">
         <div class="topic-filters" role="group" aria-label="Filter by topic">
           <button type="button" data-topic="all" aria-pressed="true">All <span>{{ notes.size }}</span></button>

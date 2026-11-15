@@ -9,7 +9,7 @@ const path = require("path");
 const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 // Notes come from the Jekyll build, so new notes are tested automatically.
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/topics/", "/learning/quiz/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -348,6 +348,28 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator(".series-item:not([hidden])")).toHaveCount(24);
     await expect(page.locator(".series-problems")).toBeVisible();
     expect(await page.locator(".plan-star").count()).toBeGreaterThan(15);
+  });
+
+  test("every note has its own link-preview image (run `npm run og` after adding a note)", async ({ page, request }) => {
+    for (const n of NOTES) {
+      await page.goto(n.url);
+      const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+      const slug = n.url.replace(/^\/learning\/|\/$/g, "");
+      expect(og, n.url).toBe(`https://shekabhi.github.io/og/${slug}.jpg`);
+      const res = await request.get(`/og/${slug}.jpg`);
+      expect(res.status(), `og/${slug}.jpg exists`).toBe(200);
+    }
+  });
+
+  test("learning hub features the series", async ({ page }) => {
+    await page.goto("/learning/");
+    const card = page.locator(".series-feature");
+    await expect(card).toHaveAttribute("href", "/learning/java-concurrency/");
+    await expect(card.locator(".sf-title")).toHaveText("Java concurrency");
+    const chapters = NOTES.filter((n) => n.topic === "Java concurrency").length;
+    await expect(card.locator(".sf-meta")).toContainText(`${chapters} chapters`);
+    await card.click();
+    await expect(page).toHaveURL(/\/learning\/java-concurrency\/$/);
   });
 
   test("multiple-choice data is valid: 2-6 options and a correct answer", async () => {
@@ -821,11 +843,26 @@ test.describe("motion", () => {
   const HEADLINE = "I build backends that survive production.";
   const desktopOnly = (testInfo) => test.skip(isMobile(testInfo), "needs a mouse");
 
-  test("01 headline decrypts, then reads normally", async ({ page }) => {
+  test("01 headline decrypts on a decorative layer; the real text never leaves the page", async ({ page }) => {
     await page.goto("/");
     const h1 = page.locator(".hero h1");
-    await expect(h1).toHaveText(HEADLINE, { timeout: 4000 });
-    await expect(h1).not.toHaveAttribute("aria-label", /./);
+    // while the effect runs: scramble layer present, but the page text is the real headline
+    await expect(h1.locator(".h-fx")).toHaveCount(1);
+    expect((await h1.evaluate((el) => el.textContent)).replace(/\s+/g, " ").trim()).toBe(HEADLINE);
+    expect((await h1.evaluate((el) => el.innerText)).replace(/\s+/g, " ").trim()).toBe(HEADLINE);
+    // afterwards: the layer is gone and the heading is back to plain markup
+    await expect(h1.locator(".h-fx")).toHaveCount(0, { timeout: 4000 });
+    await expect(h1.locator(".h-real")).toHaveCount(0);
+    await expect(h1).toHaveText(HEADLINE);
+    await expect(h1.locator(".grad")).toHaveText("survive production.");
+  });
+
+  test("phone: the intro starts below the header", async ({ page }, testInfo) => {
+    test.skip(!isMobile(testInfo), "phone layout");
+    await page.goto("/");
+    const nav = await page.locator(".nav").boundingBox();
+    const first = await page.locator(".hero .eyebrow").boundingBox();
+    expect(first.y).toBeGreaterThanOrEqual(nav.y + nav.height);
   });
 
   test("02 network background is drawn behind the intro", async ({ page }) => {
@@ -951,6 +988,13 @@ test.describe("motion", () => {
     expect(await page.evaluate(() => window.__vt)).toBe(0);
     await ctx.close();
   });
+});
+
+test("404 page shows the missing address and links back into the site", async ({ page }) => {
+  await page.goto("/404.html");
+  await expect(page.locator("h1")).toHaveText("That page doesn't exist.");
+  await expect(page.locator(".nf-path")).toHaveText("/404.html");
+  for (const href of ["/", "/learning/", "/about/"]) await expect(page.locator(`.notfound-links a[href="${href}"]`)).toHaveCount(1);
 });
 
 test.describe("MCP flow", () => {

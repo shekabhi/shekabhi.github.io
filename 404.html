@@ -1,0 +1,21 @@
+---
+layout: base
+title: Page not found
+description: This page doesn't exist. Here's where to go instead.
+permalink: /404.html
+sitemap: false
+---
+    <section class="container notfound">
+      <p class="eyebrow">404</p>
+      <h1>That page doesn't exist.</h1>
+      <p class="summary">The link may be old, or the address may have a typo.</p>
+      <pre class="notfound-term mono" aria-hidden="true"><span class="ps">~$</span> cd <span class="nf-path">/this/page</span>
+cd: no such file or directory</pre>
+      <ul class="notfound-links">
+        <li><a href="/">Home</a><span>the live demo and case studies</span></li>
+        <li><a href="/learning/">Learning</a><span>notes, topics and the quiz</span></li>
+        <li><a href="/learning/java-concurrency/">Java concurrency</a><span>the series, chapter by chapter</span></li>
+        <li><a href="/about/">About</a><span>who I am and what I've worked on</span></li>
+      </ul>
+    </section>
+    <script>document.querySelector(".nf-path").textContent = location.pathname;</script>

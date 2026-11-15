@@ -37,7 +37,8 @@ plain HTML, CSS and JavaScript, with no build step.
    `https://shekabhi.github.io/learning/kafka-consumer-groups/`.
 2. Fill in the details at the top (`title`, `topic`, `date`, `tags`, `summary`)
    and write the note in Markdown below them.
-3. Commit and push. GitHub builds the page and adds it to the Learning hub in about a minute.
+3. Run `npm run og` to create the note's link-preview image (`og/<note>.jpg`). A test fails if it's missing.
+4. Commit and push. GitHub builds the page and adds it to the Learning hub in about a minute.
 
 You can do this on github.com too: open the `_notes` folder, click **Add file → Create new file**.
 
