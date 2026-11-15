@@ -361,20 +361,16 @@ test.describe("learning: topics, quiz and privacy", () => {
     }
   });
 
-  test("learning hub features the series", async ({ page }) => {
+  test("learning hub points to the Java section with one card", async ({ page }) => {
     await page.goto("/learning/");
-    await expect(page.locator(".series-feature")).toHaveCount(2);
-    const core = page.locator('.series-feature[href="/learning/core-java/"]');
-    await expect(core.locator(".sf-title")).toHaveText("Core Java");
-    const coreCount = NOTES.filter((n) => n.topic === "Core Java").length;
-    await expect(core.locator(".sf-meta")).toContainText(`${coreCount} chapter`);
-    const card = page.locator('.series-feature[href="/learning/java-concurrency/"]');
-    await expect(card).toHaveAttribute("href", "/learning/java-concurrency/");
-    await expect(card.locator(".sf-title")).toHaveText("Java concurrency");
-    const chapters = NOTES.filter((n) => n.topic === "Java concurrency").length;
-    await expect(card.locator(".sf-meta")).toContainText(`${chapters} chapters`);
+    const card = page.locator(".series-feature");
+    await expect(card).toHaveCount(1);
+    await expect(card).toHaveAttribute("href", "/learning/java/");
+    await expect(card.locator(".sf-sum")).toContainText("Core Java and Java concurrency");
+    const chapters = NOTES.filter((n) => n.topic === "Core Java" || n.topic === "Java concurrency").length;
+    await expect(card.locator(".sf-meta")).toHaveText(`${chapters} chapters`);
     await card.click();
-    await expect(page).toHaveURL(/\/learning\/java-concurrency\/$/);
+    await expect(page).toHaveURL(/\/learning\/java\/$/);
   });
 
   test("Java section groups both series and is linked from the learning tabs", async ({ page }) => {
