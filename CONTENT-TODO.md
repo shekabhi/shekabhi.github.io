@@ -138,6 +138,15 @@ then rewrite them in your words.
       collectors); the effectively-final rule checked against javac.
 - [ ] `optional-and-null.md` — chapter 10, drafted by AI with 6 common questions and
       4 multiple-choice questions. One runnable program (chaining, orElse vs orElseGet, Objects checks).
+- [ ] `records-sealed-pattern-matching.md` — chapter 11, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program; exhaustiveness, dominance and permits
+      errors checked against javac.
+- [ ] `jvm-memory-garbage-collection.md` — chapter 12, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program (a leak, stack overflow, array limit);
+      the G1 log is real output from Java 21.
+- [ ] `reflection-annotations.md` — chapter 13, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program (annotation validator, dynamic proxy,
+      module encapsulation).
 - [ ] The Core Java chapter list in `_data/topics.yml` (13 chapters; the two collections chapters moved to the Java collections series): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
