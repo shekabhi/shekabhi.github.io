@@ -125,6 +125,11 @@ then rewrite them in your words.
 - [ ] `inheritance-polymorphism-interfaces.md` — chapter 5, drafted by AI with 6 common questions
       and 4 multiple-choice questions. Two runnable programs (dispatch, default methods);
       overriding rules checked against javac.
+- [ ] `equals-hashcode-comparing.md` — chapter 6, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Two runnable programs (broken contracts, sorting).
+- [ ] `exceptions-try-with-resources.md` — chapter 7, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Three runnable programs (try/finally, resources and
+      chaining, helpful NullPointerException messages).
 - [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
