@@ -136,6 +136,8 @@ then rewrite them in your words.
 - [ ] `lambdas-functional-interfaces-streams.md` — chapter 9, drafted by AI with 6 common questions
       and 4 multiple-choice questions. One runnable program (functional interfaces, laziness,
       collectors); the effectively-final rule checked against javac.
+- [ ] `optional-and-null.md` — chapter 10, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program (chaining, orElse vs orElseGet, Objects checks).
 - [ ] The Core Java chapter list in `_data/topics.yml` (13 chapters; the two collections chapters moved to the Java collections series): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
@@ -149,6 +151,10 @@ then rewrite them in your words.
       Java 21 (table sizes read with reflection in a separate test program).
 - [ ] `linkedhashmap-treemap-lru.md` — chapter 4, drafted by AI with 6 common questions and
       4 multiple-choice questions. One runnable program; every value in the navigation table checked.
+- [ ] `sets-hash-linked-tree-enum.md` — chapter 5, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program.
+- [ ] `queues-priorityqueue.md` — chapter 6, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program (heap order, max-heap, top-K).
 - [ ] The 9-chapter plan for the series in `_data/topics.yml`.
 
 ### Learning sections (`_data/sections.yml`)
