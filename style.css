@@ -1134,6 +1134,8 @@ h1, .section-title, .contact h2 { font-weight: 700; letter-spacing: -.035em; }
 .series-feature .tag { font-weight: 700; }
 .series-feature + .series-feature { --c: var(--sh-4); }
 .series-feature + .series-feature .tag, .series-feature + .series-feature .sf-go { color: var(--tag-4); }
+.series-feature + .series-feature + .series-feature { --c: var(--sh-3); }
+.series-feature + .series-feature + .series-feature .tag, .series-feature + .series-feature + .series-feature .sf-go { color: var(--tag-3); }
 
 .java-practice { margin-top: 30px; padding: 26px 28px; --c: var(--sh-3); }
 .java-practice .tag { font: 700 .72rem "JetBrains Mono", monospace; letter-spacing: .08em; color: var(--tag-3); }

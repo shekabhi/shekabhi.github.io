@@ -11,7 +11,7 @@ const CASES = ["mcp-server", "pasoe", "fips", "rate-limiter"];
 const NOTES = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "_site", "learning", "notes.json"), "utf8"));
 // Learning sections that have notes (AI has none yet, so its tab is hidden)
 const SECTIONS = ["/learning/java/", "/learning/system-design/", "/learning/databases/", "/learning/security/"];
-const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
+const PAGES = ["/", ...CASES.map((c) => `/work/${c}.html`), "/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-collections/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url), "/play/", "/about/", "/404.html"];
 
 // Collect JavaScript errors and failed requests on every page
 test.beforeEach(async ({ page }) => {
@@ -243,7 +243,7 @@ test.describe("learning: topics, quiz and privacy", () => {
   });
 
   test("public learning pages show no personal plan or progress", async ({ page }) => {
-    for (const url of ["/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
+    for (const url of ["/learning/", "/learning/quiz/", ...SECTIONS, "/learning/ai/", "/learning/core-java/", "/learning/java-collections/", "/learning/java-concurrency/", ...NOTES.map((n) => n.url)]) {
       await page.goto(url);
       const text = await page.locator("body").innerText();
       expect(text, url).not.toMatch(/roadmap|revis|confidence|study plan|not started|my progress/i);
@@ -380,15 +380,17 @@ test.describe("learning: topics, quiz and privacy", () => {
     }
   });
 
-  test("Java section groups both series and is linked from the learning tabs", async ({ page }) => {
+  test("Java section groups the three series and is linked from the learning tabs", async ({ page }) => {
     await page.goto("/learning/");
     await page.locator('.learn-tabs a[href="/learning/java/"]').click();
     await expect(page).toHaveURL(/\/learning\/java\/$/);
     await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText("Java");
     const cards = page.locator(".java-hub .series-feature");
-    await expect(cards).toHaveCount(2);
+    await expect(cards).toHaveCount(3);
     await expect(cards.nth(0)).toHaveAttribute("href", "/learning/core-java/");
-    await expect(cards.nth(1)).toHaveAttribute("href", "/learning/java-concurrency/");
+    await expect(cards.nth(1)).toHaveAttribute("href", "/learning/java-collections/");
+    await expect(cards.nth(2)).toHaveAttribute("href", "/learning/java-concurrency/");
+    await expect(page.locator('.java-practice a[href="/learning/quiz/?topic=java-collections"]')).toBeVisible();
     await expect(cards.nth(0).locator(".sf-title")).toHaveText("Core Java");
     await expect(page.locator('.java-practice a[href="/learning/quiz/?topic=core-java"]')).toBeVisible();
     await page.locator('.java-practice a[href="/learning/quiz/?topic=java-concurrency"]').click();
@@ -402,6 +404,23 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(links.first()).toHaveText(/How Java runs/);
     await links.first().click();
     await expect(page.locator('.note-head .eyebrow a[href="/learning/core-java/"]')).toContainText("CORE JAVA · SERIES");
+  });
+
+  test("note summaries are plain text (they are inserted as HTML on list pages)", async () => {
+    for (const n of NOTES) expect(n.summary, `${n.url} summary`).not.toMatch(/[<>]/);
+  });
+
+  test("Java collections series lists its chapters and links them in order", async ({ page }) => {
+    await page.goto("/learning/java-collections/");
+    await expect(page.locator('.learn-tabs a[aria-current="page"]')).toHaveText("Java");
+    const links = page.locator(".series-item:not([hidden]) .series-link");
+    await expect(links).toHaveCount(NOTES.filter((n) => n.topic === "Java collections").length);
+    await expect(links.first()).toHaveText(/collections framework/);
+    await links.first().click();
+    await expect(page.locator('.note-head .eyebrow a[href="/learning/java-collections/"]')).toContainText("JAVA COLLECTIONS · SERIES");
+    const next = page.locator(".next-case a.next");
+    await expect(next).toContainText("Next in Java collections");
+    await expect(next).toHaveAttribute("href", "/learning/arraylist-linkedlist-arraydeque/");
   });
 
   test("Run shows the recorded Java output for runnable examples", async ({ page }) => {

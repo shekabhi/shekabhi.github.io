@@ -73,13 +73,28 @@
     - { id: equals-hashcode, title: "equals, hashCode & comparing objects", key: true }
     - { id: exceptions, title: "Exceptions & try-with-resources", key: true }
     - { id: generics, title: "Generics, type erasure & wildcards", key: true }
-    - { id: collections, title: "The collections framework", key: true }
-    - { id: collections-internals, title: "HashMap & collections internals", key: true }
     - { id: streams, title: "Lambdas, functional interfaces & streams", key: true }
     - { id: optional, title: "Optional & handling null" }
     - { id: modern-java, title: "Records, sealed types & pattern matching", key: true }
     - { id: jvm-gc, title: "JVM memory & garbage collection", key: true }
     - { id: reflection, title: "Reflection & annotations" }
+
+- id: java-collections
+  section: java
+  title: "Java collections"
+  summary: Lists, sets, maps and queues, and what happens inside them.
+  blurb: Read it in order, from choosing the right structure to HashMap internals and the traps.
+  series: true
+  topics:
+    - { id: collections-framework, title: "The collections framework: interfaces and how to choose", key: true }
+    - { id: lists-deques, title: "ArrayList vs LinkedList, and ArrayDeque", key: true }
+    - { id: hashmap-internals, title: "HashMap internals: buckets, resizing, treeification", key: true }
+    - { id: linkedhashmap-treemap, title: "LinkedHashMap, TreeMap and an LRU cache", key: true }
+    - { id: sets, title: "Sets: HashSet, LinkedHashSet, TreeSet, EnumSet", key: true }
+    - { id: queues-heaps, title: "Queues and PriorityQueue", key: true }
+    - { id: iterators-fail-fast, title: "Iterators, fail-fast and ConcurrentModificationException", key: true }
+    - { id: immutable-collections, title: "Immutable collections: List.of, copyOf and views", key: true }
+    - { id: collections-utilities, title: "The Collections and Arrays utilities, and common pitfalls" }
 
 - id: java-concurrency
   section: java

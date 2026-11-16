@@ -130,8 +130,18 @@ then rewrite them in your words.
 - [ ] `exceptions-try-with-resources.md` — chapter 7, drafted by AI with 6 common questions and
       4 multiple-choice questions. Three runnable programs (try/finally, resources and
       chaining, helpful NullPointerException messages).
-- [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
+- [ ] `generics-erasure-wildcards.md` — chapter 8, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program; the five forbidden patterns checked
+      against javac.
+- [ ] The Core Java chapter list in `_data/topics.yml` (13 chapters; the two collections chapters moved to the Java collections series): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
+
+### Java collections series (`_notes/collections-framework.md` and later chapters, `learning/java-collections/`)
+- [ ] `collections-framework.md` — chapter 1, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program.
+- [ ] `arraylist-linkedlist-arraydeque.md` — chapter 2, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program.
+- [ ] The 9-chapter plan for the series in `_data/topics.yml`.
 
 ### Learning sections (`_data/sections.yml`)
 - [ ] Headings and summaries for System design, Databases, Security and AI, drafted by AI.

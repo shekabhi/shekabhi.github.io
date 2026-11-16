@@ -5,7 +5,7 @@ topic: Java concurrency   # Java, Redis, System Design, Security... (a new topic
 date: 2026-11-20          # when you wrote it (YYYY-MM-DD). Future dates are hidden until that day.
 # updated: 2026-12-01     # uncomment when you update the note
 tags: [tag-one, tag-two]
-summary: One sentence that appears on the card in the Learning hub.
+summary: One sentence that appears on the card in the Learning hub.  # plain text: no < or > (write "a list of Integer", not List<Integer>)
 catalog: thread-pools     # optional: a topic id from _data/topics.yml, lists the note on the Topics page
 series: java-concurrency  # optional: part of a series, ordered as in _data/topics.yml (previous/next links)
 priority: high            # optional: only shown (as a star) in your private plan view
