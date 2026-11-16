@@ -943,6 +943,7 @@ body { transition: background-color .25s, color .25s; }
 .quiz { padding-top: 30px; padding-bottom: 90px; max-width: 820px; }
 .quiz-filters { margin-bottom: 20px; }
 .quiz-card, .quiz-done { padding: 30px; }
+.quiz-card code, .quiz-card .quiz-q, .quiz-card .quiz-a, .quiz-option { overflow-wrap: anywhere; }   /* long method names must wrap on phones */
 .quiz-card[hidden], .quiz-done[hidden], .quiz-review[hidden] { display: none; }
 .quiz-meta { font-size: .8rem; color: var(--muted); margin-bottom: 12px; }
 .quiz-source { color: var(--accent); }

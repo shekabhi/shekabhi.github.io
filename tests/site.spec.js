@@ -406,6 +406,24 @@ test.describe("learning: topics, quiz and privacy", () => {
     await expect(page.locator('.note-head .eyebrow a[href="/learning/core-java/"]')).toContainText("CORE JAVA · SERIES");
   });
 
+  test("every quiz question fits a phone screen, including long method names", async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: { width: 375, height: 740 }, isMobile: true, hasTouch: true });
+    const page = await ctx.newPage();
+    const widest = async () => page.evaluate(() => Math.max(document.documentElement.scrollWidth, window.innerWidth));
+    await page.goto("/learning/quiz/?note=java-virtual-threads");
+    for (let i = 0; i < 12; i++) {
+      expect(await widest()).toBeLessThanOrEqual(375);
+      const option = page.locator(".quiz-option").first();
+      if (await option.isVisible()) await option.click();
+      else if (await page.locator(".quiz-reveal").isVisible()) await page.locator(".quiz-reveal").click();
+      expect(await widest()).toBeLessThanOrEqual(375);
+      const next = page.locator(".quiz-next, .quiz-skip").first();
+      if (!(await next.isVisible())) break;
+      await next.click();
+    }
+    await ctx.close();
+  });
+
   test("note summaries are plain text (they are inserted as HTML on list pages)", async () => {
     for (const n of NOTES) expect(n.summary, `${n.url} summary`).not.toMatch(/[<>]/);
   });
