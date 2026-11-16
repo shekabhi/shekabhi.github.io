@@ -585,6 +585,8 @@ body.term-open { overflow: hidden; }
 .note { padding-top: 130px; padding-bottom: 80px; max-width: 1100px; }
 .note-head { max-width: 760px; }
 .note-head h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 800; line-height: 1.12; letter-spacing: -.03em; margin: 14px 0 14px; }
+/* Titles can contain one very long Java name (ConcurrentModificationException): let it break on small screens */
+.note-head h1, .note-head .summary, .series-link, .next-case a, .note-card h2, .toc a, .topic-notes a { overflow-wrap: anywhere; }
 .note-head .summary { font-size: 1.1rem; color: var(--muted); }
 .note-head .eyebrow a:hover { text-decoration: underline; }
 .note-tags { display: flex; flex-wrap: wrap; gap: 8px; }

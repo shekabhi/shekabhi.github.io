@@ -164,7 +164,13 @@ then rewrite them in your words.
       4 multiple-choice questions. One runnable program.
 - [ ] `queues-priorityqueue.md` — chapter 6, drafted by AI with 6 common questions and
       4 multiple-choice questions. One runnable program (heap order, max-heap, top-K).
-- [ ] The 9-chapter plan for the series in `_data/topics.yml`.
+- [ ] `iterators-fail-fast.md` — chapter 7, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program (CME, the silent second-to-last case, safe removal).
+- [ ] `immutable-collections.md` — chapter 8, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program; null rules and Set.of ordering checked on Java 21.
+- [ ] `collections-arrays-utilities.md` — chapter 9, drafted by AI with 6 common questions and
+      4 multiple-choice questions. One runnable program, plus the series pitfalls checklist.
+
 
 ### Learning sections (`_data/sections.yml`)
 - [ ] Headings and summaries for System design, Databases, Security and AI, drafted by AI.

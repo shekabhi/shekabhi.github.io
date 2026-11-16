@@ -69,6 +69,8 @@ hello
 {: .run-output}
 -->
 
+<!-- Jekyll reads {{ and {% as template tags, even inside code blocks. Write Java array literals with a space: { {1, 2}, {3, 4} }. -->
+
 <!-- Every table column needs a header, including the first (an empty header cell fails the accessibility check). -->
 
 ## Further reading
