@@ -119,6 +119,12 @@ then rewrite them in your words.
 - [ ] `strings-pool-stringbuilder.md` — chapter 3, drafted by AI with 6 common questions and
       4 multiple-choice questions. String pool, constant folding, `split`, `strip`, text blocks
       and `invokedynamic` concatenation checked on Java 21.
+- [ ] `classes-objects-initialisation.md` — chapter 4, drafted by AI with 6 common questions and
+      4 multiple-choice questions. Two runnable programs (initialisation order, pass-by-value)
+      with output recorded on Java 21.
+- [ ] `inheritance-polymorphism-interfaces.md` — chapter 5, drafted by AI with 6 common questions
+      and 4 multiple-choice questions. Two runnable programs (dispatch, default methods);
+      overriding rules checked against javac.
 - [ ] The Core Java chapter list in `_data/topics.yml` (15 chapters): reorder, add or drop.
 - [ ] Intro text on the Java section page (`learning/java/index.html`).
 
