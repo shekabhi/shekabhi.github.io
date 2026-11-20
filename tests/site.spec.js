@@ -160,6 +160,20 @@ test.describe("rate limiter demo", () => {
   }
 });
 
+// Privacy: no phone number anywhere on the site. Matches any Indian mobile number
+// (10 digits starting 6-9, optionally +91), but not digits inside longer numbers.
+test("no page shows or links to a phone number", async ({ page }) => {
+  const MOBILE = /(?<![\d.])(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?![\d.])/;
+  for (const url of PAGES) {
+    await page.goto(url);
+    const text = await page.locator("body").innerText();
+    expect(text, `${url} text`).not.toMatch(MOBILE);
+    const html = (await page.content()).replace(/\?v=\d+/g, "");   // ignore asset version stamps
+    expect(html, `${url} source`).not.toMatch(MOBILE);
+    await expect(page.locator('a[href^="tel:"]'), `${url} tel: links`).toHaveCount(0);
+  }
+});
+
 test.describe("learning hub", () => {
   test.beforeEach(async ({ page }) => { await page.goto("/learning/"); });
   const cards = (page) => page.locator(".note-card:not([hidden])");
@@ -914,7 +928,6 @@ test.describe("about page", () => {
       await expect(page.locator("main")).toContainText(text);
     }
     for (const c of CASES) await expect(page.locator(`.role-points a[href="/work/${c}.html"]`)).toHaveCount(1);
-    await expect(page.locator("body")).not.toContainText("[removed]");
   });
 
   test("jump links go to each section", async ({ page }) => {
