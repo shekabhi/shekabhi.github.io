@@ -1154,6 +1154,19 @@ h1, .section-title, .contact h2 { font-weight: 700; letter-spacing: -.035em; }
 .rl-dot { border: 1.5px solid var(--ink); }
 .rl-log { border: 2px solid var(--ink); }
 
+/* home: learning series cards */
+.home-series { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.home-series-card { display: flex; flex-direction: column; }
+.home-series-card:nth-child(1) { --c: var(--sh-1); --t: var(--tag-1); }
+.home-series-card:nth-child(2) { --c: var(--sh-4); --t: var(--tag-4); }
+.home-series-card:nth-child(3) { --c: var(--sh-3); --t: var(--tag-3); }
+.home-series-card .tag { font: 700 .75rem "JetBrains Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--t); }
+.home-series-card h3 { font-size: 1.45rem; margin: 8px 0 8px; letter-spacing: -.02em; }
+.home-series-card p { color: var(--muted); flex: 1; margin-bottom: 16px; }
+.home-series-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--c); }
+.home-learn-more { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: 26px; }
+@media (max-width: 860px) { .home-series { grid-template-columns: minmax(0, 1fr); } }
+
 /* play teaser */
 .teaser { --c: var(--sh-4); }
 .teaser:hover { transform: none; }

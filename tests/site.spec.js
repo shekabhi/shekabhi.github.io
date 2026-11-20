@@ -97,6 +97,23 @@ for (const path of PAGES) {
 }
 
 test.describe("home page", () => {
+  test("shows the Java series with counts that match the notes", async ({ page }) => {
+    await page.goto("/");
+    const section = page.locator("#learning");
+    await expect(section.locator("h2")).toHaveText("Java, from the JVM up.");
+    const series = [["core-java", "Core Java"], ["java-collections", "Java collections"], ["java-concurrency", "Java concurrency"]];
+    const cards = section.locator(".home-series-card");
+    await expect(cards).toHaveCount(series.length);
+    for (const [i, [id, topic]] of series.entries()) {
+      await expect(cards.nth(i)).toHaveAttribute("href", `/learning/${id}/`);
+      const count = NOTES.filter((n) => n.topic === topic).length;
+      await expect(cards.nth(i).locator(".tag")).toHaveText(`${count} chapters`);
+    }
+    const total = NOTES.filter((n) => series.some(([, t]) => t === n.topic)).length;
+    await expect(section.locator(".section-intro")).toContainText(`${total} chapters`);
+    await expect(section.locator('a[href="/learning/java/#practice"]')).toContainText(/\d+ Java questions/);
+  });
+
   test.beforeEach(async ({ page }) => { await page.goto("/"); });
 
   test("has every section and a card for each case study", async ({ page }) => {

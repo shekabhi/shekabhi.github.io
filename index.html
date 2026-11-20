@@ -208,6 +208,37 @@
     </section>
 
     <!-- PLAY TEASER -->
+    <!-- LEARNING: the Java series, counted from the notes -->
+    {%- assign series_ids = "core-java,java-collections,java-concurrency" | split: "," %}
+    {%- assign total_chapters = 0 %}{% assign total_questions = 0 %}
+    {%- for sid in series_ids %}{% assign written = site.notes | where: "series", sid %}{% assign total_chapters = total_chapters | plus: written.size %}{% for n in written %}{% assign total_questions = total_questions | plus: n.questions.size %}{% endfor %}{% endfor %}
+    <section id="learning" class="container section reveal">
+      <p class="eyebrow">Learning</p>
+      <h2 class="section-title">Java, from the JVM up.</h2>
+      <p class="section-intro">
+        {{ total_chapters }} chapters in three series, each with diagrams, code I've run on Java 21 and a short quiz.
+        Written so I never learn the same thing twice.
+      </p>
+      <div class="home-series">
+        {%- for sid in series_ids %}
+        {%- assign area = site.data.topics | where: "id", sid | first %}
+        {%- assign written = site.notes | where: "series", sid %}
+        {%- if written.size > 0 %}
+        <a class="card home-series-card" href="/learning/{{ sid }}/">
+          <span class="tag">{{ written.size }} chapters</span>
+          <h3>{{ area.title | escape }}</h3>
+          <p>{{ area.summary | escape }}</p>
+          <span class="link-arrow">Read the series</span>
+        </a>
+        {%- endif %}
+        {%- endfor %}
+      </div>
+      <p class="home-learn-more">
+        <a class="link-arrow" href="/learning/">All notes</a>
+        <a class="link-arrow" href="/learning/java/#practice">Test yourself: {{ total_questions }} Java questions</a>
+      </p>
+    </section>
+
     <section id="play-teaser" class="container section reveal">
       <div class="card teaser">
         <div class="teaser-copy">
